@@ -83,12 +83,15 @@ class BaseClock {
 	}
 	#end
 	public function reset(?chart:Chart) {
+		chart ??= Song.dummyData();
+
+		timingMap.reset(chart.timingPoints);
 		audioTime = songTime = time = visualTime = 0.0;
 		rate = 1.0;
-
-		chart ??= Song.dummyData();
-		timingMap.reset(chart.timingPoints);
+		
 		velocityMap.reset(chart.scrollVelocities);
+		velocityIndex = 0;
+		currentVelocity = {};
 	}
 
 	public var stepHit:FlxTypedSignal<Int -> Void>;
@@ -109,8 +112,8 @@ class BaseClock {
 		updateBeats(songTime);
 	}
 
-	var velocityIndex:Int = 0;
-	var currentVelocity:ScrollVelocity = {};
+	var velocityIndex:Int;
+	var currentVelocity:ScrollVelocity;
 	function updateVelocities(pos:Float) {
 		var offsetedTime:Float = pos - Nevermore.settings.inputOffset;
 
