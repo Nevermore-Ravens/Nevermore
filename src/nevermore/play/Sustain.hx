@@ -15,6 +15,7 @@ import nevermore.modchart.ModchartManager;
 class Sustain extends Note {
 	public static var vertices:Array<Float> = [0, 0, 0, 0, 0, 0, 0, 0];
 	public var forceHeightRecalc:Bool = false;
+	public var isRoll:Bool = false;
 
 	// stupid shit to make texture setting not break this
 	override function updateHitbox() {}
@@ -34,6 +35,8 @@ class Sustain extends Note {
 		behavior = NoteBehavior.get(type);
 		behavior.setup(this);
 		behavior.applySkin(this, SUSTAIN);
+
+		isRoll = type.toLowerCase() == 'roll';
 
 		lastScaleY = -1;
 		lastSustainScale = -1;

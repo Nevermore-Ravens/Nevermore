@@ -245,6 +245,17 @@ class NoteField extends BaseField {
 		var strumline = getStrumline(id);
 		var receptor:Receptor = strumline.members[direction];
 
+		var rollHit:Bool = false;
+		for (sustain in sustains.members) {
+			if (!sustain.exists || !sustain.isRoll) continue;
+			if (!sustain.wasHit || sustain.player != id || sustain.lane != direction) continue;
+
+			sustain.regrabTimer = 0.25;
+			sustainHit(strumline, sustain, true);
+			receptor.glow();
+			rollHit = true;
+		}
+
 		var closestDistance:Float = Math.POSITIVE_INFINITY;
 		var noteToHit:Note = null;
 		for (i in 0 ... notes.length) {
@@ -274,8 +285,11 @@ class NoteField extends BaseField {
 			receptor.glow();
 
 			noteToHit.kill();
-			if (noteToHit.sustain != null) {
-				noteToHit.sustain.wasHit = true;
+			var sustain:Sustain = noteToHit.sustain;
+			if (sustain != null) {
+				sustain.wasHit = true;
+				if (sustain.isRoll) sustain.regrabTimer = 0.25;
+
 				receptor.isHolding = true;
 			}
 
@@ -283,7 +297,7 @@ class NoteField extends BaseField {
 				receptor.color = noteToHit.color;
 				receptor.luminize = true;
 			}
-		} else {
+		} else if (!rollHit) {
 			receptor.isHolding = true;
 			receptor.glow('pressed');
 		}
@@ -308,11 +322,11 @@ class NoteField extends BaseField {
 		var strumline:Strumline = sustain.strumline;
 		var receptor:Receptor = sustain.receptor;
 
-		var held:Bool = held[sustain.lane];
+		var held:Bool = !sustain.isRoll && held[sustain.lane];
 		var playerHeld:Bool = (held || sustain.regrabTimer > 0);
 		var heldKey:Bool = (!strumline.ai && playerHeld) || (strumline.ai && sustain.adjustedTime <= clock.time);
 
-		final regrabLimit:Float = Judgement.max.window / 1000;
+		final regrabLimit:Float = sustain.isRoll ? 0.25 : Judgement.max.window / 1000;
 
 		if (sustain.regrabTimer < regrabLimit && held && !strumline.ai) { // regrab logic would never happen in botplay
 			receptor.glow('standard');

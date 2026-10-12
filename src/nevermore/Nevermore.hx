@@ -100,6 +100,7 @@ class Nevermore {
 
 		NoteBehavior.register('Fake', FakeBehavior);
 		NoteBehavior.register('Mine', MineBehavior);
+		NoteBehavior.register('Roll', RollBehavior);
 
 		#if !NEVERMORE_NO_QUANTIZATION 
 		Quantization.reset(); 

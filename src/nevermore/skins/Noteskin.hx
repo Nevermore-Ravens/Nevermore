@@ -78,7 +78,7 @@ class Noteskin {
 						looped: true
 					}
 				]
-			}/*,
+			},
 
 			roll: {
 				style: "sparrow",
@@ -95,7 +95,7 @@ class Noteskin {
 						looped: true
 					}
 				]
-			}*/
+			}
 		});
 	}
 
