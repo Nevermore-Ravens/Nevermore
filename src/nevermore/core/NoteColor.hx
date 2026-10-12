@@ -29,25 +29,6 @@ class NoteColor {
 	public static final WHITE:FlxColor = 0xFFFFFFFF;
 	public static final GRAY:FlxColor = 0xFF878787;
 
-	public static var bySnap:Bool = true;
-	static var quantType(default, set):QuantType;
-	static function set_quantType(v:QuantType):QuantType {
-		currentQuants = quantList[v];
-		return quantType = v;
-	}
-
-	static var type(default, set):ColorType;
-	static function set_type(v:ColorType):ColorType {
-		current = list[v];
-		return type = v;
-	}
-
-	// colouring based on the note's snap timing
-	public static var currentQuants:Array<Int>;
-
-	// colouring based on what lane the note is in
-	public static var current:Array<Int>;
-
 	// these games don't necessarily *have* a set quant list
 	// as quants depend on the skin, rather than the game setting them (like in this scenario)
 	// the quant list you see here is dependent on the game's default noteskin
@@ -151,6 +132,25 @@ class NoteColor {
 			0xFFFFFFFF
 		]
 	];
+
+	public static var bySnap:Bool = true;
+	static var quantType(default, set):QuantType;
+	static function set_quantType(v:QuantType):QuantType {
+		currentQuants = quantList[v];
+		return quantType = v;
+	}
+
+	static var type(default, set):ColorType;
+	static function set_type(v:ColorType):ColorType {
+		current = list[v];
+		return type = v;
+	}
+
+	// colouring based on the note's snap timing
+	public static var currentQuants:Array<Int>;
+
+	// colouring based on what lane the note is in
+	public static var current:Array<Int>;
 
 	public static function reset() {
 		quantType = STEPMANIA;
