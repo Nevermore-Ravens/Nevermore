@@ -1,13 +1,7 @@
 package nevermore.core;
 
-// these games don't necessarily *have* a set quant list
-// as quants depend on the skin, rather than the game setting them (like in this scenario)
-// the quant list you see here is dependent on the game's default noteskin
-// sm being "default" (no shit)
-// itg being metal/cel
-// etterna being the byzero series
-// etc
-#if !NEVERMORE_NO_QUANTIZATION
+import nevermore.play.BaseNote;
+
 enum abstract QuantType(String) from String to String {
 	var STEPMANIA = 'StepMania';
 	var ITG = 'In The Groove';
@@ -17,7 +11,11 @@ enum abstract QuantType(String) from String to String {
 	var CUSTOM = 'Custom';
 }
 
-class Quantization {
+enum abstract ColorType(String) from String to String {
+	var CUSTOM = 'Custom';
+}
+
+class NoteColor {
 	public static final RED:FlxColor = 0xFFFF2B32;
 	public static final BLUE:FlxColor = 0xFF0861FF;
 	public static final PURPLE:FlxColor = 0xFFC228FF;
@@ -31,8 +29,26 @@ class Quantization {
 	public static final WHITE:FlxColor = 0xFFFFFFFF;
 	public static final GRAY:FlxColor = 0xFF878787;
 
+	public static var bySnap:Bool = true;
+	static var quantType(default, set):QuantType;
+	static function set_quantType(v:QuantType):QuantType {
+		currentQuants = quantList[v];
+		return quantType = v;
+	}
+
+	static var type(default, set):ColorType;
+	static function set_type(v:ColorType):ColorType {
+		current = list[v];
+		return type = v;
+	}
+
+	// colouring based on the note's snap timing
+	public static var currentQuants:Array<Int>;
+
+	// colouring based on what lane the note is in
 	public static var current:Array<Int>;
-	public static final list:Map<String, Array<FlxColor>> = [
+
+	public static var quantList:Map<String, Array<Int>> = [
 		'StepMania' => [
 			RED,     // 4th
 			BLUE,    // 8th
@@ -120,17 +136,24 @@ class Quantization {
 		]
 	];
 
-	public static var currentType(default, set):QuantType;
-	static function set_currentType(v:QuantType):QuantType {
-		currentType = v;
-		current = list[currentType];
-		return v;
-	}
+	public static var list:Map<String, Array<Int>> = [
+		'Custom' => [
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0xFFFFFFFF
+		]
+	];
 
 	public static function reset() {
-		currentType = STEPMANIA;
+		quantType = STEPMANIA;
+		type = CUSTOM;
+	}
+
+	public static function get(note:BaseNote):Int {
+		if (!note.luminize) return WHITE;
+
+		if (bySnap) return currentQuants[note.data.snapID];
+		return current[note.lane % (current.length - 1)];
 	}
 }
-#else
-class Quantization {}
-#end

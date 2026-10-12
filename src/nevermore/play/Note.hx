@@ -54,8 +54,7 @@ class Note extends BaseNote {
 		if (!strumline.quantization) luminize = false;
 		else luminize = Nevermore.settings.quantization;
 
-		color = luminize ? Quantization.current[data.snapID] : FlxColor.WHITE;
-
+		color = NoteColor.get(this);
 		type = data.type;
 
 		return this;

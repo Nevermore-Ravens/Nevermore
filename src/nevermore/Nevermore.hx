@@ -102,9 +102,7 @@ class Nevermore {
 		NoteBehavior.register('Mine', MineBehavior);
 		NoteBehavior.register('Roll', RollBehavior);
 
-		#if !NEVERMORE_NO_QUANTIZATION 
-		Quantization.reset(); 
-		#end
+		NoteColor.reset();
 
 		#if !NEVERMORE_NO_MODCHARTS 
 		ModchartManager.setupRedirects();
