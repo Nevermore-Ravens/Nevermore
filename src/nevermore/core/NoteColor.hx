@@ -48,6 +48,13 @@ class NoteColor {
 	// colouring based on what lane the note is in
 	public static var current:Array<Int>;
 
+	// these games don't necessarily *have* a set quant list
+	// as quants depend on the skin, rather than the game setting them (like in this scenario)
+	// the quant list you see here is dependent on the game's default noteskin
+	// sm being "default" (no shit)
+	// itg being metal/cel
+	// etterna being the byzero series
+	// etc
 	public static var quantList:Map<String, Array<Int>> = [
 		'StepMania' => [
 			RED,     // 4th
