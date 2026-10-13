@@ -227,6 +227,7 @@ class NoteField extends BaseField {
 		if (id == -1) id = playerID;
 		if (multiplayer) {
 			strumline = getStrumline(id);
+			if (strumline.ai) return;
 		}
 
 		if (strumline.held[direction]) return;
@@ -249,6 +250,7 @@ class NoteField extends BaseField {
 		if (id == -1) id = playerID;
 		if (multiplayer) {
 			strumline = getStrumline(id);
+			if (strumline.ai) return;
 		}
 
 		strumline.held[direction] = false;
