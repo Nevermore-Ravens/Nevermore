@@ -253,6 +253,12 @@ class NoteField extends BaseField {
 			sustain.regrabTimer = 0.25;
 			sustainHit(strumline, sustain, true);
 			receptor.glow();
+
+			if (sustain.luminize) {
+				receptor.color = sustain.color;
+				receptor.luminize = true;
+			}
+			
 			rollHit = true;
 		}
 
