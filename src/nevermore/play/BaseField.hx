@@ -153,6 +153,6 @@ class BaseField extends FlxSpriteGroup {
 
 	function noteSpawned(data:NoteData) {}
 
-	function pressed(direction:Int) {}
-	function released(direction:Int) {}
+	function pressed(id:Int, direction:Int) {}
+	function released(id:Int, direction:Int) {}
 }

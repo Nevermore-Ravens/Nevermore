@@ -16,8 +16,8 @@ enum InputPreference {
 // combines keyboard/gamepad input into one callback
 // and converts the input into a 0 - keyCount integer
 class InputManager {
-	public var onPress:Event<Int -> Void>;
-	public var onRelease:Event<Int -> Void>;
+	public var onPress:Event<(Int, Int) -> Void>;
+	public var onRelease:Event<(Int, Int) -> Void>;
 	public var timestamp:Int = 0;
 	public var keyCount:Int = 4;
 
@@ -25,12 +25,17 @@ class InputManager {
 	// or allow both at once
 	public var prefer:InputPreference = ALL;
 
+	// since this never calls remove() you can technically make a fuckton of gamepads
+	// by just disconnecting/reconnecting the same controller
+	// but im not sure how to go around this sooooooooooooooo
+	public var gamepads:Array<CustomGamepad> = [];
+
 	public function new() {
-		onPress = new Event<Int -> Void>();
-		onRelease = new Event<Int -> Void>();
+		onPress = new Event<(Int, Int) -> Void>();
+		onRelease = new Event<(Int, Int) -> Void>();
 
 		Gamepad.onConnect.add(_onConnectGamepad);
-		_addGamepad(Gamepad.devices[0]);
+		for (gamepad in Gamepad.devices) gamepads.push(new CustomGamepad(this, gamepad));
 
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
@@ -41,23 +46,13 @@ class InputManager {
 		Application.current.window.onKeyUp.remove(keyReleased);
 		Gamepad.onConnect.remove(_onConnectGamepad);
 
-		var gamepad:Gamepad = Gamepad.devices[0];
-		if (gamepad == null) return;
-
-		gamepad.onButtonDown.remove(buttonPressed);
-		gamepad.onButtonUp.remove(buttonReleased);
+		for (gamepad in gamepads) gamepad.destroy();
+		gamepads.resize(0);
 	}
 
 	function _onConnectGamepad(gamepad:Gamepad) {
 		if (gamepad.id != 0) return;
-		_addGamepad(gamepad);
-	}
-
-	function _addGamepad(gamepad:Gamepad) {
-		if (gamepad == null) return;
-
-		gamepad.onButtonDown.add(buttonPressed);
-		gamepad.onButtonUp.add(buttonReleased);
+		gamepads.push(new CustomGamepad(this, gamepad));
 	}
 
 	inline function keyPressed(key:KeyCode, _) {
@@ -72,7 +67,8 @@ class InputManager {
 		timestamp = System.getTimer();
 		#end
 
-		onPress.dispatch(direction);
+		// -1 because who the fuck has more than one keyboard connected
+		onPress.dispatch(-1, direction);
 	}
 
 	inline function keyReleased(key:KeyCode, _) {
@@ -81,31 +77,53 @@ class InputManager {
 		var direction:Int = Controls.keyboard.get(keyCount, key);
 		if (direction == -1) return;
 
-		onRelease.dispatch(direction);
+		onRelease.dispatch(-1, direction);
+	}
+}
+
+class CustomGamepad {
+	public var manager:InputManager;
+	public var id:Int = 0;
+	var _gamepad:Gamepad;
+	public function new(manager:InputManager, gamepad:Gamepad) {
+		_gamepad = gamepad;
+
+		this.id = gamepad.id;
+		this.manager = manager;
+
+		_gamepad.onButtonDown.add(buttonPressed);
+		_gamepad.onButtonUp.add(buttonReleased);
+	}
+
+	public function destroy() {
+		_gamepad.onButtonDown.remove(buttonPressed);
+		_gamepad.onButtonUp.remove(buttonReleased);
+
+		_gamepad = null;
+		manager = null;
 	}
 
 	inline function buttonPressed(button:GamepadButton) {
-		if (prefer == KEYBOARD) return;
+		if (manager.prefer == KEYBOARD) return;
 
-		var direction:Int = Controls.gamepad.get(keyCount, button);
+		var direction:Int = Controls.gamepad.get(manager.keyCount, button);
 		if (direction == -1) return;
 
 		#if (lime >= version("8.4.0"))
-		var gamepad:Gamepad = Gamepad.devices[0];
-		timestamp = gamepad.onButtonDown.timestamp;
+		manager.timestamp = _gamepad.onButtonDown.timestamp;
 		#else
-		timestamp = System.getTimer();
+		manager.timestamp = System.getTimer();
 		#end
 
-		onPress.dispatch(direction);
+		manager.onPress.dispatch(_gamepad.id, direction);
 	}
 
 	inline function buttonReleased(button:GamepadButton) {
-		if (prefer == KEYBOARD) return;
+		if (manager.prefer == KEYBOARD) return;
 
-		var direction:Int = Controls.gamepad.get(keyCount, button);
+		var direction:Int = Controls.gamepad.get(manager.keyCount, button);
 		if (direction == -1) return;
 
-		onRelease.dispatch(direction);
+		manager.onRelease.dispatch(_gamepad.id, direction);
 	}
 }

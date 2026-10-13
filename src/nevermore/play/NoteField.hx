@@ -16,18 +16,31 @@ class NoteField extends BaseField {
 	public dynamic function sustainDropped(strumline:Strumline, sustain:Sustain):Void {}
 	public dynamic function ghostTap(strumline:Strumline, dir:Int):Void {}
 
+	public var player:Strumline;
 	override function set_playerID(v:Int):Int {
 		v = FlxMath.minInt(v, strumlines.length - 1);
 
 		for (i => line in strumlines.members) {
-			line.ai = (v == i) ? autoplay : true;
+			if (multiplayer) line.ai = autoplay;
+			else line.ai = (v == i) ? autoplay : true;
 		}
 
+		player = getStrumline(v);
 		return playerID = v;
 	}
 
 	override function set_autoplay(v:Bool):Bool {
 		return autoplay = getStrumline(playerID).ai = v;
+	}
+
+	public var multiplayer(default, set):Bool = false;
+	function set_multiplayer(v:Bool):Bool {
+		for (i => line in strumlines.members) {
+			if (v) line.ai = autoplay;
+			else line.ai = (playerID == i) ? autoplay : true;
+		}
+
+		return multiplayer = v;
 	}
 
 	override function set_scrollSpeed(v:Float):Float {
@@ -61,7 +74,7 @@ class NoteField extends BaseField {
 		input.keyCount = v;
 		for (i in strumlines.members)
 			i.keyCount = v;
-		held = [for (i in 0...keyCount) false];
+
 		return v;
 	}
 
@@ -206,17 +219,22 @@ class NoteField extends BaseField {
 		}
 	}
 
-	var held:Array<Bool> = [];
 	var mirrorInputs:Array<Int> = [];
-	override function pressed(direction:Int) {
+	override function pressed(id:Int, direction:Int) {
 		if (autoplay || (!persistentUpdate && Nevermore.paused)) return;
 
-		if (held[direction]) return;
-		held[direction] = true;
+		var strumline:Strumline = player;
+		if (id == -1) id = playerID;
+		if (multiplayer) {
+			strumline = getStrumline(id);
+		}
 
-		var note:Note = tapInputs(direction, playerID);
+		if (strumline.held[direction]) return;
+		strumline.held[direction] = true;
+
+		var note:Note = tapInputs(direction, id);
 		if (note == null) {
-			ghostTap(getStrumline(playerID), direction);
+			ghostTap(strumline, direction);
 		} else {
 			noteHit(note.strumline, note);
 		}
@@ -224,15 +242,23 @@ class NoteField extends BaseField {
 		for (i in mirrorInputs) tapInputs(direction, i);
 	}
 
-	override function released(direction:Int) {
+	override function released(id:Int, direction:Int) {
 		if (autoplay) return;
-		held[direction] = false;
+
+		var strumline:Strumline = player;
+		if (id == -1) id = playerID;
+		if (multiplayer) {
+			strumline = getStrumline(id);
+		}
+
+		strumline.held[direction] = false;
 
 		function resetReceptor(strumline:Strumline) {
 			strumline.members[direction].glow('standard');
 		}
 
-		resetReceptor(getStrumline(playerID));
+		resetReceptor(strumline);
+		
 		for (i in mirrorInputs) resetReceptor(getStrumline(i));
 	}
 
@@ -328,7 +354,7 @@ class NoteField extends BaseField {
 		var strumline:Strumline = sustain.strumline;
 		var receptor:Receptor = sustain.receptor;
 
-		var held:Bool = !sustain.isRoll && held[sustain.lane];
+		var held:Bool = !sustain.isRoll && strumline.held[sustain.lane];
 		var playerHeld:Bool = (held || sustain.regrabTimer > 0);
 		var heldKey:Bool = (!strumline.ai && playerHeld) || (strumline.ai && sustain.adjustedTime <= clock.time);
 

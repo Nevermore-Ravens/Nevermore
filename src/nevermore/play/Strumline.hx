@@ -9,6 +9,7 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	public var keyCount(default, set):Int = 4;
 	function set_keyCount(v:Int):Int {
 		keyCount = v;
+		held = [for (i in 0...keyCount) false];
 		regen();
 		return v;
 	}
@@ -41,6 +42,7 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	}
 
 	public var curHolds:Array<Sustain> = [];
+	public var held:Array<Bool> = [];
 
 	// for similar properties between Strumline and ProxyField. as said, only for modcharts.
 	public var modchartX:Float = 0;
