@@ -214,7 +214,7 @@ class Sustain extends Note {
 	}
 
 	function updateFrames(time:Float) {
-		function getSustainFrame(anim:FlxAnimation):Int {
+		inline function getSustainFrame(anim:FlxAnimation):Int {
 			var frameIndex:Float = Math.abs(time / 1000 * anim.frameRate) % anim.frames.length;
 			return anim.frames[Math.floor(frameIndex)];
 		}
@@ -239,18 +239,18 @@ class Sustain extends Note {
 			direction = Util.swapDirection(direction);
 		}
 		
+		modchart.curLane = lane;
+		modchart.curField = player;
+
 		final yMult = direction == DOWN ? -1 : 1;
 		final oldScaleX = scale.x;
 		final oldScaleY = scale.y;
-		final spiral:Bool = modchart.get("spiralholds", player) == 1;
-		final sexuality:Float = modchart.get("straightholds", player) - modchart.get("gayholds", player);
-		final superstraight:Float = modchart.get("extrastraightholds", player);
+		final spiral:Bool = modchart.config.spiralHolds == 1;
+		final sexuality:Float = modchart.config.straightHolds - modchart.config.gayHolds;
+		final superstraight:Float = modchart.config.extraStraightHolds;
 		var layer:Float = 0;
 		var angleUp:Float = 0;
 		var angleDown:Float = 0;
-
-		modchart.curLane = lane;
-		modchart.curField = player;
 
 		var curDist = distance * yMult;
 		var curY = offsetY;

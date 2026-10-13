@@ -155,9 +155,9 @@ class Receptor extends NoteObject {
 		Note.modchartVertices[3].set(_matrix.transformX(_frame.frame.width, _frame.frame.height), _matrix.transformY(_frame.frame.width, _frame.frame.height), modchartPos.z);
 		
 		var orientAngle:Float = 0;
-		final orient:Float = modchart.get("orient", player);
+		final orient:Float = modchart.config.orient;
 		if (orient != 0){
-			final orientOffset: Float = modchart.get("orientoffset", player);
+			final orientOffset: Float = modchart.config.orientOffset;
 			final cacheX:Float = modchartPos.x;
 			final cacheY:Float = modchartPos.y;
 			final cacheZ:Float = modchartPos.z;
@@ -189,7 +189,8 @@ class Receptor extends NoteObject {
 			vert.project();
 		}
 
-		modchart.pushDraw(player, parent, cameras, scrollFactor, _frame, Note.modchartVertices, colorTransform, blend, antialiasing, luminize, stealth, layer, true);
+		_drawFrame = _frame.copyTo(_drawFrame);
+		modchart.pushDraw(player, parent, cameras, scrollFactor, _drawFrame, Note.modchartVertices, colorTransform, blend, antialiasing, luminize, stealth, layer, true);
 
 		modchartPos.z -= offsetZ;
 		for (attach in attachments) {
@@ -237,7 +238,8 @@ class Receptor extends NoteObject {
 			vert.project();
 		}
 
-		modchart.pushDraw(player, parent, cameras, scrollFactor, _frame, Note.modchartVertices, colorTransform, blend, antialiasing, luminize, stealth, layer, true);
+		attachment._drawFrame = attachment._frame.copyTo(attachment._drawFrame);
+		modchart.pushDraw(player, parent, cameras, scrollFactor, attachment._drawFrame, Note.modchartVertices, colorTransform, blend, antialiasing, luminize, stealth, layer, true);
 
 		modchartPos.z -= attachment.offsetZ;
 	}

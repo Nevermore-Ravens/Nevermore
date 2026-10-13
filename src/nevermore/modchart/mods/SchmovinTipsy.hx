@@ -24,7 +24,7 @@ class SchmovinTipsy extends BaseModifier {
 
 	override function modifiesPosition(_):Bool {return true;}
 	override function adjustPos(_, pos:Vector3, _, _, beat:Float, lane:Int, player:Int, field:Strumline, _) {
-		final clipVal:Float = Math.abs(1 - parent.get("sinclip", player));
+		final clipVal:Float = Math.abs(1 - parent.config.sinClip);
 
 		final valX = schmovinTipsyX;
 		if (valX != 0.0)

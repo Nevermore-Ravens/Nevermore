@@ -62,7 +62,7 @@ class Beat extends BaseModifier {
 	override function modifiesPosition(_):Bool {return true;}
 	override function adjustPos(_, pos:Vector3, distance:Float, _, _, _, player:Int, _, _) {
 		// use cos so we dont need to offset pi/2
-		final clip:Float = Math.abs(1 - parent.get("cosclip", player));
+		final clip:Float = Math.abs(1 - parent.config.cosClip);
 
 		final xPeriod = ((beatPeriod * 30) + 30);
 		pos.x += this.beat * beatTimes[player][0] * Util.cosClip(distance / xPeriod, clip);

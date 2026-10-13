@@ -52,7 +52,7 @@ class NoteField extends BaseField {
 			sustain.forceHeightRecalc = true;
 
 			var speed:Float = v / clock.rate;
-			var longHolds:Float = modchart == null ? 1 : (modchart.get('longholds', sustain.player) + 1);
+			var longHolds:Float = modchart == null ? 1 : (modchart.getLongHolds(sustain.player) + 1);
 			sustain.calcHeight(speed * longHolds);
 		}
 
@@ -172,7 +172,9 @@ class NoteField extends BaseField {
 
 			holdInputs(sustain);
 			sustain.move(clock);
-			sustain.calcHeight(sustain.strumline.speed / clock.rate);
+
+			var longHolds:Float = modchart == null ? 1 : (modchart.getLongHolds(sustain.player) + 1);
+			sustain.calcHeight(sustain.strumline.speed / clock.rate * longHolds);
 
 			if (sustain.adjustedTime + sustain.length < clock.time - killDelay) {
 				sustain.kill();
@@ -212,7 +214,7 @@ class NoteField extends BaseField {
 			var sustain = addNote(data, sustains, Sustain);
 
 			var speed:Float = sustain.strumline.speed / clock.rate;
-			var longHolds:Float = modchart == null ? 1 : (modchart.get('longholds', data.player) + 1);
+			var longHolds:Float = modchart == null ? 1 : (modchart.getLongHolds(sustain.player) + 1);
 			sustain.calcHeight(speed * longHolds);
 
 			note.sustain = sustain;
@@ -435,6 +437,13 @@ class NoteField extends BaseField {
 
 		queueTimer += FlxG.elapsed;
 		if (queueTimer >= 1.0/queueFramerate) {
+			var oldDefaultCameras = null;
+			@:privateAccess {
+				oldDefaultCameras = FlxCamera._defaultCameras;
+				if (cameras != null)
+					FlxCamera._defaultCameras = cameras;
+			}
+
 			modchart.killAllQueues();
 			modchart.prepare();
 
@@ -473,16 +482,9 @@ class NoteField extends BaseField {
 				note.drawCrazy(modchart, note.strumline.direction);
 			}
 			queueTimer = 0;
-		}
-
-		var oldDefaultCameras = null;
-		@:privateAccess {
-			oldDefaultCameras = FlxCamera._defaultCameras;
-			if (cameras != null)
-				FlxCamera._defaultCameras = cameras;
+			@:privateAccess FlxCamera._defaultCameras = oldDefaultCameras;
 		}
 
 		modchart.drawQueues();
-		@:privateAccess FlxCamera._defaultCameras = oldDefaultCameras;
 	}
 }

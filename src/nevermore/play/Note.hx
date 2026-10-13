@@ -124,9 +124,9 @@ class Note extends BaseNote {
 		modchartVertices[2].set(_matrix.transformX(0, _frame.frame.height), _matrix.transformY(0, _frame.frame.height), modchartPos.z);
 		modchartVertices[3].set(_matrix.transformX(_frame.frame.width, _frame.frame.height), _matrix.transformY(_frame.frame.width, _frame.frame.height), modchartPos.z);
 
-		final orient:Float = modchart.get("orient", player);
+		final orient:Float = modchart.config.orient;
 		if(orient != 0){
-			final orientOffset:Float = modchart.get("orientoffset", player);
+			final orientOffset:Float = modchart.config.orientOffset;
 			final cacheX:Float = modchartPos.x;
 			final cacheY:Float = modchartPos.y;
 			final cacheZ:Float = modchartPos.z;
@@ -156,6 +156,7 @@ class Note extends BaseNote {
 			vert.project();
 		}
 
-		modchart.pushDraw(player, strumline, cameras, scrollFactor, _frame, modchartVertices, colorTransform, blend, antialiasing, luminize, stealth, layer);
+		_drawFrame = _frame.copyTo(_drawFrame);
+		modchart.pushDraw(player, strumline, cameras, scrollFactor, _drawFrame, modchartVertices, colorTransform, blend, antialiasing, luminize, stealth, layer);
 	}
 }

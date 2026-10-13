@@ -42,6 +42,7 @@ class ModchartManager {
 	public var allMods:Array<BaseModifier> = [];
 	public var allAuxes:Array<AuxModifier> = []; // so they can cache their values
 	public var nodes:Array<AuxNode> = [];
+	public var config:ModchartConfig;
 
 	public var timeline:ModchartTimeline;
 	public var strumlineCount:Int = 0;
@@ -62,23 +63,8 @@ class ModchartManager {
 	public function new() {
 		timeline = new ModchartTimeline();
 		addStrumlineSets(2);
-		makeAux("spiralholds", 1);
-		makeAux("longholds");
-		makeAux("straightholds");
-		makeAux("gayholds");
 
-		makeAux("orientoffset");
-		makeAux("orient");
-
-		makeAux("hidestealthglow");
-		makeAux("hidedarkglow");
-
-		makeAux("cosclip");
-		makeAux("sinclip");
-		//makeAux("cosecant"); TODO: Add if/when we add tangent variants of modifiers
-
-		// shitpost, dont use LMFAO
-		makeAux("extrastraightholds");
+		config = cast getInstance(ModchartConfig); // use getInstance to auto-add/allow .getRedirect to grab it properly
 	}
 
 	function getInstance(inputCls:Class<BaseModifier>) {
@@ -300,6 +286,11 @@ class ModchartManager {
 	}
 
 
+	public function getLongHolds(from:Int) {
+		curField = from; // this is how the special getter knows which field to grab from
+		return config.longHolds;
+	}
+
 	public function update() {
 		
 		for (mod in allMods)
@@ -402,7 +393,7 @@ class ModchartManager {
 
 		// TODO: Move this into the stealth modifier so we can add hidesuddenglow and hidehiddenglow from nITG
 		var stealthAlpha:Float = 1;
-		if (!isStrum && get("hidestealthglow", player) == 1 || isStrum && get("hidedarkglow", player) == 1) {
+		if (!isStrum && config.hideStealthGlow == 1 || isStrum && config.hideDarkGlow == 1) {
 			stealthAlpha = 1 - stealth;
 			stealth = 0;
 		}

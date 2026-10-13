@@ -30,7 +30,7 @@ class Tipsy extends BaseModifier {
 	override function modifiesPosition(_):Bool {return true;}
 	override function adjustPos(_, pos:Vector3, _, _, _, lane:Int, player:Int, field:Strumline, _) {
 		final time = Conductor.time * 0.001;
-		final clipVal:Float = Math.abs(1 - parent.get("cosclip", player));
+		final clipVal:Float = Math.abs(1 - parent.config.cosClip);
 
 		final valX = tipsyX;
 		if (valX != 0.0)

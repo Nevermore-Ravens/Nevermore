@@ -15,6 +15,9 @@ class NoteObject extends FlxSprite {
 	public var offsetY:Float;
 	public var offsetZ:Float;
 
+	// actually used for modchart rendering but maybe there'll be another purpose
+	var _drawFrame:FlxFrame;
+
 	function prepareMatrix(camera:FlxCamera) {
 		_matrix.translate(-origin.x, -origin.y);
 		_matrix.scale(scale.x, scale.y);

@@ -26,7 +26,7 @@ class Bumpy extends BaseModifier {
 
 	override function modifiesPosition(strumline:Int):Bool {return true;}
 	override function adjustPos(_, pos:Vector3, distance:Float, _, _, _, player:Int, _, _) {
-		final clipVal:Float = Math.abs(1 - parent.get("sinclip", player));
+		final clipVal:Float = Math.abs(1 - parent.config.sinClip);
 
 		final valX = bumpyX;
 		if (valX != 0.0)

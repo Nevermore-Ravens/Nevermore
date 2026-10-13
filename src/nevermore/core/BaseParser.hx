@@ -37,7 +37,7 @@ class BaseParser {
 		result.title = meta.title;
 		result.offset = meta.offset;
 		result.speed = meta.scrollSpeeds[singleDiff ? format.diffs[0] : diff];
-		result.keyCount = meta.extraData[STRUMLINE_KEYS]; // i have to do LANES_LENGTH if i want to compile, tho ill keep looking. - srt
+		result.keyCount = meta.extraData[LANES_LENGTH]; // i have to do LANES_LENGTH if i want to compile, tho ill keep looking. - srt
 
 		result.timingPoints = [
 			for (change in meta.bpmChanges) {

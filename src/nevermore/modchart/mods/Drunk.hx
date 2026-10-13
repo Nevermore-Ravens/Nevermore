@@ -33,7 +33,7 @@ class Drunk extends BaseModifier {
 	override function modifiesPosition(player:Int):Bool {return true;}
 	override function adjustPos(_, pos:Vector3, distance:Float, _, _, lane:Int, player:Int, field:Strumline, _) {
 		final time = Conductor.time * 0.001;
-		final clipVal:Float = Math.abs(1 - parent.get("sinclip", player));
+		final clipVal:Float = Math.abs(1 - parent.config.sinClip);
 
 		final val = drunk;
 		if (val != 0.0)

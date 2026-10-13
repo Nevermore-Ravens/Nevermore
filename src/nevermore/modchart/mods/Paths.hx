@@ -107,8 +107,8 @@ class Paths extends BaseModifier {
 		// When enabled, then paths will use pos.y to determine where in the path it is
 		// When disabled, paths use distance.
 		// Doing it in a function so paths that modify the Y are also taken into account here
-		final sinClip:Float = Math.abs(1 - parent.get("sinclip", player));
-		final cosClip:Float = Math.abs(1 - parent.get("cosclip", player));
+		final sinClip:Float = Math.abs(1 - parent.config.sinClip);
+		final cosClip:Float = Math.abs(1 - parent.config.cosClip);
 
 		var usedDistance:Float = pathType == 1 ? distance : unadjustedDistance;
 

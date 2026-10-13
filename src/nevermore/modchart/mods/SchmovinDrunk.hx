@@ -28,7 +28,7 @@ class SchmovinDrunk extends BaseModifier {
 
 	override function modifiesPosition(_):Bool {return true;}
 	override function adjustPos(_, pos:Vector3, distance:Float, _, beat:Float, lane:Int, player:Int, field:Strumline, _) {
-		final clipVal:Float = Math.abs(1 - parent.get("sinclip", player));
+		final clipVal:Float = Math.abs(1 - parent.config.sinClip);
 		
 		final val = schmovinDrunk;
 		if (val != 0.0)
