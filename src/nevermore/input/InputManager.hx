@@ -7,6 +7,12 @@ import lime.ui.GamepadButton;
 import lime.ui.KeyCode;
 import lime.system.System;
 
+enum InputPreference {
+	ALL;
+	KEYBOARD;
+	GAMEPAD;
+}
+
 // combines keyboard/gamepad input into one callback
 // and converts the input into a 0 - keyCount integer
 class InputManager {
@@ -14,6 +20,10 @@ class InputManager {
 	public var onRelease:Event<Int -> Void>;
 	public var timestamp:Int = 0;
 	public var keyCount:Int = 4;
+
+	// makes it able to only allow keyboard/gamepad input
+	// or allow both at once
+	public var prefer:InputPreference = ALL;
 
 	public function new() {
 		onPress = new Event<Int -> Void>();
@@ -24,6 +34,18 @@ class InputManager {
 
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
+	}
+	
+	public function destroy() {
+		Application.current.window.onKeyDown.remove(keyPressed);
+		Application.current.window.onKeyUp.remove(keyReleased);
+		Gamepad.onConnect.remove(_onConnectGamepad);
+
+		var gamepad:Gamepad = Gamepad.devices[0];
+		if (gamepad == null) return;
+
+		gamepad.onButtonDown.remove(buttonPressed);
+		gamepad.onButtonUp.remove(buttonReleased);
 	}
 
 	function _onConnectGamepad(gamepad:Gamepad) {
@@ -38,19 +60,9 @@ class InputManager {
 		gamepad.onButtonUp.add(buttonReleased);
 	}
 
-	public function destroy() {
-		Application.current.window.onKeyDown.remove(keyPressed);
-		Application.current.window.onKeyUp.remove(keyReleased);
-		Gamepad.onConnect.remove(_onConnectGamepad);
-
-		var gamepad:Gamepad = Gamepad.devices[0];
-		if (gamepad == null) return;
-
-		gamepad.onButtonDown.remove(buttonPressed);
-		gamepad.onButtonUp.remove(buttonReleased);
-	}
-
 	inline function keyPressed(key:KeyCode, _) {
+		if (prefer == GAMEPAD) return;
+
 		var direction:Int = Controls.keyboard.get(keyCount, key);
 		if (direction == -1) return;
 
@@ -64,6 +76,8 @@ class InputManager {
 	}
 
 	inline function keyReleased(key:KeyCode, _) {
+		if (prefer == GAMEPAD) return;
+
 		var direction:Int = Controls.keyboard.get(keyCount, key);
 		if (direction == -1) return;
 
@@ -71,6 +85,8 @@ class InputManager {
 	}
 
 	inline function buttonPressed(button:GamepadButton) {
+		if (prefer == KEYBOARD) return;
+
 		var direction:Int = Controls.gamepad.get(keyCount, button);
 		if (direction == -1) return;
 
@@ -85,6 +101,8 @@ class InputManager {
 	}
 
 	inline function buttonReleased(button:GamepadButton) {
+		if (prefer == KEYBOARD) return;
+
 		var direction:Int = Controls.gamepad.get(keyCount, button);
 		if (direction == -1) return;
 
