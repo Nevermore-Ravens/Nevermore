@@ -186,7 +186,10 @@ class NoteField extends BaseField {
 		if (note.time - clock.time > 0) return;
 		note.passedStrumline = true;
 
-		if (note.player != playerID) return;
+		if (multiplayer) {
+			if (note.strumline.ai) return;
+		} else if (note.player != playerID) return;
+		
 		if (!note.behavior.hittable || note.behavior.punishable) return;
 
 		if (tickSound == null || !assistTicks) return;
