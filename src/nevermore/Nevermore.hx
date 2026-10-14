@@ -66,18 +66,6 @@ class NevermoreSettings {
 
 	// How many times the NOTEFIELDS will render per second! setting this to your monitor's HZ value or double is recommended.
 	var notefieldFramerate = 60;
-
-	/**
-	 * Changes sustain/hold inputs to a system similar to osu!mania or Quaver.
-	 * Will "judge" you on how close you released the sustain to 0 ms, relative to the sustain's end time.
-	 * If you release too early, it counts as a drop.
-	 * ("judging" is dependent on how you implement it, it just gives you the ability to do so)
-	 *
-	 * Otherwise, the note field will default to a system like StepMania or Etterna.
-	 * Releasing a sustain holds onto it a bit longer, and then finally drops it (if it didn't reach the end).
-	 * (see `play/NoteField.hx#holdInputs()` for more info)
-	**/
-	var releaseTimings:Bool = false;
 }
 
 class Nevermore {

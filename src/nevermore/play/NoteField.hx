@@ -10,6 +10,11 @@ class NoteField extends BaseField {
 	public var strumlines:FlxTypedSpriteGroup<Strumline>;
 	public var notes:FlxTypedSpriteGroup<Note>;
 
+	// whether the game will allow you to write sustain inputs like osu!mania or quaver
+	// if false, it works like stepmania or etterna instead
+	// (see `holdInputs()`)
+	public var releaseTimings:Bool = false;
+
 	public dynamic function noteHit(strumline:Strumline, note:Note):Void {}
 	public dynamic function noteMissed(strumline:Strumline, note:Note):Void {}
 	public dynamic function sustainHit(strumline:Strumline, sustain:Sustain, mostRecent:Bool):Void {}
@@ -363,7 +368,7 @@ class NoteField extends BaseField {
 	function holdInputs(sustain:Sustain) {
 		if (!sustain.wasHit) return;
 
-		if (Nevermore.settings.releaseTimings && !sustain.isRoll) {
+		if (releaseTimings && !sustain.isRoll) {
 			holdInputs_releaseTimings(sustain);
 			return;
 		}
