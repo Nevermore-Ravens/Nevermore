@@ -1,6 +1,8 @@
 package nevermore.core.timing;
 
 import flixel.util.FlxSignal;
+import openfl.media.Sound;
+import openfl.media.SoundTransform;
 
 // NOTE:
 // this uses SETTING beats, rather than incrementing them
@@ -52,8 +54,10 @@ class BaseClock {
 		beatHit = new FlxTypedSignal<Int -> Void>();
 		measureHit = new FlxTypedSignal<Int -> Void>();
 
-		metronomeSound = FlxG.sound.load(Assets.dependency.audio('sfx/metronome.wav'));
-		measureSound = FlxG.sound.load(Assets.dependency.audio('sfx/metronome measure.wav'));
+		metronomeSound = Assets.dependency.audio('sfx/metronome.wav');
+		measureSound = Assets.dependency.audio('sfx/metronome measure.wav');
+
+		_soundTransform = new SoundTransform(FlxG.sound.volume);
 	}
 
 	public function destroy() {
@@ -134,8 +138,13 @@ class BaseClock {
 	}
 
 	public var metronome:Bool = false;
-	public var metronomeSound:FlxSound;
-	public var measureSound:FlxSound;
+
+	// these have to be an openfl sound instead
+	// because FlxG.sound.load() keeps fucking up somehow
+	public var metronomeSound:Sound;
+	public var measureSound:Sound;
+
+	var _soundTransform:SoundTransform;
 
 	public var step:Float;
 	var iStep:Int;
@@ -172,8 +181,11 @@ class BaseClock {
 		if (nextBeat != iBeat) {
 			beatHit.dispatch(iBeat = nextBeat);
 			if (metronome) {
+				var volume:Float = FlxG.sound.muted ? 0 : FlxG.sound.volume;
+				_soundTransform.volume = volume;
+
 				var newMeasure:Bool = nextBeat % timingMap.beatsPerMeasure == 0;
-				(newMeasure ? measureSound : metronomeSound).play(true);
+				(newMeasure ? measureSound : metronomeSound).play(0, 0, _soundTransform);
 			}
 		}
 
