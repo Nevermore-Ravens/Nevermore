@@ -30,7 +30,7 @@ class NoteField extends BaseField {
 	}
 
 	override function set_autoplay(v:Bool):Bool {
-		return autoplay = getStrumline(playerID).ai = v;
+		return autoplay = player.ai = v;
 	}
 
 	public var multiplayer(default, set):Bool = false;
@@ -119,11 +119,13 @@ class NoteField extends BaseField {
 		super.update(delta);
 
 		for (i => underlay in underlays.members) {
-			underlay.alpha = strumlines.members[i].alpha * underlays.alpha;
-			underlay.visible = strumlines.members[i].visible;
+			var strumline:Strumline = strumlines.members[i];
+
+			underlay.alpha = strumline.alpha * underlays.alpha;
+			underlay.visible = strumline.visible;
 		}
 
-		var updateBehaviors = false;
+		var updateBehaviors:Bool = false;
 		for (i in 0 ... notes.length) {
 			var note:Note = notes.members[i];
 
@@ -451,7 +453,7 @@ class NoteField extends BaseField {
 		}
 
 		queueTimer += FlxG.elapsed;
-		if (queueTimer >= 1.0/queueFramerate) {
+		if (queueTimer >= 1.0 / queueFramerate) {
 			var oldDefaultCameras = null;
 			@:privateAccess {
 				oldDefaultCameras = FlxCamera._defaultCameras;

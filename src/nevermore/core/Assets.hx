@@ -58,7 +58,7 @@ class AssetHandler {
 		// i hate that this is called sound
 		// but this is function is called audio
 		// and so is the enum
-		var sound:Sound = Sound.fromFile(path);
+		var sound:Sound = Sound.fromAudioBuffer(AudioBuffer.fromFile(path));
 		Assets.cache.set(path, {src: Audio(sound)});
 		return sound;
 	}
