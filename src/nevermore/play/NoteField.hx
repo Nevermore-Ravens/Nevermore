@@ -13,6 +13,7 @@ class NoteField extends BaseField {
 	public dynamic function noteHit(strumline:Strumline, note:Note):Void {}
 	public dynamic function noteMissed(strumline:Strumline, note:Note):Void {}
 	public dynamic function sustainHit(strumline:Strumline, sustain:Sustain, mostRecent:Bool):Void {}
+	public dynamic function sustainFinished(strumline:Strumline, sustain:Sustain, deviation:Float) {}
 	public dynamic function sustainDropped(strumline:Strumline, sustain:Sustain):Void {}
 	public dynamic function ghostTap(strumline:Strumline, dir:Int):Void {}
 
@@ -358,6 +359,102 @@ class NoteField extends BaseField {
 		return noteToHit;
 	}
 
+	var sustainInterval:Float = 0.12;
+	function holdInputs(sustain:Sustain) {
+		if (!sustain.wasHit) return;
+
+		if (Nevermore.settings.releaseTimings && !sustain.isRoll) {
+			holdInputs_releaseTimings(sustain);
+			return;
+		}
+
+		holdInputs_regrabTimer(sustain);
+	}
+
+	// kind of buggy but whatever idk how they should work anyways
+	// i don't play osu Lol Lmao
+	function holdInputs_releaseTimings(sustain:Sustain) {
+		var strumline:Strumline = sustain.strumline;
+		var receptor:Receptor = sustain.receptor;
+
+		var curHolds:Array<Sustain> = strumline.curHolds;
+		var held:Bool = strumline.held[sustain.lane];
+
+		function finishHold(sustain:Sustain) {
+			curHolds.remove(sustain);
+
+			sustain.visible = false;
+			sustain.regrabAlpha = 0;
+
+			receptor.isHolding = false;
+			if (strumline.ai) {
+				receptor.glow('standard');
+				receptor.isHolding = false;
+			}
+			sustain.untilTick = 0; // Hit it one last time, to make sure
+		}
+
+		if (!strumline.ai) {
+			if (!held) {
+				var deviation:Float = (sustain.adjustedTime + sustain.length) - clock.time;
+
+				if (Math.abs(deviation) <= Judgement.max.window) {
+					// now we actually finish
+					finishHold(sustain);
+					sustain.kill();
+
+					sustainFinished(strumline, sustain, deviation);
+				} else {
+					curHolds.remove(sustain);
+					sustain.regrabAlpha = 0.2;
+					sustain.wasHit = false;
+					sustainDropped(sustain.strumline, sustain);
+				}
+				return;
+			}
+		}
+
+		sustain.regrabAlpha = sustain.adjustedTime + sustain.length <= clock.time ? 0 : 1;
+
+		// only clip if it's past the sustain
+		if (!scrollVelocities)
+			sustain.timeOffset = -Math.min(sustain.adjustedTime - clock.time, 0);
+		else if (clock.time >= sustain.adjustedTime)
+			sustain.timeOffset = clock.visualTime - sustain.visualTime;
+
+		sustain.forceHeightRecalc = true;
+		receptor.isHolding = true;
+
+		if (!curHolds.contains(sustain)) {
+			// we want the most recent, but we also dont wanna prioritize super short sustains
+			final idx = sustain.length >= 250 ? curHolds.length : 0;
+			curHolds.insert(idx, sustain);
+		} else if (sustain.adjustedTime + sustain.length <= clock.time) {
+			// technically finished, but not really
+			// as we need to check if the player is holding for too long
+			finishHold(sustain);
+
+			if (strumline.ai) {
+				sustain.kill();
+				sustainFinished(strumline, sustain, 0);
+			}
+		}
+
+		sustain.untilTick -= FlxG.elapsed;
+		if (sustain.untilTick > 0) return;
+
+		sustain.untilTick = sustainInterval;
+		if (strumline.ai || held) {
+			receptor.glow();
+			if (sustain.luminize) {
+				receptor.color = sustain.color;
+				receptor.luminize = true;
+			}
+		}
+
+		sustainHit(strumline, sustain, curHolds[curHolds.length - 1] == sustain);
+	}
+
 	// attempts to recreate the "regrab" system from stepmania/etterna
 	// instead of immediately dropping the sustain when the player lets go,
 	// we give them a little bit of leeway by holding onto the sustain for a *little* longer,
@@ -368,10 +465,7 @@ class NoteField extends BaseField {
 	// especially if there's a note right after the end of a sustain
 	//
 	// this same concept applies to rolls as well, since they heavily utilize this functionality
-	var sustainInterval:Float = 0.12;
-	function holdInputs(sustain:Sustain) {
-		if (!sustain.wasHit) return;
-
+	function holdInputs_regrabTimer(sustain:Sustain) {
 		var strumline:Strumline = sustain.strumline;
 		var receptor:Receptor = sustain.receptor;
 
@@ -390,12 +484,10 @@ class NoteField extends BaseField {
 			sustain.regrabTimer = held ? regrabLimit : sustain.regrabTimer - FlxG.elapsed;
 
 			if (!heldKey) {
-				if (!strumline.ai) {
-					curHolds.remove(sustain);
-					sustain.regrabAlpha = 0.2;
-					sustain.wasHit = false;
-					sustainDropped(sustain.strumline, sustain);
-				}
+				curHolds.remove(sustain);
+				sustain.regrabAlpha = 0.2;
+				sustain.wasHit = false;
+				sustainDropped(sustain.strumline, sustain);
 
 				return;
 			}
@@ -425,6 +517,9 @@ class NoteField extends BaseField {
 				receptor.isHolding = false;
 			}
 			sustain.untilTick = 0; // Hit it one last time, to make sure
+
+			var deviation:Float = (sustain.adjustedTime + sustain.length) - clock.time;
+			sustainFinished(strumline, sustain, deviation);
 		}
 
 		sustain.untilTick -= FlxG.elapsed;
