@@ -77,7 +77,7 @@ class NevermoreSettings {
 	 * Releasing a sustain holds onto it a bit longer, and then finally drops it (if it didn't reach the end).
 	 * (see `play/NoteField.hx#holdInputs()` for more info)
 	**/
-	var releaseTimings:Bool = true;
+	var releaseTimings:Bool = false;
 }
 
 class Nevermore {
