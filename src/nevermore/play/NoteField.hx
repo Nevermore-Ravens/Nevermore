@@ -52,7 +52,11 @@ class NoteField extends BaseField {
 			sustain.forceHeightRecalc = true;
 
 			var speed:Float = v / clock.rate;
+			#if NEVERMORE_NO_MODCHARTS
+			var longHolds:Float = 1;
+			#else
 			var longHolds:Float = modchart == null ? 1 : (modchart.getLongHolds(sustain.player) + 1);
+			#end
 			sustain.calcHeight(speed * longHolds);
 		}
 
@@ -173,7 +177,11 @@ class NoteField extends BaseField {
 			holdInputs(sustain);
 			sustain.move(clock);
 
+			#if NEVERMORE_NO_MODCHARTS
+			var longHolds:Float = 1;
+			#else
 			var longHolds:Float = modchart == null ? 1 : (modchart.getLongHolds(sustain.player) + 1);
+			#end
 			sustain.calcHeight(sustain.strumline.speed / clock.rate * longHolds);
 
 			if (sustain.adjustedTime + sustain.length < clock.time - killDelay) {
@@ -217,7 +225,11 @@ class NoteField extends BaseField {
 			var sustain = addNote(data, sustains, Sustain);
 
 			var speed:Float = sustain.strumline.speed / clock.rate;
+			#if NEVERMORE_NO_MODCHARTS
+			var longHolds:Float = 1;
+			#else
 			var longHolds:Float = modchart == null ? 1 : (modchart.getLongHolds(sustain.player) + 1);
+			#end
 			sustain.calcHeight(speed * longHolds);
 
 			note.sustain = sustain;
@@ -428,7 +440,7 @@ class NoteField extends BaseField {
 		sustainHit(strumline, sustain, curHolds[curHolds.length - 1] == sustain);
 	}
 
-	
+	#if !NEVERMORE_NO_MODCHARTS	
 	var queueFramerate:Float = Nevermore.settings.notefieldFramerate;
 	var queueTimer:Float = 1000; // Force draw on first frame
 	
@@ -490,4 +502,5 @@ class NoteField extends BaseField {
 
 		modchart.drawQueues();
 	}
+	#end
 }

@@ -73,7 +73,10 @@ class Receptor extends NoteObject {
 			if (attach.dirty && firstCam) // rarely
 				attach.calcFrame(attach.useFramePixels);
 
+			final oldAlpha = attach.colorTransform.alphaMultiplier;
+			attach.colorTransform.alphaMultiplier *= colorTransform.alphaMultiplier;
 			attach.drawComplex(camera);
+			attach.colorTransform.alphaMultiplier = oldAlpha;
 
 			#if FLX_DEBUG
 			flixel.FlxBasic.visibleCount++;
@@ -149,29 +152,21 @@ class Receptor extends NoteObject {
 		y = oldY;
 		scale.set(oldScaleX, oldScaleY);
 
-		Note.modchartVertices[0].set(_matrix.transformX(0, 0), _matrix.transformY(0, 0), modchartPos.z);
-		Note.modchartVertices[1].set(_matrix.transformX(_frame.frame.width, 0), _matrix.transformY(_frame.frame.width, 0), modchartPos.z);
-		Note.modchartVertices[2].set(_matrix.transformX(0, _frame.frame.height), _matrix.transformY(0, _frame.frame.height), modchartPos.z);
-		Note.modchartVertices[3].set(_matrix.transformX(_frame.frame.width, _frame.frame.height), _matrix.transformY(_frame.frame.width, _frame.frame.height), modchartPos.z);
-		
-		var orientAngle:Float = 0;
-		final orient:Float = modchart.config.orient;
-		if (orient != 0){
-			final orientOffset: Float = modchart.config.orientOffset;
-			final cacheX:Float = modchartPos.x;
-			final cacheY:Float = modchartPos.y;
-			final cacheZ:Float = modchartPos.z;
-			final mult: Float = direction == DOWN ? -1 : 1;
-			modchartPos.set(x + width * 0.5, y + (height * 0.5) + ((modchartDist + 2) * mult), 0);
-			modchart.adjustPos(this, modchartPos, modchartDist + 2, 2, lane, player, parent, RECEPTOR);
+		prepareModchartVertices(modchartPos.z);
+		final mult: Float = direction == DOWN ? -1 : 1;
+		final orientAngle:Float = getOrientAngle(
+			modchart,
+			modchartPos,
+			mult,
+			y + ((modchartDist + 2) * mult),
+			modchartDist + 2,
+			2,
+			player,
+			parent,
+			RECEPTOR
+		);
 
-			Note.cachePoint.set(modchartPos.x - cacheX, modchartPos.y - cacheY);
-			Note.cachePoint.rotateByDegrees(orientOffset);
-
-			final diffX:Float = Note.cachePoint.x;
-			final diffY:Float = Note.cachePoint.y;
-			orientAngle = orient * (Math.atan2(diffY, diffX) - (Math.PI / 2));
-
+		if (orientAngle != 0){
 			for (i => vert in Note.modchartVertices){	
 				vert.x -= modchartPos.x;
 				vert.y -= modchartPos.y;
@@ -181,7 +176,6 @@ class Receptor extends NoteObject {
 				vert.y += modchartPos.y;
 				vert.z += modchartPos.z;
 			}
-			modchartPos.set(cacheX, cacheY, cacheZ);
 		}
 
 		for (vert in Note.modchartVertices) {
@@ -209,18 +203,14 @@ class Receptor extends NoteObject {
 		attachment.y = modchartPos.y - attachment.height * 0.5;
 		final layer = modchartPos.z;
 
-		scale.set(oldScaleX * modchartScaleX, oldScaleY * modchartScaleY);
+		attachment.scale.set(oldScaleX * modchartScaleX, oldScaleY * modchartScaleY);
 		attachment._frame.prepareMatrix(attachment._matrix, ANGLE_0, attachment.checkFlipX(), attachment.checkFlipY());
 		attachment.prepareMatrix(attachment.cameras[0]);
 		attachment._matrix.translate(attachment.cameras[0].scroll.x * attachment.scrollFactor.x, attachment.cameras[0].scroll.y * attachment.scrollFactor.y);
 		attachment.scale.set(oldScaleX, oldScaleY);
 
-		Note.modchartVertices[0].set(_matrix.transformX(0, 0), _matrix.transformY(0, 0), modchartPos.z);
-		Note.modchartVertices[1].set(_matrix.transformX(_frame.frame.width, 0), _matrix.transformY(_frame.frame.width, 0), modchartPos.z);
-		Note.modchartVertices[2].set(_matrix.transformX(0, _frame.frame.height), _matrix.transformY(0, _frame.frame.height), modchartPos.z);
-		Note.modchartVertices[3].set(_matrix.transformX(_frame.frame.width, _frame.frame.height), _matrix.transformY(_frame.frame.width, _frame.frame.height), modchartPos.z);
+		attachment.prepareModchartVertices(modchartPos.z);
 		
-		var orientAngle:Float = 0;
 		if (orientAngle != 0){
 			for (i => vert in Note.modchartVertices){	
 				vert.x -= modchartPos.x;
@@ -238,8 +228,11 @@ class Receptor extends NoteObject {
 			vert.project();
 		}
 
+		final oldAlpha = attachment.colorTransform.alphaMultiplier;
+		attachment.colorTransform.alphaMultiplier *= colorTransform.alphaMultiplier;
 		attachment._drawFrame = attachment._frame.copyTo(attachment._drawFrame);
-		modchart.pushDraw(player, parent, cameras, scrollFactor, attachment._drawFrame, Note.modchartVertices, colorTransform, blend, antialiasing, luminize, stealth, layer, true);
+		modchart.pushDraw(player, parent, attachment.cameras, attachment.scrollFactor, attachment._drawFrame, Note.modchartVertices, attachment.colorTransform, attachment.blend, attachment.antialiasing, attachment.luminize, stealth, layer, true);
+		attachment.colorTransform.alphaMultiplier = oldAlpha;
 
 		modchartPos.z -= attachment.offsetZ;
 	}

@@ -82,7 +82,7 @@ class Note extends BaseNote {
 		}
 	}
 
-	@:allow(nevermore.play.Receptor)
+	@:allow(nevermore.play.NoteObject)
 	static var cachePoint = FlxPoint.get();
 	public var modchartPos:Vector3 = new Vector3();
 	public var stealth:Float = 0;
@@ -119,36 +119,29 @@ class Note extends BaseNote {
 		y = oldY;
 		scale.set(oldScaleX, oldScaleY);
 
-		modchartVertices[0].set(_matrix.transformX(0, 0), _matrix.transformY(0, 0), modchartPos.z);
-		modchartVertices[1].set(_matrix.transformX(_frame.frame.width, 0), _matrix.transformY(_frame.frame.width, 0), modchartPos.z);
-		modchartVertices[2].set(_matrix.transformX(0, _frame.frame.height), _matrix.transformY(0, _frame.frame.height), modchartPos.z);
-		modchartVertices[3].set(_matrix.transformX(_frame.frame.width, _frame.frame.height), _matrix.transformY(_frame.frame.width, _frame.frame.height), modchartPos.z);
+		prepareModchartVertices(modchartPos.z);
+		final orientAngle:Float = getOrientAngle(
+			modchart,
+			modchartPos,
+			mult,
+			rawY + ((newDistance + 2) * mult),
+			newDistance + 2,
+			(distance * mult) + 2,
+			player,
+			strumline,
+			NOTE
+		);
 
-		final orient:Float = modchart.config.orient;
-		if(orient != 0){
-			final orientOffset:Float = modchart.config.orientOffset;
-			final cacheX:Float = modchartPos.x;
-			final cacheY:Float = modchartPos.y;
-			final cacheZ:Float = modchartPos.z;
-			modchartPos.set(x + width * 0.5, (rawY + ((newDistance + 2) * mult)) + height * 0.5, 0);
-			modchart.adjustPos(this, modchartPos, newDistance + 2, (distance * mult) + 2, lane, player, strumline, NOTE);
-
-			cachePoint.set(modchartPos.x - cacheX, modchartPos.y - cacheY);
-			cachePoint.rotateByDegrees(orientOffset);
-
-			final diffX:Float = cachePoint.x;
-			final diffY:Float = cachePoint.y;
-
+		if(orientAngle != 0){
 			for (i => vert in modchartVertices) {	
 				vert.x -= modchartPos.x;
 				vert.y -= modchartPos.y;
 				vert.z -= modchartPos.z;
-				vert.rotateRads(0, 0, orient * (Math.atan2(diffY, diffX) - (Math.PI / 2)));
+				vert.rotateRads(0, 0, orientAngle);
 				vert.x += modchartPos.x;
 				vert.y += modchartPos.y;
 				vert.z += modchartPos.z;
 			}
-			modchartPos.set(cacheX, cacheY, cacheZ);
 		}
 
 		for (i => vert in modchartVertices) {

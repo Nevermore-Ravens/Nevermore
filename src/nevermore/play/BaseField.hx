@@ -53,7 +53,9 @@ class BaseField extends FlxSpriteGroup {
 	public var scrollVelocities:Bool = true;
 
 	public var spawner:NoteSpawner;
+	#if !NEVERMORE_NO_MODCHARTS
 	public var modchart:ModchartManager;
+	#end
 
 	public var input:InputManager;
 
@@ -90,7 +92,9 @@ class BaseField extends FlxSpriteGroup {
 			obj.update(delta);
 		}
 
+		#if !NEVERMORE_NO_MODCHARTS
 		if (modchart != null) modchart.update();
+		#end
 
 		spawner.update(clock);
 	}
