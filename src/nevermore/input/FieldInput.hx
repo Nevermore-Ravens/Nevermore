@@ -5,9 +5,9 @@ import nevermore.core.timing.BaseClock;
 import flixel.group.FlxSpriteGroup;
 
 class FieldInput extends InputManager {
-	public var parent:NoteField;
-	public var notes:FlxTypedSpriteGroup<Note>;
-	public var sustains:FlxTypedSpriteGroup<Sustain>;
+	var parent:NoteField;
+	var notes:FlxTypedSpriteGroup<Note>;
+	var sustains:FlxTypedSpriteGroup<Sustain>;
 	var sustainInterval:Float = 0.12;
 
 	var clock(get, never):BaseClock;
