@@ -99,7 +99,6 @@ class BaseField extends FlxSpriteGroup {
 		super.destroy();
 
 		spawner.destroy();
-
 		spawner = null;
 	}
 
@@ -108,10 +107,11 @@ class BaseField extends FlxSpriteGroup {
 		if (chart.scrollVelocities.length <= 1) {
 			modifiers.scrollVelocities = false;
 		}
-
+	
+		scrollVelocities = modifiers.scrollVelocities;
 		keyCount = chart.keyCount;
 		
-		scrollVelocities = modifiers.scrollVelocities;
+		if (!scrollVelocities) chart.scrollVelocities.resize(0);
 
 		clock.reset(chart);
 		clock.offset = chart.offset;

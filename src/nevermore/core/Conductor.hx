@@ -6,7 +6,7 @@ class Conductor extends flixel.FlxBasic {
 	@:isVar public static var tempo(get, set):Float;
 	public static var crotchet(get, never):Float;
 	static function get_crotchet():Float {
-		return Util.crotchet(tempo);
+		return Util.crotchet(timingMap.tempo);
 	}
 
 	@:isVar public static var metronome(get, set):Bool;
