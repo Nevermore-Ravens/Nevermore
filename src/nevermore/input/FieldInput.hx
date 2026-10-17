@@ -4,7 +4,7 @@ import nevermore.play.*;
 import nevermore.core.timing.BaseClock;
 import flixel.group.FlxSpriteGroup;
 
-class FieldInput {
+class FieldInput extends InputManager {
 	public var parent:NoteField;
 	public var notes:FlxTypedSpriteGroup<Note>;
 	public var sustains:FlxTypedSpriteGroup<Sustain>;
@@ -16,6 +16,8 @@ class FieldInput {
 	}
 
 	public function new(parent:NoteField, notes:FlxTypedSpriteGroup<Note>, sustains:FlxTypedSpriteGroup<Sustain>) {
+		super();
+
 		this.parent = parent;
 		this.notes = notes;
 		this.sustains = sustains;
@@ -24,7 +26,7 @@ class FieldInput {
 	// you don't have to do inputs like this
 	// a simple sort and then list[0] should do the job 
 	// but for something this caliber it needs to handle it a bit more accurately
-	public function tapInputs(id:Int, direction:Int):Note {
+	override function tap(id:Int, direction:Int):Note {
 		var strumline:Strumline = null;
 		var receptor:Receptor = null;
 
@@ -103,7 +105,7 @@ class FieldInput {
 	
 	// kind of buggy but whatever idk how they should work anyways
 	// i don't play osu Lol Lmao
-	public function releaseTimings(strumline:Strumline, sustain:Sustain) {
+	override function releaseTimings(strumline:Strumline, sustain:Sustain) {
 		var receptor:Receptor = sustain.receptor;
 
 		var curHolds:Array<Sustain> = strumline.curHolds;
@@ -194,7 +196,7 @@ class FieldInput {
 	// especially if there's a note right after the end of a sustain
 	//
 	// this same concept applies to rolls as well, since they heavily utilize this functionality
-	public function regrabTimer(strumline:Strumline, sustain:Sustain) {
+	override function regrabTimer(strumline:Strumline, sustain:Sustain) {
 		var receptor:Receptor = sustain.receptor;
 		var clock:BaseClock = parent.clock;
 
@@ -266,7 +268,7 @@ class FieldInput {
 		parent.sustainHit(strumline, sustain, curHolds[curHolds.length - 1] == sustain);
 	}
 
-	public function autoplay(strumline:Strumline, note:Note) {
+	override function autoplay(strumline:Strumline, note:Note) {
 		if (note.behavior.punishable || note.adjustedTime - clock.time > 0) return;
 
 		var receptor:Receptor = strumline.members[note.lane];

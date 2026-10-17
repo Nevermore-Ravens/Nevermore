@@ -69,11 +69,7 @@ class BaseField extends FlxSpriteGroup {
 	public function new() {
 		super();
 
-		input = new InputManager();
 		spawner = new NoteSpawner();
-
-		input.onPress.add(pressed);
-		input.onRelease.add(released);
 
 		scrollSpeed = 1.0;
 		scrollDirection = UP;
@@ -102,11 +98,9 @@ class BaseField extends FlxSpriteGroup {
 	override function destroy():Void {
 		super.destroy();
 
-		input.destroy();
 		spawner.destroy();
 
 		spawner = null;
-		input = null;
 	}
 
 	public function load(chart:Chart, ?modifiers:GameplayModifiers) {

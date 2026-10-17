@@ -15,8 +15,6 @@ class NoteField extends BaseField {
 	// (see `holdInputs()`)
 	public var releaseTimings:Bool = false;
 
-	var _inputSystem:FieldInput;
-
 	public dynamic function noteHit(strumline:Strumline, note:Note):Void {}
 	public dynamic function noteMissed(strumline:Strumline, note:Note):Void {}
 	public dynamic function sustainHit(strumline:Strumline, sustain:Sustain, mostRecent:Bool):Void {}
@@ -103,14 +101,16 @@ class NoteField extends BaseField {
 		notes = new FlxTypedSpriteGroup<Note>();
 		notes.active = false;
 
-		_inputSystem = new FieldInput(this, notes, sustains);
-
 		for (line in lines ?? []) {
 			line.field = this;
 			strumlines.add(line);
 		}
 
 		super();
+
+		input = new FieldInput(this, notes, sustains);
+		input.onPress.add(pressed);
+		input.onRelease.add(released);
 
 		this.playerID = playerID;
 
@@ -150,7 +150,7 @@ class NoteField extends BaseField {
 			note.move(clock);
 
 			if (note.strumline.ai) {
-				_inputSystem.autoplay(note.strumline, note);
+				input.autoplay(note.strumline, note);
 			} else if (!note.missed && !note.behavior.ignore && note.late) {
 				note.missed = true;
 				noteMissed(note.strumline, note);
@@ -187,6 +187,13 @@ class NoteField extends BaseField {
 				sustain.kill();
 			}
 		}
+	}
+
+	override function destroy():Void {
+		super.destroy();
+
+		input.destroy();
+		input = null;
 	}
 
 	function checkAssistTick(note:Note) {
@@ -249,7 +256,7 @@ class NoteField extends BaseField {
 		if (strumline.held[direction]) return;
 		strumline.held[direction] = true;
 
-		var note:Note = _inputSystem.tapInputs(id, direction);
+		var note:Note = input.tap(id, direction);
 		if (note == null) {
 			ghostTap(strumline, direction);
 		} else {
@@ -257,7 +264,7 @@ class NoteField extends BaseField {
 		}
 
 		for (i in mirrorInputs) {
-			_inputSystem.tapInputs(i, direction);
+			input.tap(i, direction);
 		}
 	}
 
@@ -282,11 +289,11 @@ class NoteField extends BaseField {
 		if (!sustain.wasHit) return;
 
 		if (releaseTimings && !sustain.isRoll) {
-			_inputSystem.releaseTimings(sustain.strumline, sustain);
+			input.releaseTimings(sustain.strumline, sustain);
 			return;
 		}
 
-		_inputSystem.regrabTimer(sustain.strumline, sustain);
+		input.regrabTimer(sustain.strumline, sustain);
 	}
 
 	#if !NEVERMORE_NO_MODCHARTS	

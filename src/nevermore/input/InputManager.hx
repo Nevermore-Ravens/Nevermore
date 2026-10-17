@@ -6,6 +6,9 @@ import lime.ui.Gamepad;
 import lime.ui.GamepadButton;
 import lime.ui.KeyCode;
 import lime.system.System;
+import nevermore.play.Note;
+import nevermore.play.Sustain;
+import nevermore.play.Strumline;
 
 enum InputPreference {
 	ALL;
@@ -48,6 +51,11 @@ class InputManager {
 
 		for (gamepad in gamepads) gamepad.destroy();
 		gamepads.resize(0);
+
+		onPress.removeAll();
+		onRelease.removeAll();
+		onPress = null;
+		onRelease = null;
 	}
 
 	function _onConnectGamepad(gamepad:Gamepad) {
@@ -79,6 +87,11 @@ class InputManager {
 
 		onRelease.dispatch(-1, direction);
 	}
+
+	public function tap(id:Int, direction:Int):Note {return null;}
+	public function releaseTimings(strumline:Strumline, sustain:Sustain) {}
+	public function regrabTimer(strumline:Strumline, sustain:Sustain) {}
+	public function autoplay(strumline:Strumline, note:Note) {}
 }
 
 class CustomGamepad {
