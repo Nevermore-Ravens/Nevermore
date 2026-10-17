@@ -16,7 +16,7 @@ class NoteBehavior {
 	// sounds like an extremely bad idea
 	public static var base:NoteBehavior = new NoteBehavior();
 
-	public static function getListOfBehaviours():Array<NoteBehavior> {
+	public static function getList():Array<NoteBehavior> {
 		return [for (k in _list) k];
 	}
 

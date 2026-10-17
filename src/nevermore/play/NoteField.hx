@@ -15,6 +15,8 @@ class NoteField extends BaseField {
 	// (see `holdInputs()`)
 	public var releaseTimings:Bool = false;
 
+	var _inputSystem:FieldInput;
+
 	public dynamic function noteHit(strumline:Strumline, note:Note):Void {}
 	public dynamic function noteMissed(strumline:Strumline, note:Note):Void {}
 	public dynamic function sustainHit(strumline:Strumline, sustain:Sustain, mostRecent:Bool):Void {}
@@ -101,6 +103,8 @@ class NoteField extends BaseField {
 		notes = new FlxTypedSpriteGroup<Note>();
 		notes.active = false;
 
+		_inputSystem = new FieldInput(this, notes, sustains);
+
 		for (line in lines ?? []) {
 			line.field = this;
 			strumlines.add(line);
@@ -145,21 +149,8 @@ class NoteField extends BaseField {
 			if (note.active) note.update(delta);
 			note.move(clock);
 
-			// should probably move this to a separate function later
 			if (note.strumline.ai) {
-				if (!note.behavior.punishable && note.adjustedTime - clock.time <= 0) {
-					note.kill();
-					if (note.sustain != null) {
-						note.sustain.wasHit = true;
-					}
-
-					note.receptor.glow();
-					if (note.luminize) {
-						note.receptor.color = note.color;
-						note.receptor.luminize = true;
-					}
-					noteHit(note.strumline, note);
-				}
+				_inputSystem.autoplay(note.strumline, note);
 			} else if (!note.missed && !note.behavior.ignore && note.late) {
 				note.missed = true;
 				noteMissed(note.strumline, note);
@@ -171,7 +162,7 @@ class NoteField extends BaseField {
 		}
 
 		if (updateBehaviors) {
-			for (i in NoteBehavior.getListOfBehaviours()) {
+			for (i in NoteBehavior.getList()) {
 				i.update(delta, [for (n in notes.members) {if (n.behavior == i) n;}]);
 			}
 		}
@@ -213,6 +204,8 @@ class NoteField extends BaseField {
 	}
 
 	override function getStrumline(id:Int):Strumline {
+		if (id == -1 || id == playerID) return player;
+
 		id = FlxMath.minInt(id, strumlines.length - 1);
 		return strumlines.members[id];
 	}
@@ -248,35 +241,31 @@ class NoteField extends BaseField {
 	override function pressed(id:Int, direction:Int) {
 		if (autoplay || (!persistentUpdate && Nevermore.paused)) return;
 
-		var strumline:Strumline = player;
 		if (id == -1) id = playerID;
-		if (multiplayer) {
-			strumline = getStrumline(id);
-			if (strumline.ai) return;
-		}
+
+		var strumline:Strumline = getStrumline(id);
+		if (strumline.ai) return;
 
 		if (strumline.held[direction]) return;
 		strumline.held[direction] = true;
 
-		var note:Note = tapInputs(direction, id);
+		var note:Note = _inputSystem.tapInputs(id, direction);
 		if (note == null) {
 			ghostTap(strumline, direction);
 		} else {
 			noteHit(note.strumline, note);
 		}
 
-		for (i in mirrorInputs) tapInputs(direction, i);
+		for (i in mirrorInputs) {
+			_inputSystem.tapInputs(i, direction);
+		}
 	}
 
 	override function released(id:Int, direction:Int) {
 		if (autoplay) return;
 
-		var strumline:Strumline = player;
-		if (id == -1) id = playerID;
-		if (multiplayer) {
-			strumline = getStrumline(id);
-			if (strumline.ai) return;
-		}
+		var strumline:Strumline = getStrumline(id);
+		if (strumline.ai) return;
 
 		strumline.held[direction] = false;
 
@@ -289,257 +278,15 @@ class NoteField extends BaseField {
 		for (i in mirrorInputs) resetReceptor(getStrumline(i));
 	}
 
-	// you don't have to do inputs like this
-	// a simple sort and then list[0] should do the job 
-	// but for something this caliber it needs to handle it a bit more accurately
-	function tapInputs(direction:Int, ?id:Int):Note {
-		id ??= playerID;
-
-		var strumline = getStrumline(id);
-		var receptor:Receptor = strumline.members[direction];
-
-		var rollHit:Bool = false;
-		for (sustain in sustains.members) {
-			if (!sustain.exists || !sustain.isRoll) continue;
-			if (!sustain.wasHit || sustain.player != id || sustain.lane != direction) continue;
-
-			sustain.regrabTimer = 0.25;
-			sustainHit(strumline, sustain, true);
-			receptor.glow();
-
-			if (sustain.luminize) {
-				receptor.color = sustain.color;
-				receptor.luminize = true;
-			}
-			
-			rollHit = true;
-		}
-
-		var closestDistance:Float = Math.POSITIVE_INFINITY;
-		var noteToHit:Note = null;
-		for (i in 0 ... notes.length) {
-			var note:Note = notes.members[i];
-			if (!note.exists) continue;
-
-			// is it on the player's strumline?
-			// is it in the correct lane?
-			if (note.player != id || note.lane != direction) continue;
-
-			// is the note hittable in general?
-			// is it within range?
-			if (!note.behavior.hittable || !note.inRange) continue;
-
-			// checks if the note is the closest to the judgement line
-			// rather than the first available note
-			// possibility of being slightly slower
-			// but might be closer to the actual note you meant to hit
-			var distance:Float = Math.abs(note.adjustedTime - clock.time);
-			if (distance >= closestDistance) continue;
-
-			closestDistance = distance;
-			noteToHit = note;
-		}
-
-		if (noteToHit != null) {
-			receptor.glow();
-
-			noteToHit.kill();
-			var sustain:Sustain = noteToHit.sustain;
-			if (sustain != null) {
-				sustain.wasHit = true;
-				if (sustain.isRoll) sustain.regrabTimer = 0.25;
-
-				receptor.isHolding = true;
-			}
-
-			if (noteToHit.luminize) {
-				receptor.color = noteToHit.color;
-				receptor.luminize = true;
-			}
-		} else if (!rollHit) {
-			receptor.isHolding = true;
-			receptor.glow('pressed');
-		}
-
-		return noteToHit;
-	}
-
-	var sustainInterval:Float = 0.12;
 	function holdInputs(sustain:Sustain) {
 		if (!sustain.wasHit) return;
 
 		if (releaseTimings && !sustain.isRoll) {
-			holdInputs_releaseTimings(sustain);
+			_inputSystem.releaseTimings(sustain.strumline, sustain);
 			return;
 		}
 
-		holdInputs_regrabTimer(sustain);
-	}
-
-	// kind of buggy but whatever idk how they should work anyways
-	// i don't play osu Lol Lmao
-	function holdInputs_releaseTimings(sustain:Sustain) {
-		var strumline:Strumline = sustain.strumline;
-		var receptor:Receptor = sustain.receptor;
-
-		var curHolds:Array<Sustain> = strumline.curHolds;
-		var held:Bool = strumline.held[sustain.lane];
-
-		function finishHold(sustain:Sustain) {
-			curHolds.remove(sustain);
-
-			sustain.visible = false;
-			sustain.regrabAlpha = 0;
-
-			receptor.isHolding = false;
-			if (strumline.ai) {
-				receptor.glow('standard');
-				receptor.isHolding = false;
-			}
-			sustain.untilTick = 0; // Hit it one last time, to make sure
-		}
-
-		if (!strumline.ai) {
-			if (!held) {
-				var deviation:Float = (sustain.adjustedTime + sustain.length) - clock.time;
-
-				if (Math.abs(deviation) <= Judgement.max.window) {
-					// now we actually finish
-					finishHold(sustain);
-					sustain.kill();
-
-					sustainFinished(strumline, sustain, deviation);
-				} else {
-					curHolds.remove(sustain);
-					sustain.regrabAlpha = 0.2;
-					sustain.wasHit = false;
-					sustainDropped(sustain.strumline, sustain);
-				}
-				return;
-			}
-		}
-
-		sustain.regrabAlpha = sustain.adjustedTime + sustain.length <= clock.time ? 0 : 1;
-
-		// only clip if it's past the sustain
-		if (!scrollVelocities)
-			sustain.timeOffset = -Math.min(sustain.adjustedTime - clock.time, 0);
-		else if (clock.time >= sustain.adjustedTime)
-			sustain.timeOffset = clock.visualTime - sustain.visualTime;
-
-		sustain.forceHeightRecalc = true;
-		receptor.isHolding = true;
-
-		if (!curHolds.contains(sustain)) {
-			// we want the most recent, but we also dont wanna prioritize super short sustains
-			final idx = sustain.length >= 250 ? curHolds.length : 0;
-			curHolds.insert(idx, sustain);
-		} else if (sustain.adjustedTime + sustain.length <= clock.time) {
-			// technically finished, but not really
-			// as we need to check if the player is holding for too long
-			finishHold(sustain);
-
-			if (strumline.ai) {
-				sustain.kill();
-				sustainFinished(strumline, sustain, 0);
-			}
-		}
-
-		sustain.untilTick -= FlxG.elapsed;
-		if (sustain.untilTick > 0) return;
-
-		sustain.untilTick = sustainInterval;
-		if (strumline.ai || held) {
-			receptor.glow();
-			if (sustain.luminize) {
-				receptor.color = sustain.color;
-				receptor.luminize = true;
-			}
-		}
-
-		sustainHit(strumline, sustain, curHolds[curHolds.length - 1] == sustain);
-	}
-
-	// attempts to recreate the "regrab" system from stepmania/etterna
-	// instead of immediately dropping the sustain when the player lets go,
-	// we give them a little bit of leeway by holding onto the sustain for a *little* longer,
-	// and then finally letting the sustain go
-	//
-	// this allows for relatively great-feeling sustain gameplay
-	// without it being too hand-holdy (if the length of time is short enough),
-	// especially if there's a note right after the end of a sustain
-	//
-	// this same concept applies to rolls as well, since they heavily utilize this functionality
-	function holdInputs_regrabTimer(sustain:Sustain) {
-		var strumline:Strumline = sustain.strumline;
-		var receptor:Receptor = sustain.receptor;
-
-		var held:Bool = !sustain.isRoll && strumline.held[sustain.lane];
-		var playerHeld:Bool = (held || sustain.regrabTimer > 0);
-		var heldKey:Bool = (!strumline.ai && playerHeld) || (strumline.ai && sustain.adjustedTime <= clock.time);
-
-		final regrabLimit:Float = sustain.isRoll ? 0.25 : Judgement.max.window / 1000;
-
-		if (sustain.regrabTimer < regrabLimit && held && !strumline.ai) { // regrab logic would never happen in botplay
-			receptor.glow('standard');
-		}
-
-		final curHolds:Array<Sustain> = strumline.curHolds;
-		if (!strumline.ai) {
-			sustain.regrabTimer = held ? regrabLimit : sustain.regrabTimer - FlxG.elapsed;
-
-			if (!heldKey) {
-				curHolds.remove(sustain);
-				sustain.regrabAlpha = 0.2;
-				sustain.wasHit = false;
-				sustainDropped(sustain.strumline, sustain);
-
-				return;
-			}
-		}
-
-		sustain.regrabAlpha = strumline.ai ? 1 : (0.6 + 0.4 * (sustain.regrabTimer / regrabLimit));
-
-		// only clip if it's past the sustain
-		if (!scrollVelocities)
-			sustain.timeOffset = -Math.min(sustain.adjustedTime - clock.time, 0);
-		else if (clock.time >= sustain.adjustedTime)
-			sustain.timeOffset = clock.visualTime - sustain.visualTime;
-		
-		sustain.forceHeightRecalc = true;
-		receptor.isHolding = true;
-
-		if (!curHolds.contains(sustain)) {
-			// we want the most recent, but we also dont wanna prioritize super short sustains
-			final idx = sustain.length >= 250 ? curHolds.length : 0;
-			curHolds.insert(idx, sustain);
-		} else if (sustain.adjustedTime + sustain.length <= clock.time) {
-			curHolds.remove(sustain);
-			sustain.kill();
-			receptor.isHolding = held;
-			if (strumline.ai) {
-				receptor.glow('standard');
-				receptor.isHolding = false;
-			}
-			sustain.untilTick = 0; // Hit it one last time, to make sure
-
-			var deviation:Float = (sustain.adjustedTime + sustain.length) - clock.time;
-			sustainFinished(strumline, sustain, deviation);
-		}
-
-		sustain.untilTick -= FlxG.elapsed;
-		if (sustain.untilTick > 0) return;
-
-		sustain.untilTick = sustainInterval;
-		if (strumline.ai || held) {
-			receptor.glow();
-			if (sustain.luminize) {
-				receptor.color = sustain.color;
-				receptor.luminize = true;
-			}
-		}
-
-		sustainHit(strumline, sustain, curHolds[curHolds.length - 1] == sustain);
+		_inputSystem.regrabTimer(sustain.strumline, sustain);
 	}
 
 	#if !NEVERMORE_NO_MODCHARTS	

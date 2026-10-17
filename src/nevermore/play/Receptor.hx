@@ -19,10 +19,8 @@ class Receptor extends NoteObject {
 
 		animation.finishCallback = anim -> {
 			if (isHolding) return;
-			
-			var waitForAnim = !parent.ai;
 
-			if (waitForAnim) return;
+			if (!parent.ai) return;
 			glow('standard');
 		}
 	}
