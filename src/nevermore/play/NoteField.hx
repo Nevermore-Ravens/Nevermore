@@ -121,7 +121,9 @@ class NoteField extends BaseField {
 
 		add(notes);
 
-		tickSound = FlxG.sound.load(Assets.dependency.audio('sfx/hitsound.wav'));
+		tickSound = new FlxSound().loadEmbedded(Assets.dependency.audio('sfx/hitsound.wav'));
+		tickSound.autoDestroy = false;
+		FlxG.sound.list.add(tickSound);
 	}
 
 	var killDelay:Float = 300;
@@ -194,6 +196,10 @@ class NoteField extends BaseField {
 
 		input.destroy();
 		input = null;
+		
+		tickSound.destroy();
+		FlxG.sound.list.remove(tickSound);
+		tickSound = null;
 	}
 
 	function checkAssistTick(note:Note) {

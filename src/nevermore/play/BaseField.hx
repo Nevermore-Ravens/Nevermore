@@ -18,7 +18,7 @@ class BaseField extends FlxSpriteGroup {
 	public var keyCount(default, set):Int = 4;
 	function set_keyCount(v:Int):Int {
 		keyCount = v;
-		input.keyCount = v;
+		if (input != null) input.keyCount = v;
 		return v;
 	}
 

@@ -1,8 +1,6 @@
 package nevermore.core.timing;
 
 import flixel.util.FlxSignal;
-import openfl.media.Sound;
-import openfl.media.SoundTransform;
 
 // NOTE:
 // this uses SETTING beats, rather than incrementing them
@@ -54,10 +52,16 @@ class BaseClock {
 		beatHit = new FlxTypedSignal<Int -> Void>();
 		measureHit = new FlxTypedSignal<Int -> Void>();
 
-		metronomeSound = Assets.dependency.audio('sfx/metronome.wav');
-		measureSound = Assets.dependency.audio('sfx/metronome measure.wav');
+		// yknow maybe ninjamuffin was onto something about making sounds yourself
+		metronomeSound = new FlxSound().loadEmbedded(Assets.dependency.audio('sfx/metronome.wav'));
+		metronomeSound.persist = true;
+		metronomeSound.autoDestroy = false;
+		FlxG.sound.list.add(metronomeSound);
 
-		_soundTransform = new SoundTransform(FlxG.sound.volume);
+		measureSound = new FlxSound().loadEmbedded(Assets.dependency.audio('sfx/metronome measure.wav'));
+		measureSound.persist = true;
+		measureSound.autoDestroy = false;
+		FlxG.sound.list.add(measureSound);
 	}
 
 	public function destroy() {
@@ -75,6 +79,14 @@ class BaseClock {
 
 		measureHit.destroy();
 		measureHit = null;
+
+		metronomeSound.destroy();
+		FlxG.sound.list.remove(metronomeSound);
+		metronomeSound = null;
+
+		measureSound.destroy();
+		FlxG.sound.list.remove(measureSound);
+		measureSound = null;
 	}
 
 	public var offset:Float;
@@ -139,12 +151,8 @@ class BaseClock {
 
 	public var metronome:Bool = false;
 
-	// these have to be an openfl sound instead
-	// because FlxG.sound.load() keeps fucking up somehow
-	public var metronomeSound:Sound;
-	public var measureSound:Sound;
-
-	var _soundTransform:SoundTransform;
+	public var metronomeSound:FlxSound;
+	public var measureSound:FlxSound;
 
 	public var step:Float;
 	var iStep:Int;
@@ -181,11 +189,8 @@ class BaseClock {
 		if (nextBeat != iBeat) {
 			beatHit.dispatch(iBeat = nextBeat);
 			if (metronome) {
-				var volume:Float = FlxG.sound.muted ? 0 : FlxG.sound.volume;
-				_soundTransform.volume = volume;
-
 				var newMeasure:Bool = nextBeat % timingMap.beatsPerMeasure == 0;
-				(newMeasure ? measureSound : metronomeSound).play(0, 0, _soundTransform);
+				(newMeasure ? measureSound : metronomeSound).play();
 			}
 		}
 
