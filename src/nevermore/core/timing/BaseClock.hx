@@ -190,7 +190,9 @@ class BaseClock {
 			beatHit.dispatch(iBeat = nextBeat);
 			if (metronome) {
 				var newMeasure:Bool = nextBeat % timingMap.beatsPerMeasure == 0;
-				(newMeasure ? measureSound : metronomeSound).play();
+
+				metronomeSound.play(true);
+				if (newMeasure) measureSound.play(true);
 			}
 		}
 
