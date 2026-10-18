@@ -51,7 +51,7 @@ class NevermoreSettings {
 	/**
 	 * Changes note colours to resemble what beat they are snapped at.
 	 * Uses StepMania's noteskin colours by default.
-	 * (see core/Quantization.hx)
+	 * (see core/NoteColor.hx)
 	**/
 	var quantization:Bool = false;
 	#end

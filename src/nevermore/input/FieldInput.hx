@@ -82,6 +82,8 @@ class FieldInput extends InputManager {
 			receptor.glow();
 			receptor.isHolding = !strumline.ai;
 
+			note.behavior.hitsound.play(true);
+
 			note.kill();
 			var sustain:Sustain = note.sustain;
 			if (sustain != null) {
@@ -287,5 +289,6 @@ class FieldInput extends InputManager {
 		}
 
 		parent.noteHit(strumline, note);
+		note.behavior.hitsound.play(true);
 	}
 }

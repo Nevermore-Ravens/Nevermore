@@ -10,6 +10,11 @@ class MineBehavior extends NoteBehavior {
 		ignore = true;
 		punishable = true;
 		missHealth = -10;
+
+		hitsound = new FlxSound().loadEmbedded(Assets.dependency.audio('sfx/mine.wav'));
+		hitsound.persist = true;
+		hitsound.autoDestroy = false;
+		FlxG.sound.list.add(hitsound);
 	}
 
 	override function applySkin(note:BaseNote, type:ObjectType) {

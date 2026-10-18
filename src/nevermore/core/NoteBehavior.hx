@@ -21,6 +21,16 @@ class NoteBehavior {
 	}
 
 	public static function register(name:String, cls:Class<NoteBehavior>) {
+		// don't wanna leave unused sound instances in flixel's cache
+		// when we're overriding an existing behavior
+		if (_list.exists(name)) {
+			var behavior:NoteBehavior = _list[name];
+
+			FlxG.sound.list.remove(behavior.hitsound);
+			behavior.hitsound.destroy();
+			behavior.hitsound = null;
+		}
+
 		_list.set(name, Type.createInstance(cls, []));
 	}
 
@@ -39,6 +49,11 @@ class NoteBehavior {
 	public var missHealth:Float = -1;
 	public var judgemental:Bool = true; // my feelings :(
 	public var punishable:Bool = false;
+
+	// make sure when using this in your own behaviors
+	// that you set `persist` to true
+	// otherwise flixel will delete it whenever you switch states
+	public var hitsound:FlxSound = new FlxSound();
 
 	public function new() {}
 	public function applySkin(note:BaseNote, type:ObjectType) {
