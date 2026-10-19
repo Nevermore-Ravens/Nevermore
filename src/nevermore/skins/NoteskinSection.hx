@@ -71,7 +71,8 @@ abstract class NoteskinSection<T> {
 	public function applyNoteObject(to:NoteObject) {
 		apply(to, to.lane);
 
-		if (colors != null)
+		// only override the color if not luminized, otherwise that customization should stay for the user.
+		if (!to.luminize && colors != null)
 			to.color = colors[to.lane % colors.length] ?? to.color;
 		if (luminize != null)
 			to.luminize = luminize[to.lane % luminize.length] ?? to.luminize;
