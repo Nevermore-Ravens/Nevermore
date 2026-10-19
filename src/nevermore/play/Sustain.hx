@@ -43,8 +43,8 @@ class Sustain extends Note {
 
 		holdAnim = animation.getByName("piece");
 		tailAnim = animation.getByName("tail");
-		holdHeight = frames.frames[holdAnim.frames[0]].frame.height;
-		tailHeight = frames.frames[tailAnim.frames[0]].frame.height;
+		holdHeight = holdAnim == null ? getBlankFrame().frame.height : frames.frames[holdAnim.frames[0]].frame.height;
+		tailHeight = tailAnim == null ? getBlankFrame().frame.height : frames.frames[tailAnim.frames[0]].frame.height;
 		return v;
 	}
 
@@ -115,6 +115,7 @@ class Sustain extends Note {
 
 	// drawing bullshit
 	// you can ignore this
+	var blankFrame:FlxFrame;
 	var sustainDivisions:Int = 0;
 	var sustainTopY:Float = 0;
 	var holdFrame:FlxFrame;
@@ -213,14 +214,19 @@ class Sustain extends Note {
 		tailFrame.frame.height = backupTailHeight;
 	}
 
+	function getBlankFrame() {
+		if (blankFrame == null)
+			blankFrame = FlxG.bitmap.add("flixel/images/logo/default.png").imageFrame.frame;
+		return blankFrame;
+	}
 	function updateFrames(time:Float) {
 		inline function getSustainFrame(anim:FlxAnimation):Int {
 			var frameIndex:Float = Math.abs(time / 1000 * anim.frameRate) % anim.frames.length;
 			return anim.frames[Math.floor(frameIndex)];
 		}
 
-		holdFrame = frames.frames[getSustainFrame(holdAnim)];
-		tailFrame = frames.frames[getSustainFrame(tailAnim)];
+		holdFrame = holdAnim == null ? getBlankFrame() : frames.frames[getSustainFrame(holdAnim)];
+		tailFrame = tailAnim == null ? getBlankFrame() : frames.frames[getSustainFrame(tailAnim)];
 	}
 
 	#if !NEVERMORE_NO_MODCHARTS
