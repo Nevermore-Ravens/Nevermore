@@ -19,6 +19,7 @@ class MineBehavior extends NoteBehavior {
 
 	override function applySkin(note:BaseNote, type:ObjectType) {
 		Noteskin.get("mine").applyToNote(note, "note");
+		note.offset.set(-22, -22); // updateHitbox() is stinky
 	}
 
 	override function setupData(data:NoteData) {
@@ -35,6 +36,7 @@ class MineBehavior extends NoteBehavior {
 	}
 
 	override function setup(note:BaseNote) {
+		note.active = true;
 		note.luminize = false;
 		note.color = 0xFFFFFFFF;
 	}
