@@ -1,19 +1,20 @@
 package nevermore.skins;
 
 import nevermore.play.BaseNote;
+import nevermore.play.NoteObject;
 import nevermore.play.Note;
 import flixel.graphics.frames.FlxFramesCollection;
 
 class Noteskin {
 	public static var cache:NoteskinCache = new NoteskinCache();
 
-	public static function load(key:String) {
-		cache.set(key);
+	public static function load(key:String, keyCount:Int = 0) {
+		cache.set(key, keyCount);
 	}
 
-	public static function get(key:String, ?quants:Bool = false):Noteskin {
-		quants = Nevermore.settings.quantization && quants;
-		return cache.get(key, quants);
+	public static function get(key:String, keyCount:Int, ?quants:Bool = false):Noteskin {
+		quants = Nevermore.settings.quantization && quants; // i may remove this
+		return cache.get(key, keyCount, quants);
 	}
 
 	public static function clear() {
@@ -99,6 +100,14 @@ class Noteskin {
 		});
 	}
 
+	public static dynamic function findFallback(from:Noteskin, skin:String) {
+		try {
+			return Noteskin.cache.fromJson(skin, from.root, from.findQuants);
+		} catch(e) {
+			return null;
+		}
+	}
+
 	/**
 	 * Used for sharing frame collections across sections.
 	 */
@@ -109,10 +118,12 @@ class Noteskin {
 	private var findQuants:Bool = false;
 	public var sections:Map<String, NoteskinSection<Dynamic>> = [];
 
+	public var root:String = "";
 	public var spacing:Float = 160 * 0.7;
 	public var scale:Float = 0.7;
-	public var supportsXKeys = false;
 	public var antialiasing:Bool = true;
+
+	public var fallback:Noteskin;
 
 	/**
 	 * Self-explainitory, goes through all the sections and modifies their scale.
@@ -128,12 +139,16 @@ class Noteskin {
 			sect.scale = factor * (set ? 1 : sect.scale);
 	}
 
-	public function new(data:Dynamic, ?findQuants:Bool = false) {
+	public function new(data:Dynamic, ?root:String = "", ?findQuants:Bool = false) {
+		this.root = root + (root.length == 0 || root.charCodeAt(root.length - 1) == '/'.code ? '' :  '/');
 		this.findQuants = findQuants;
 		var instanceFields = Type.getInstanceFields(Noteskin);
 		var fields = Reflect.fields(data);
 
 		for (field in fields) {
+			if (field == "fallback")
+				continue;
+
 			var obj = Reflect.field(data, field);
 			if (Reflect.isObject(obj))
 				sections.set(field, NoteskinSection.create(this, obj));
@@ -143,24 +158,53 @@ class Noteskin {
 
 		if (!fields.contains("spacing") && fields.contains("scale"))
 			spacing = 160 * scale;
+		if (fields.contains("fallback"))
+			fallback = findFallback(this, data.fallback);
 	}
 
-	public function apply(to:FlxSprite, lane:Int, section:String) {
-		sections.get(section).apply(to, supportsXKeys ? lane : lane % 4);
+	public function hasSection(section:String) {
+		return sections.exists(section) || (fallback != null && fallback.hasSection(section));
+	}
+	public function apply(to:FlxSprite, lane:Int, section:String):Bool {
+		if (sections.exists(section)) {
+			sections.get(section).apply(to, lane);
+			return true;
+		}
+		// try the fallback if existant, otherwise false
+		return fallback != null && fallback.apply(to, lane, section);
+	}
+	public function applyNoteObject(to:NoteObject, section:String) {
+		if (sections.exists(section)) {
+			sections.get(section).applyNoteObject(to);
+			return true;
+		}
+		// try the fallback if existant, otherwise false
+		return fallback != null && fallback.applyNoteObject(to, section);
 	}
 	public function applyToNote(to:BaseNote, section:String) {
-		inline apply(to, to.lane, section);
+		var result = inline applyNoteObject(to, section);
 		to.scale.scale(to.strumline.size * to.strumline.keyScale);
 		to.updateHitbox();
+		return result;
+	}
+
+	public function append(data:Dynamic) {
+		var fields = Reflect.fields(data);
+
+		for (field in fields) {
+			var obj = Reflect.field(data, field);
+			if (Reflect.isObject(obj))
+				sections.set(field, NoteskinSection.create(this, obj));
+		}
 	}
 
 	public function getFrames(path:String, fallback:String->FlxFramesCollection) {
 		if (frames.exists(path))
 			return frames.get(path);
 
-		var newFrames = fallback(findQuants ? path + "-quant" : path);
+		var newFrames = fallback(root + (findQuants ? path + "-quant" : path));
 		if (newFrames == null && findQuants)
-			newFrames = fallback(path);
+			newFrames = fallback(root + path);
 
 		frames.set(path, newFrames);
 		return newFrames;

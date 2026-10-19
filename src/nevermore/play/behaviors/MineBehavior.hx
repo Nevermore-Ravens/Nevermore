@@ -18,7 +18,8 @@ class MineBehavior extends NoteBehavior {
 	}
 
 	override function applySkin(note:BaseNote, type:ObjectType) {
-		Noteskin.get("mine").applyToNote(note, "note");
+		if (!note.strumline.skin.applyToNote(note, "mine"))
+			Noteskin.get("mine", note.strumline.keyCount).applyToNote(note, "note");
 	}
 
 	override function setupData(data:NoteData) {

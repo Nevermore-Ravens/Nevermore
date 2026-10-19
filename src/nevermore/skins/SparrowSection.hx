@@ -5,14 +5,14 @@ import nevermore.skins.NoteskinSection;
 
 class SparrowSection extends NoteskinSection<String> {
 	public function new(parent:Noteskin, data:Dynamic) {
-		super("sparrow", parent, data.spritesheet, loadAnimsFromData(data.animations), data.scale, data.antialiasing);
+		super("sparrow", parent, data.spritesheet, loadAnimsFromData(data.animations), data.scale, data.antialiasing, data.angles, data.colors, data.luminize);
 	}
 
 	public function apply(to:FlxSprite, lane:Int) {
-		basicApply(to);
+		basicApply(to, lane);
 
 		for (anim in animations)
-			to.animation.addByPrefix(anim.name, anim.prefixes[lane], anim.framerate, anim.looped);
+			to.animation.addByPrefix(anim.name, anim.prefixes[lane % anim.prefixes.length], anim.framerate, anim.looped);
 		to.animation.play(animations[0].name, true);
 
 		to.updateHitbox();
@@ -26,6 +26,6 @@ class SparrowSection extends NoteskinSection<String> {
 		return null;
 	}
 	function getBackupAnim():NoteskinAnim<String> {
-		return {name: "", prefixes: [for (i in 0...((!parent.supportsXKeys ? 4 : Nevermore.keyCount))) ""]};
+		return {name: "", prefixes: [""]};
 	}
 }

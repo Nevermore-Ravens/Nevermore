@@ -1,5 +1,8 @@
 package nevermore.skins;
 
+import nevermore.skins.Noteskin;
+import haxe.io.Path;
+
 class NoteskinCache {
 	var list:Map<String, Noteskin> = [];
 	public function new() {}
@@ -12,57 +15,67 @@ class NoteskinCache {
 		list.clear();
 	}
 
-	public function get(key:String, ?quants:Bool = false) {
-		set(key, quants);
-		return list.get(quants ? key + "-quant" : key);
+	inline public function getMapKey(key:String, keyCount:Int, quants:Bool = false) {
+		return key + keyCount + "k" + (quants ? "-quant" : "");
 	}
 
-	public function set(key:String, ?quants:Bool = false) {
-		var mapKey = quants ? key + "-quant" : key; 
+	public function get(key:String, keyCount:Int, ?quants:Bool = false) {
+		set(key, keyCount, quants);
+		return list.get(getMapKey(key, keyCount, quants));
+	}
+
+	public function set(key:String, keyCount:Int, ?quants:Bool = false) {
+		var mapKey = getMapKey(key, keyCount, quants); 
 		if (exists(mapKey)) return;
 		
-		var data = getData(key, quants);
+		var data = getData(key, keyCount, quants);
 		if (data == null) return;
 		
 		list.set(mapKey, data);
 	}
 
-	public function create(key:String, quants:Bool):Noteskin {
-		return getData(key, quants);
+	public function create(key:String, keyCount:Int, quants:Bool):Noteskin {
+		return getData(key, keyCount, quants);
 	}
 
 	// this is what you wanna override if you have your own asset system
 	// (for example like fnf's)
-	public function getData(key:String, quants:Bool):Noteskin {
-		var preferQuants = quants;
+	public function fromJson(file:String, root:String, findQuants:Bool) {
+		var jsonPath = root + file + ".json";
+		var content = Assets.exists(jsonPath) ? Assets.text(jsonPath) : Assets.dependency.text(jsonPath);
+		var json = haxe.Json.parse(content);
+		return new Noteskin(json, root, findQuants);
+	}
 
-		inline function getLoadKey()
-			return #if !NEVERMORE_NO_QUANTIZATION quants ? key + '-quant' : #end key;
+	public function fromSparrow(file:String) {
+		return Noteskin.basic(file);
+	}
 
-		var attempts = quants ? 2 : 1;
-		for (i in 0...attempts) {
-			var loadKey = getLoadKey();
-			var jsonPath = loadKey + ".json";
-			var existsOnMain = Assets.exists(jsonPath);
-			if (existsOnMain || Assets.dependency.exists(jsonPath)) {
-				try {
-					var content = existsOnMain ? Assets.text(jsonPath) : Assets.dependency.text(jsonPath);
-					var json = haxe.Json.parse(content);
-					return new Noteskin(json, preferQuants && !quants);
-				} catch (e) {
-					quants = false;
-				}
-			} else
-				quants = false;
+	public function getData(key:String, keyCount:Int, quants:Bool):Noteskin {
+		var folder = key + (key.charCodeAt(key.length - 1) == '/'.code ? '' :  '/');
+
+		inline function getLoadKeys(keys:Array<String>) {
+			if (quants) {
+				for (i in 0...keys.length)
+					keys.insert(i * 2, keys[i * 2] + "-quant");
+			}
+			return keys;
 		}
 
-		quants = preferQuants;
-		for (i in 0...attempts) {
-			var loadKey = getLoadKey();
+		var loadKeys = getLoadKeys([keyCount + "k", Path.withoutDirectory(key)]);
+		for (i in 0...loadKeys.length) {
+			var jsonPath = folder + loadKeys[i] + ".json";
+			if (!Assets.exists(jsonPath) && !Assets.dependency.exists(jsonPath)) 
+				continue;
+
+			try {
+				return fromJson(loadKeys[i], folder, quants && i % 2 == 0);
+			} catch (e) {}
+		}
+
+		for (loadKey in getLoadKeys([key])) {
 			if (Assets.exists(loadKey + ".xml") || Assets.dependency.exists(loadKey + ".xml"))
-				return Noteskin.basic(loadKey);
-			else
-				quants = false;
+				return fromSparrow(loadKey);
 		}
 
 		return null;

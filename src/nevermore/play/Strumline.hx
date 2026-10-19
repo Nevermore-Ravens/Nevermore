@@ -83,7 +83,7 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 		var receptor:Receptor = null;
 		for (i in 0...keyCount) {
 			add(receptor = new Receptor(this, i));
-			if (skin != null) skin.apply(receptor, i, "receptor");
+			if (skin != null) skin.applyNoteObject(receptor, "receptor");
 
 			receptor.x += skin.spacing * (i - keyCount * 0.5);
 			receptor.y += (skin.spacing - receptor.height) * 0.5;

@@ -1,6 +1,7 @@
 package nevermore.skins;
 
 import nevermore.play.BaseNote;
+import nevermore.play.NoteObject;
 import flixel.graphics.frames.FlxFramesCollection;
 
 @:structInit
@@ -44,6 +45,8 @@ abstract class NoteskinSection<T> {
 	 * To be loaded in `NoteskinSection.new`, a reference to the frames used for this section.
 	 */
 	private var frames:FlxFramesCollection = null;
+	// later on, there may be a `luminFrames`, so noteskins dont need an entire `-quant` variant.
+	// just throw in a `luminized` param in `apply` and `basicApply`.	
 
 	/**
 	 * Since NoteskinSection is abstract, this variable determines which extension to use.
@@ -56,16 +59,31 @@ abstract class NoteskinSection<T> {
 	public var scale:Float = 0.7;
 	public var antialiasing:Bool = true;
 
+	public var angles:Array<Float> = null;
+	public var luminize:Array<Bool> = null;
+	public var colors:Array<Int> = null;
+	
 	abstract public function apply(to:FlxSprite, lane:Int):Void;
 
 	abstract function loadFrames(path:String):FlxFramesCollection;
 	abstract function getBackupAnim():NoteskinAnim<T>;
 
-	function basicApply(to:FlxSprite) {
+	public function applyNoteObject(to:NoteObject) {
+		apply(to, to.lane);
+
+		if (colors != null)
+			to.color = colors[to.lane % colors.length] ?? to.color;
+		if (luminize != null)
+			to.luminize = luminize[to.lane % luminize.length] ?? to.luminize;
+	}
+	function basicApply(to:FlxSprite, lane:Int) {
 		if (to.frames != frames)
 			to.frames = frames;
 		to.antialiasing = antialiasing;
 		to.scale.set(scale, scale);
+
+		if (angles != null)
+			to.angle = angles[lane % angles.length];
 	}
 
 	function loadAnimsFromData(data:Array<Dynamic>):Array<NoteskinAnim<T>> {
@@ -89,12 +107,17 @@ abstract class NoteskinSection<T> {
 		return result;
 	}
 
-	public function new(style:String, parent:Noteskin, spritesheet:String, animations:Array<NoteskinAnim<T>>, ?scale:Float, ?antialiasing:Bool) {
-		this.style = spritesheet;
+	// i may have to figure out a better way for this, there's a lot of parameters
+	public function new(style:String, parent:Noteskin, spritesheet:String, animations:Array<NoteskinAnim<T>>, ?scale:Float, ?antialiasing:Bool, ?angles:Array<Float>, ?colors:Array<Int>, ?luminize:Array<Bool>) {
+		this.style = style;
 		this.spritesheet = spritesheet;
 		this.animations = animations;
 		this.scale = scale ?? parent.scale;
 		this.antialiasing = antialiasing ?? parent.antialiasing;
+		
+		this.angles = angles;
+		this.colors = colors;
+		this.luminize = luminize;
 
 		this.frames = parent.getFrames(spritesheet, loadFrames);
 	}
