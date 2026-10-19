@@ -50,6 +50,9 @@ class NoteBehavior {
 	public var judgemental:Bool = true; // my feelings :(
 	public var punishable:Bool = false;
 
+	public var normalized(get, never):Bool;
+	function get_normalized():Bool return hittable && !punishable;
+
 	// make sure when using this in your own behaviors
 	// that you set `persist` to true
 	// otherwise flixel will delete it whenever you switch states
