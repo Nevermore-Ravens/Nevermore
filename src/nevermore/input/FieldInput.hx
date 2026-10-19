@@ -271,7 +271,7 @@ class FieldInput extends InputManager {
 	}
 
 	override function autoplay(strumline:Strumline, note:Note) {
-		if (note.behavior.punishable || note.adjustedTime - clock.time > 0) return;
+		if (!note.behavior.normalized || note.adjustedTime - clock.time > 0) return;
 
 		var receptor:Receptor = strumline.members[note.lane];
 

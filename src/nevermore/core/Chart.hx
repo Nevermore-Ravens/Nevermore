@@ -61,8 +61,7 @@ class Chart {
 			if (data.player != playerID) continue;
 		
 			if (data.type.length != 0) {
-				var type:NoteBehavior = NoteBehavior.get(data.type);
-				if (!type.hittable || type.punishable) continue;
+				if (!NoteBehavior.get(data.type).normalized) continue;
 			}
 
 			if (i == 0) {
@@ -140,8 +139,7 @@ class Chart {
 			if (data.player != playerID) continue;
 
 			if (!ignoreTypes && data.type.length != 0) {
-				var type = NoteBehavior.get(data.type);
-				if (!type.hittable || type.punishable) continue;
+				if (!NoteBehavior.get(data.type).normalized) continue;
 			}
 
 			count++;

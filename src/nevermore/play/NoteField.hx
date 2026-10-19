@@ -36,7 +36,14 @@ class NoteField extends BaseField {
 	}
 
 	override function set_autoplay(v:Bool):Bool {
-		return autoplay = player.ai = v;
+		autoplay = v;
+
+		if (multiplayer) {
+			for (line in strumlines.members) line.ai = v;
+			return v;	
+		}
+
+		return player.ai = v;
 	}
 
 	public var multiplayer(default, set):Bool = false;
@@ -210,7 +217,7 @@ class NoteField extends BaseField {
 			if (note.strumline.ai) return;
 		} else if (note.player != playerID) return;
 		
-		if (!note.behavior.hittable || note.behavior.punishable) return;
+		if (!note.behavior.normalized) return;
 
 		if (tickSound == null || !assistTicks) return;
 		tickSound.play(true);
