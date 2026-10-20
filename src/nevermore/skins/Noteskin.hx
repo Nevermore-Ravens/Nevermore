@@ -106,7 +106,7 @@ class Noteskin {
 			if (skin is Int)
 				return from.findRelative(cast skin);
 			var path:String = cast skin;
-			return Noteskin.cache.fromJson(Path.join([from.loadKey, Path.directory(from)]), from.loadKeyCount, cast skin, from.root, from.findQuants);
+			return Noteskin.cache.fromJson(Path.join([from.loadKey, Path.directory(path)]), from.loadKeyCount, path, from.root, from.findQuants);
 		} catch(e) {
 			return null;
 		}
