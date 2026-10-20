@@ -9,7 +9,7 @@ class MineBehavior extends NoteBehavior {
 
 		ignore = true;
 		punishable = true;
-		missHealth = -10;
+		hitHealth = -15;
 
 		hitsound = new FlxSound().loadEmbedded(Assets.dependency.audio('sfx/mine.wav'));
 		hitsound.persist = true;
