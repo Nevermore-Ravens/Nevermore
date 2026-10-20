@@ -1,5 +1,5 @@
 [General]
-period_size = 64
+period_size = 512 # if you have an issue with sync modify this
 periods = 2
 sample-type = float32
 
