@@ -19,13 +19,19 @@ class NoteskinCache {
 		return key + keyCount + "k" + (quants ? "-quant" : "");
 	}
 
-	public function get(key:String, keyCount:Int, ?quants:Bool = false) {
+	public function get(key:String, ?keyCount:Int, ?quants:Bool = false) {
+		key = Path.normalize(key);
+		keyCount ??= Nevermore.keyCount;
+
 		set(key, keyCount, quants);
 		return list.get(getMapKey(key, keyCount, quants));
 	}
 
-	public function set(key:String, keyCount:Int, ?quants:Bool = false) {
+	public function set(key:String, ?keyCount:Int, ?quants:Bool = false) {
+		key = Path.normalize(key);
+		keyCount ??= Nevermore.keyCount;
 		var mapKey = getMapKey(key, keyCount, quants); 
+
 		if (exists(mapKey)) return;
 		
 		var data = getData(key, keyCount, quants);
@@ -35,20 +41,21 @@ class NoteskinCache {
 	}
 
 	public function create(key:String, keyCount:Int, quants:Bool):Noteskin {
+		key = Path.normalize(key);
 		return getData(key, keyCount, quants);
 	}
 
 	// this is what you wanna override if you have your own asset system
 	// (for example like fnf's)
-	public function fromJson(file:String, root:String, findQuants:Bool) {
+	public function fromJson(key:String, keyCount:Int, file:String, root:String, findQuants:Bool) {
 		var jsonPath = root + file + ".json";
 		var content = Assets.exists(jsonPath) ? Assets.text(jsonPath) : Assets.dependency.text(jsonPath);
 		var json = haxe.Json.parse(content);
-		return new Noteskin(json, root, findQuants);
+		return new Noteskin(json, root, findQuants, key, keyCount);
 	}
 
-	public function fromSparrow(file:String) {
-		return Noteskin.basic(file);
+	public function fromSparrow(key:String, keyCount:Int, file:String) {
+		return Noteskin.basic(file, key, keyCount);
 	}
 
 	public function getData(key:String, keyCount:Int, quants:Bool):Noteskin {
@@ -69,13 +76,13 @@ class NoteskinCache {
 				continue;
 
 			try {
-				return fromJson(loadKeys[i], folder, quants && i % 2 == 0);
+				return fromJson(key, keyCount, loadKeys[i], folder, quants && i % 2 == 0);
 			} catch (e) {}
 		}
 
 		for (loadKey in getLoadKeys([key])) {
 			if (Assets.exists(loadKey + ".xml") || Assets.dependency.exists(loadKey + ".xml"))
-				return fromSparrow(loadKey);
+				return fromSparrow(key, keyCount, loadKey);
 		}
 
 		return null;

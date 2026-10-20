@@ -4,15 +4,16 @@ import nevermore.play.BaseNote;
 import nevermore.play.NoteObject;
 import nevermore.play.Note;
 import flixel.graphics.frames.FlxFramesCollection;
+import haxe.io.Path;
 
 class Noteskin {
 	public static var cache:NoteskinCache = new NoteskinCache();
 
-	public static function load(key:String, keyCount:Int = 0) {
+	public static function load(key:String, ?keyCount:Int) {
 		cache.set(key, keyCount);
 	}
 
-	public static function get(key:String, keyCount:Int, ?quants:Bool = false):Noteskin {
+	public static function get(key:String, ?keyCount:Int, ?quants:Bool = false):Noteskin {
 		quants = Nevermore.settings.quantization && quants; // i may remove this
 		return cache.get(key, keyCount, quants);
 	}
@@ -30,13 +31,13 @@ class Noteskin {
 	 *
 	 * @param key Which sparrow atlas to load.
 	 */
-	public static function basic(key:String) {
+	public static function basic(sheet:String, key:String, keyCount:Int) {
 		return new Noteskin({
 			scale: basicScale, // Use a static variable so people don't have to edit `NoteskinCache.getData`.
 
 			receptor: {
 				style: "sparrow", // this one actually isnt necessary but....
-				spritesheet: key,
+				spritesheet: sheet,
 				animations: [
 					{
 						name: "standard",
@@ -56,7 +57,7 @@ class Noteskin {
 
 			note: {
 				style: "sparrow",
-				spritesheet: key,
+				spritesheet: sheet,
 				animations: [{
 					name: "standard",
 					prefixes: [for (col in Note.colors) '${col}0'],
@@ -66,7 +67,7 @@ class Noteskin {
 
 			sustain: {
 				style: "sparrow",
-				spritesheet: key,
+				spritesheet: sheet,
 				animations: [
 					{
 						name: "piece",
@@ -83,7 +84,7 @@ class Noteskin {
 
 			roll: {
 				style: "sparrow",
-				spritesheet: key,
+				spritesheet: sheet,
 				animations: [
 					{
 						name: "piece",
@@ -97,12 +98,15 @@ class Noteskin {
 					}
 				]
 			}
-		});
+		}, "", false, key, keyCount);
 	}
 
-	public static dynamic function findFallback(from:Noteskin, skin:String) {
+	public static dynamic function findFallback(from:Noteskin, skin:Any) {
 		try {
-			return Noteskin.cache.fromJson(skin, from.root, from.findQuants);
+			if (skin is Int)
+				return from.findRelative(cast skin);
+			var path:String = cast skin;
+			return Noteskin.cache.fromJson(Path.join([from.loadKey, Path.directory(from)]), from.loadKeyCount, cast skin, from.root, from.findQuants);
 		} catch(e) {
 			return null;
 		}
@@ -123,6 +127,8 @@ class Noteskin {
 	public var scale:Float = 0.7;
 	public var antialiasing:Bool = true;
 
+	public var loadKey:String;
+	public var loadKeyCount:Int;
 	public var fallback:Noteskin;
 
 	/**
@@ -139,9 +145,19 @@ class Noteskin {
 			sect.scale = factor * (set ? 1 : sect.scale);
 	}
 
-	public function new(data:Dynamic, ?root:String = "", ?findQuants:Bool = false) {
+	// i gotta throw `luminized` in here later on....
+	public function findRelative(keyCount:Int) {
+		if (keyCount == loadKeyCount)
+			return this;
+		return get(loadKey, keyCount, findQuants);
+	}
+
+	public function new(data:Dynamic, ?root:String = "", ?findQuants:Bool = false, ?loadKey:String = "", ?loadKeyCount:Int = 0) {
 		this.root = root + (root.length == 0 || root.charCodeAt(root.length - 1) == '/'.code ? '' :  '/');
 		this.findQuants = findQuants;
+		this.loadKey = loadKey;
+		this.loadKeyCount = loadKeyCount;
+
 		var instanceFields = Type.getInstanceFields(Noteskin);
 		var fields = Reflect.fields(data);
 
