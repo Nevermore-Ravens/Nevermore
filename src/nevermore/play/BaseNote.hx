@@ -63,7 +63,7 @@ class BaseNote extends NoteObject {
 			result -= timestamp - System.getTimer();
 		}
 
-		return result;
+		return result / clock.rate;
 	}
 
 	public function move(clock:BaseClock):Void {}
