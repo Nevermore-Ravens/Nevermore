@@ -45,8 +45,10 @@ abstract class NoteskinSection<T> {
 	 * To be loaded in `NoteskinSection.new`, a reference to the frames used for this section.
 	 */
 	private var frames:FlxFramesCollection = null;
-	// later on, there may be a `luminFrames`, so noteskins dont need an entire `-quant` variant.
-	// just throw in a `luminized` param in `apply` and `basicApply`.	
+	/**
+	 * To be loaded in `NoteskinSection.new`, a reference to the luminized frames used for this section, may end up just being `frames`.
+	 */
+	private var luminizedFrames:FlxFramesCollection = null;
 
 	/**
 	 * Since NoteskinSection is abstract, this variable determines which extension to use.
@@ -63,13 +65,13 @@ abstract class NoteskinSection<T> {
 	public var luminize:Array<Bool> = null;
 	public var colors:Array<Int> = null;
 	
-	abstract public function apply(to:FlxSprite, lane:Int):Void;
+	abstract public function apply(to:FlxSprite, lane:Int, luminized:Bool):Void;
 
 	abstract function loadFrames(path:String):FlxFramesCollection;
 	abstract function getBackupAnim():NoteskinAnim<T>;
 
 	public function applyNoteObject(to:NoteObject) {
-		apply(to, to.lane);
+		apply(to, to.lane, to.luminize);
 
 		// only override the color if not luminized, otherwise that customization should stay for the user.
 		if (!to.luminize && colors != null)
@@ -77,9 +79,10 @@ abstract class NoteskinSection<T> {
 		if (luminize != null)
 			to.luminize = luminize[to.lane % luminize.length] ?? to.luminize;
 	}
-	function basicApply(to:FlxSprite, lane:Int) {
-		if (to.frames != frames)
-			to.frames = frames;
+	function basicApply(to:FlxSprite, lane:Int, luminized:Bool) {
+		var targetFrames = luminized ? luminizedFrames : frames;
+		if (to.frames != targetFrames)
+			to.frames = targetFrames;
 		to.antialiasing = antialiasing;
 		to.scale.set(scale, scale);
 
@@ -121,5 +124,8 @@ abstract class NoteskinSection<T> {
 		this.luminize = luminize;
 
 		this.frames = parent.getFrames(spritesheet, loadFrames);
+		// I'd throw in a `luminizedSpritesheet` property but i gotta reduce the fuck out the constructor params
+		// When we do add `luminizedSpritesheet`, change true to `luminizedSpritesheet == null`.
+		this.luminizedFrames = (parent.alreadyLuminized ? null : parent.getFrames(spritesheet, loadFrames, true)) ?? this.frames;
 	}
 }

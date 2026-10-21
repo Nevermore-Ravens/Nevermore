@@ -15,56 +15,56 @@ class NoteskinCache {
 		list.clear();
 	}
 
-	inline public function getMapKey(key:String, keyCount:Int, quants:Bool = false) {
-		return key + keyCount + "k" + (quants ? "-quant" : "");
+	inline public function getMapKey(key:String, keyCount:Int, luminized:Bool) {
+		return key + keyCount + "k" + (luminized ? "-luminized" : "");
 	}
 
-	public function get(key:String, ?keyCount:Int, ?quants:Bool = false) {
+	public function get(key:String, ?keyCount:Int, ?luminized:Bool = false) {
 		key = Path.normalize(key);
 		keyCount ??= Nevermore.keyCount;
 
-		set(key, keyCount, quants);
-		return list.get(getMapKey(key, keyCount, quants));
+		set(key, keyCount, luminized);
+		return list.get(getMapKey(key, keyCount, luminized));
 	}
 
-	public function set(key:String, ?keyCount:Int, ?quants:Bool = false) {
+	public function set(key:String, ?keyCount:Int, ?luminized:Bool = false) {
 		key = Path.normalize(key);
 		keyCount ??= Nevermore.keyCount;
-		var mapKey = getMapKey(key, keyCount, quants); 
+		var mapKey = getMapKey(key, keyCount, luminized); 
 
 		if (exists(mapKey)) return;
 		
-		var data = getData(key, keyCount, quants);
+		var data = getData(key, keyCount, luminized);
 		if (data == null) return;
 		
 		list.set(mapKey, data);
 	}
 
-	public function create(key:String, keyCount:Int, quants:Bool):Noteskin {
+	public function create(key:String, keyCount:Int, luminized:Bool):Noteskin {
 		key = Path.normalize(key);
-		return getData(key, keyCount, quants);
+		return getData(key, keyCount, luminized);
 	}
 
 	// this is what you wanna override if you have your own asset system
 	// (for example like fnf's)
-	public function fromJson(key:String, keyCount:Int, file:String, root:String, findQuants:Bool) {
+	public function fromJson(key:String, keyCount:Int, file:String, root:String, alreadyLuminized:Bool) {
 		var jsonPath = root + file + ".json";
 		var content = Assets.exists(jsonPath) ? Assets.text(jsonPath) : Assets.dependency.text(jsonPath);
 		var json = haxe.Json.parse(content);
-		return new Noteskin(json, root, findQuants, key, keyCount);
+		return new Noteskin(json, root, alreadyLuminized, key, keyCount);
 	}
 
-	public function fromSparrow(key:String, keyCount:Int, file:String) {
-		return Noteskin.basic(file, key, keyCount);
+	public function fromSparrow(key:String, keyCount:Int, luminized:Bool) {
+		return Noteskin.basic(key, keyCount, luminized);
 	}
 
-	public function getData(key:String, keyCount:Int, quants:Bool):Noteskin {
+	public function getData(key:String, keyCount:Int, luminized:Bool):Noteskin {
 		var folder = key + (key.charCodeAt(key.length - 1) == '/'.code ? '' :  '/');
 
 		inline function getLoadKeys(keys:Array<String>) {
-			if (quants) {
+			if (luminized) {
 				for (i in 0...keys.length)
-					keys.insert(i * 2, keys[i * 2] + "-quant");
+					keys.insert(i * 2, keys[i * 2] + "-luminized");
 			}
 			return keys;
 		}
@@ -76,13 +76,14 @@ class NoteskinCache {
 				continue;
 
 			try {
-				return fromJson(key, keyCount, loadKeys[i], folder, quants && i % 2 == 0);
+				return fromJson(key, keyCount, loadKeys[i], folder, luminized && i % 2 == 0);
 			} catch (e) {}
 		}
 
-		for (loadKey in getLoadKeys([key])) {
-			if (Assets.exists(loadKey + ".xml") || Assets.dependency.exists(loadKey + ".xml"))
-				return fromSparrow(key, keyCount, loadKey);
+		loadKeys = getLoadKeys([key]);
+		for (i in 0...loadKeys.length) {
+			if (Assets.exists(loadKeys[i] + ".xml") || Assets.dependency.exists(loadKeys[i] + ".xml"))
+				return fromSparrow(loadKeys[i], keyCount, luminized && i % 2 == 0);
 		}
 
 		return null;

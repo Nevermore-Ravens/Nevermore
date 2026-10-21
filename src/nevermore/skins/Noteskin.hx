@@ -31,13 +31,13 @@ class Noteskin {
 	 *
 	 * @param key Which sparrow atlas to load.
 	 */
-	public static function basic(sheet:String, key:String, keyCount:Int) {
+	public static function basic(key:String, keyCount:Int, luminized:Bool) {
 		return new Noteskin({
 			scale: basicScale, // Use a static variable so people don't have to edit `NoteskinCache.getData`.
 
 			receptor: {
 				style: "sparrow", // this one actually isnt necessary but....
-				spritesheet: sheet,
+				spritesheet: key,
 				animations: [
 					{
 						name: "standard",
@@ -57,7 +57,7 @@ class Noteskin {
 
 			note: {
 				style: "sparrow",
-				spritesheet: sheet,
+				spritesheet: key,
 				animations: [{
 					name: "standard",
 					prefixes: [for (col in Note.colors) '${col}0'],
@@ -67,7 +67,7 @@ class Noteskin {
 
 			sustain: {
 				style: "sparrow",
-				spritesheet: sheet,
+				spritesheet: key,
 				animations: [
 					{
 						name: "piece",
@@ -84,7 +84,7 @@ class Noteskin {
 
 			roll: {
 				style: "sparrow",
-				spritesheet: sheet,
+				spritesheet: key,
 				animations: [
 					{
 						name: "piece",
@@ -98,15 +98,32 @@ class Noteskin {
 					}
 				]
 			}
-		}, "", false, key, keyCount);
+		}, "", luminized, key, keyCount);
 	}
 
-	public static dynamic function findFallback(from:Noteskin, skin:Any) {
+	public static dynamic function findFallback(from:Noteskin, skin:Dynamic) {
 		try {
+			// do NOT, return itself.
+			inline function doubleCheck(result:Noteskin)
+				return result == from ? null : result;
+
+			if (Reflect.isObject(skin)) {
+				skin.keyCount = skin.keyCount != null && skin.keyCount is Int ? skin.keyCount : from.loadKeyCount;
+				skin.luminized = skin.luminized != null && skin.luminized is Bool ? skin.luminized : from.alreadyLuminized;
+
+				if (skin.key != null && skin.key is String)
+					return doubleCheck(get(Path.join([from.loadKey, skin.key]), skin.keyCount, skin.luminized));
+				return doubleCheck(from.findRelative(skin.keyCount, skin.luminized));
+			}
+
 			if (skin is Int)
-				return from.findRelative(cast skin);
+				return doubleCheck(from.findRelative(cast skin));
+			if (skin is Bool)
+				return doubleCheck(from.findRelative(from.loadKeyCount, cast skin));
+
+			// it's interesting since this seems like the most typical option but ends up being one of the worst
 			var path:String = cast skin;
-			return Noteskin.cache.fromJson(Path.join([from.loadKey, Path.directory(path)]), from.loadKeyCount, path, from.root, from.findQuants);
+			return Noteskin.cache.fromJson(Path.join([from.loadKey, Path.directory(path)]), from.loadKeyCount, path, from.root, from.alreadyLuminized);
 		} catch(e) {
 			return null;
 		}
@@ -117,9 +134,9 @@ class Noteskin {
 	 */
 	private var frames:Map<String, FlxFramesCollection> = [];
 	/**
-	 * Whether or not noteskin section spritesheets should try to search for a -quant variant first.
+	 * Whether or not noteskin section spritesheets should try to search for a -luminized variant first.
 	 */
-	private var findQuants:Bool = false;
+	public var alreadyLuminized:Bool = false;
 	public var sections:Map<String, NoteskinSection<Dynamic>> = [];
 
 	public var root:String = "";
@@ -145,16 +162,17 @@ class Noteskin {
 			sect.scale = factor * (set ? 1 : sect.scale);
 	}
 
-	// i gotta throw `luminized` in here later on....
-	public function findRelative(keyCount:Int) {
-		if (keyCount == loadKeyCount)
+	public function findRelative(?keyCount:Int, ?luminized:Bool) {
+		keyCount ??= loadKeyCount;
+		luminized ??= alreadyLuminized;
+		if (keyCount == loadKeyCount && luminized == alreadyLuminized)
 			return this;
-		return get(loadKey, keyCount, findQuants);
+		return get(loadKey, keyCount, alreadyLuminized);
 	}
 
-	public function new(data:Dynamic, ?root:String = "", ?findQuants:Bool = false, ?loadKey:String = "", ?loadKeyCount:Int = 0) {
+	public function new(data:Dynamic, ?root:String = "", ?alreadyLuminized:Bool = false, ?loadKey:String = "", ?loadKeyCount:Int = 0) {
 		this.root = root + (root.length == 0 || root.charCodeAt(root.length - 1) == '/'.code ? '' :  '/');
-		this.findQuants = findQuants;
+		this.alreadyLuminized = alreadyLuminized;
 		this.loadKey = loadKey;
 		this.loadKeyCount = loadKeyCount;
 
@@ -181,13 +199,13 @@ class Noteskin {
 	public function hasSection(section:String) {
 		return sections.exists(section) || (fallback != null && fallback.hasSection(section));
 	}
-	public function apply(to:FlxSprite, lane:Int, section:String):Bool {
+	public function apply(to:FlxSprite, lane:Int, luminized:Bool, section:String):Bool {
 		if (sections.exists(section)) {
-			sections.get(section).apply(to, lane);
+			sections.get(section).apply(to, lane, luminized);
 			return true;
 		}
 		// try the fallback if existant, otherwise false
-		return fallback != null && fallback.apply(to, lane, section);
+		return fallback != null && fallback.apply(to, lane, luminized, section);
 	}
 	public function applyNoteObject(to:NoteObject, section:String) {
 		if (sections.exists(section)) {
@@ -214,14 +232,15 @@ class Noteskin {
 		}
 	}
 
-	public function getFrames(path:String, fallback:String->FlxFramesCollection) {
+	public function getFrames(path:String, fallback:String->FlxFramesCollection, ?luminized:Bool = false) {
+		var luminFrames = luminized ? getFrames(path + "-luminized", fallback) : null;
+		if (luminFrames != null)
+			return luminFrames;
+
 		if (frames.exists(path))
 			return frames.get(path);
 
-		var newFrames = fallback(root + (findQuants ? path + "-quant" : path));
-		if (newFrames == null && findQuants)
-			newFrames = fallback(root + path);
-
+		var newFrames = fallback(root + path);
 		frames.set(path, newFrames);
 		return newFrames;
 	}

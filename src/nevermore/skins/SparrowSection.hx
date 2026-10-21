@@ -8,8 +8,8 @@ class SparrowSection extends NoteskinSection<String> {
 		super("sparrow", parent, data.spritesheet, loadAnimsFromData(data.animations), data.scale, data.antialiasing, data.angles, data.colors, data.luminize);
 	}
 
-	public function apply(to:FlxSprite, lane:Int) {
-		basicApply(to, lane);
+	public function apply(to:FlxSprite, lane:Int, luminized:Bool) {
+		basicApply(to, lane, luminized);
 
 		for (anim in animations)
 			to.animation.addByPrefix(anim.name, anim.prefixes[lane % anim.prefixes.length], anim.framerate, anim.looped);
