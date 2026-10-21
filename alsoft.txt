@@ -1,17 +1,8 @@
 [General]
-sample-type=float32
-stereo-mode=speakers
-hrtf=false
-cf_level=0
-output-limiter=false
-front-stabilizer=false
-volume-adjust=0
-period_size=441
-sources=512
-sends=64
-dither=false
+period_size = 512 # if you have an issue with sync modify this
+periods = 2
+sample-type = float32
 
-[decoder]
-hq-mode=true
-distance-comp=true
-nfc=false
+[wasapi]
+exclusive-mode = false
+allow-resampler = false

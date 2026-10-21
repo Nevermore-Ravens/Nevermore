@@ -164,10 +164,7 @@ class BaseClock {
 	var iMeasure:Int;
 
 	// TODO:
-	// for some reason when starting with negative time (ie positive offset)
-	// beat hits at 0 just don't seem to occur at all ?
-	//
-	// also maybe add stepsPerBeat support later
+	// add stepsPerBeat support later
 	// (if i can figure out how the fuck it works)
 	function updateBeats(pos:Float) {
 		var point:TimingPoint = null;
@@ -180,14 +177,15 @@ class BaseClock {
 		step = beat * 4;
 		measure = timingMap.getMeasure(pos, point);
 
-		var nextStep:Int = Std.int(step);
+		var nextStep:Int = Math.floor(step);
 		if (nextStep != iStep) {
 			stepHit.dispatch(iStep = nextStep);
 		}
 
-		var nextBeat:Int = Std.int(beat);
+		var nextBeat:Int = Math.floor(beat);
 		if (nextBeat != iBeat) {
 			beatHit.dispatch(iBeat = nextBeat);
+
 			if (metronome) {
 				var newMeasure:Bool = nextBeat % timingMap.beatsPerMeasure == 0;
 
@@ -196,7 +194,7 @@ class BaseClock {
 			}
 		}
 
-		var nextMeasure:Int = Std.int(measure);
+		var nextMeasure:Int = Math.floor(measure);
 		if (nextMeasure != iMeasure) {
 			measureHit.dispatch(iMeasure = nextMeasure);
 		}

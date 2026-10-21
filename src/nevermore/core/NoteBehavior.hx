@@ -45,8 +45,11 @@ class NoteBehavior {
 	public var ignore:Bool = false;
 	public var hittable:Bool = true;
 	public var missPadding:Float = 25;
-	public var hitHealth:Float = 1;
-	public var missHealth:Float = -1;
+
+	public var hitHealth:Null<Float>;
+	public var missHealth:Null<Float>;
+	public var healthMult:Float = 1;
+
 	public var judgemental:Bool = true; // my feelings :(
 	public var punishable:Bool = false;
 
