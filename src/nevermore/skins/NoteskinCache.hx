@@ -55,7 +55,7 @@ class NoteskinCache {
 	}
 
 	public function fromSparrow(key:String, keyCount:Int, luminized:Bool) {
-		return Noteskin.basic(key, keyCount, luminized);
+		return BasicNoteskin.create(key, keyCount, luminized);
 	}
 
 	public function getData(key:String, keyCount:Int, luminized:Bool):Noteskin {
