@@ -128,7 +128,7 @@ class BaseClock {
 	public var rate(default, set):Float = 1.0;
 	function set_rate(v:Float):Float {
 		#if FLX_PITCH
-		audio?.pitch = v;
+		if (audio != null) audio.pitch = v;
 		return rate = v;
 		#else
 		return rate = 1.0;

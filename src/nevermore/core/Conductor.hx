@@ -92,7 +92,6 @@ class Conductor extends flixel.FlxBasic {
 	@:isVar public static var rate(get, set):Float = 1.0;
 	static function get_rate():Float return clock.rate;
 	static function set_rate(v:Float):Float {
-		if (inst != null) inst.pitch = v;
 		if (vocals != null) vocals.pitch = v;
 
 		return clock.rate = v;
@@ -101,7 +100,6 @@ class Conductor extends flixel.FlxBasic {
 	public static var rate:Float = 1.0;
 	#end
 
-	// raw sound.time
 	@:isVar public static var audioTime(get, set):Float;
 	static function get_audioTime():Float return clock.audioTime;
 	static function set_audioTime(v:Float):Float {
@@ -109,13 +107,9 @@ class Conductor extends flixel.FlxBasic {
 		return inst.time = v;
 	}
 
-	// sound.time + offset
 	public static var songTime(get, never):Float;
 	static function get_songTime():Float return clock.songTime;
 
-	// `songTime` but more smoothed out 
-	// 'cause it's trying to predict time
-	// this is your sync
 	public static var time(get, never):Float;
 	static function get_time():Float return clock.time;
 
@@ -174,9 +168,6 @@ class Conductor extends flixel.FlxBasic {
 	override function update(delta:Float):Void {
 		clock.update(delta);
 
-		// apparently even after it's done playing
-		// this still triggers ?????
-		// ok flixel
 		if (vocals == null || !vocals.playing) return;
 
 		// trying to sync vocals with streamed audio
