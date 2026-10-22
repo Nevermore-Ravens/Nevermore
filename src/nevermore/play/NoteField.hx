@@ -224,7 +224,7 @@ class NoteField extends BaseField {
 	}
 
 	override function getStrumline(id:Int):Strumline {
-		if (id == -1 || id == playerID) return player;
+		if (id == -1) return player;
 
 		id = FlxMath.minInt(id, strumlines.length - 1);
 		return strumlines.members[id];

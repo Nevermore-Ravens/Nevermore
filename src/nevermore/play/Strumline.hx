@@ -78,6 +78,7 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 
 	function regen() {
 		clear();
+		var oldSize = size;
 		size = 1;
 
 		var receptor:Receptor = null;
@@ -90,6 +91,6 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 		}
 
 		receptor = null;
-		size = size;
+		size = oldSize;
 	}
 }

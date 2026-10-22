@@ -8,10 +8,10 @@ class SyncClock extends BaseClock {
 	}
 
 	override function update(delta:Float) {
-		delta *= 1000;
+		delta *= (rate * 1000);
 
 		if (audio == null || !audio.playing) {
-			audioTime += delta * rate;
+			audioTime += delta;
 		} else {
 			@:privateAccess
 			audioTime = audio._channel.position;
