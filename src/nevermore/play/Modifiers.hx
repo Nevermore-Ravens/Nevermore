@@ -2,7 +2,7 @@ package nevermore.play;
 
 @:structInit
 @:publicFields
-class GameplayModifiers {
+class Modifiers {
 	#if !NEVERMORE_NO_MODIFIERS
 
 	var sustains:Bool = true;

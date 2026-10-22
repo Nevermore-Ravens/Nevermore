@@ -102,7 +102,7 @@ class BaseField extends FlxSpriteGroup {
 		spawner = null;
 	}
 
-	public function load(chart:Chart, ?modifiers:GameplayModifiers) {
+	public function load(chart:Chart, ?modifiers:Modifiers) {
 		modifiers ??= {};
 		if (chart.scrollVelocities.length <= 1) {
 			modifiers.scrollVelocities = false;
@@ -130,7 +130,7 @@ class BaseField extends FlxSpriteGroup {
 		spawner.triggered = noteSpawned;
 	}
 
-	function applyModifiers(chart:Chart, modifiers:GameplayModifiers) {
+	function applyModifiers(chart:Chart, modifiers:Modifiers) {
 		var keySeq = [for (i in 0...keyCount) i];
 		if (modifiers.mirroredNotes) keySeq.reverse();
 		var lanes:Array<Int> = keySeq;
