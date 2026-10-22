@@ -172,9 +172,7 @@ class Conductor extends flixel.FlxBasic {
 
 	var vocalReboundTime:Float = 15;
 	override function update(delta:Float):Void {
-		if (clock.active) {
-			clock.update(delta);
-		}
+		clock.update(delta);
 
 		// apparently even after it's done playing
 		// this still triggers ?????

@@ -2,46 +2,82 @@ package nevermore.core.timing;
 
 import flixel.util.FlxSignal;
 
-// NOTE:
-// this uses SETTING beats, rather than incrementing them
-// the reason why this is so important to mention is because in some circumstances
-// incrementing beats can be more accurate, but it still has its downsides
-// with incrementing, you have the benefit of being more accurate at the cost
-// of being only able to go forwards (you can rewind, but it's a PAIN in the ass)
-// tempo changes are a problem as well, but aren't that bad if you know how to write it
-//
-// setting beats has benefits as well as its downsides
-// setting beats has the benefit of being easier to set up and work with,
-// at the downside of being SLIIIGGGHTLY less accurate
-//
-// this doesn't mean both methods aren't viable, however
-// despite incrementing being the possibly more accurate version, setting beats is more widely used
-// than any other timing method
-// 
-// https://github.com/ppy/osu/blob/master/osu.Game/Graphics/Containers/BeatSyncedContainer.cs#L13
-// https://github.com/stepmania/stepmania/blob/5_1-new/src/TimingData.cpp#L911
-// https://github.com/etternagame/etterna/blob/develop/src/Etterna/Models/Misc/TimingData.cpp#L828
-// https://github.com/quaver/Quaver/blob/master/Quaver.Shared/Screens/Edit/Timing/Metronome.cs#L107
-// https://github.com/uvcat7/ArrowVortex/blob/beta/src/Simfile/TimingData.cpp#L395-409
-//
-// the only game(s) that i know of that increments beats is rhythm doctor/adofai, but that's speculation
-// as both games are closed source
-// and the only information to back it up is a reddit post the developer made on reddit as a rhythm crash course
-//
-// in the end i went with setting beats, as it was easy to set up and the accuracy in my opinion is negligable
-// but it depends on what you're doing and what you need it for, especially what game engine you're using
+/**
+* A clock instance that acts as a "metronome".
+* It keeps track of what beat the audio is at, along with steps, measures, and what position.
+*
+* Extend this if you're looking to make your own sync.
+**/
 class BaseClock {
+	/**
+	* The audio connected to this clock instance.
+	**/
+	public var audio:FlxSound;
+
+	/**
+	* The raw audio position of this clock, in milliseconds.
+	**/
 	public var audioTime:Float;
+
+	/**
+	* The audio position of this clock with offset taken into account, in milliseconds.
+	**/
 	public var songTime:Float;
+
+	/**
+	* The audio position of this clock with offset taken into account, in milliseconds.
+	* Make sure to use this as your sync.
+	**/
 	public var time:Float;
+
+	/**
+	* Basically `time`, but it takes scroll velocities into account.
+	* Use this for note visual positions ONLY.
+	**/
 	public var visualTime:Float;
 
+	/**
+	* The audio offset for this clock.
+	* Negative = Time moves forward.
+	* Positive = Time moves backward.
+	**/
+	public var offset:Float;
+
+	/**
+	* The timing points for this clock.
+	**/
 	public var timingMap:TimingMap;
+
+	/**
+	* The scroll velocities for this clock.
+	**/
 	public var velocityMap:VelocityMap;
 
+	/**
+	* Whether this clock is allowed to update or not.
+	**/
 	public var active:Bool = true;
+
+	/**
+	* Whether a sound will be played every time a beat is hit or not.
+	**/
+	public var metronome:Bool = false;
+
+	/**
+	* A signal that gets dispatched whenever a step is hit.
+	**/
+	public var stepHit:FlxTypedSignal<Int -> Void>;
+
+	/**
+	* A signal that gets dispatched whenever a beat is hit.
+	**/
+	public var beatHit:FlxTypedSignal<Int -> Void>;
+
+	/**
+	* A signal that gets dispatched whenever a measure is hit.
+	**/
+	public var measureHit:FlxTypedSignal<Int -> Void>;
 	
-	public var audio:FlxSound;
 	public function new(?audio:FlxSound) {
 		this.audio = audio;
 
@@ -89,15 +125,20 @@ class BaseClock {
 		measureSound = null;
 	}
 
-	public var offset:Float;
-	#if FLX_PITCH 
-	public var rate:Float;
-	#else
-	public var rate(default, set):Float;
-	function set_rate(_):Float {
+	public var rate(default, set):Float = 1.0;
+	function set_rate(v:Float):Float {
+		#if FLX_PITCH
+		audio?.pitch = v;
+		return rate = v;
+		#else
 		return rate = 1.0;
+		#end
 	}
-	#end
+
+	/**
+	* Resets this clock back to default.
+	* Make sure to run this *after* initialzing.
+	**/
 	public function reset(?chart:Chart) {
 		chart ??= Song.dummyData();
 
@@ -110,10 +151,9 @@ class BaseClock {
 		currentVelocity = {};
 	}
 
-	public var stepHit:FlxTypedSignal<Int -> Void>;
-	public var beatHit:FlxTypedSignal<Int -> Void>;
-	public var measureHit:FlxTypedSignal<Int -> Void>;
 	public function update(delta:Float) {
+		if (!active) return;
+
 		if (audio == null || !audio.playing) {
 			audioTime += (delta * 1000) * rate;
 		} else {
@@ -149,8 +189,6 @@ class BaseClock {
 		visualTime = currentVelocity.toPixels(offsetedTime);
 	}
 
-	public var metronome:Bool = false;
-
 	public var metronomeSound:FlxSound;
 	public var measureSound:FlxSound;
 
@@ -163,9 +201,41 @@ class BaseClock {
 	public var measure:Float;
 	var iMeasure:Int;
 
-	// TODO:
-	// add stepsPerBeat support later
-	// (if i can figure out how the fuck it works)
+	/**
+	NOTE:
+
+	This uses *setting* beats, rather than incrementing them.
+	The reason why this is so important to mention is because in some circumstances,
+	incrementing beats can be more accurate, but it still has its downsides.
+
+	With incrementing, you have the benefit of being *slightly* more accurate, at the cost
+	of being only able to go forwards (you can rewind, but it's a pain in the ASS to figure out).
+	Tempo changes are a problem as well, but aren't that bad if you know what you're doing.
+
+	Setting beats has both upsides and downsides as well.
+	You have the benefit of it being easier to set up and use,
+	but it's not as accurate as incrementing.
+
+	This doesn't mean both methods aren't viable to use, however.
+	Despite incrementing beats being the absolutely more accurate method, setting beats is more widely used
+	than any other timing method.
+
+	https://github.com/ppy/osu/blob/master/osu.Game/Graphics/Containers/BeatSyncedContainer.cs#L13
+	https://github.com/stepmania/stepmania/blob/5_1-new/src/TimingData.cpp#L911
+	https://github.com/etternagame/etterna/blob/develop/src/Etterna/Models/Misc/TimingData.cpp#L828
+	https://github.com/quaver/Quaver/blob/master/Quaver.Shared/Screens/Edit/Timing/Metronome.cs#L107
+	https://github.com/uvcat7/ArrowVortex/blob/beta/src/Simfile/TimingData.cpp#L395-409
+
+	The only game(s) that I know of that increment beats is Rhythm Doctor, or A Dance of Fire and Ice.
+	However, that's speculation; as both games are closed source, and can only be viewed via decompiling.
+	The only evidence to back up this claim is an old rhythm crash-course that 7th Beat Games (or its lead programmer, Giacomo Preciado)
+	posted on Reddit, where it shows incrementing instead of setting, like most other rhythm games out there.
+
+	In the end, I went with setting beats. In my opinion, the accuracy is negligable, and I didn't wanna spend a bunch of time
+	trying to make incrementing work like I wanted it to when I could just set up setting faster.
+
+	Realistically, it depends on what you're doing and what you need it for, especially in the game engine you're developing in.
+	**/
 	function updateBeats(pos:Float) {
 		var point:TimingPoint = null;
 		
@@ -174,7 +244,7 @@ class BaseClock {
 		}
 
 		beat = timingMap.getBeat(pos, point);
-		step = beat * 4;
+		step = beat * 4; // TODO: add stepsPerBeat support later ?
 		measure = timingMap.getMeasure(pos, point);
 
 		var nextStep:Int = Math.floor(step);
