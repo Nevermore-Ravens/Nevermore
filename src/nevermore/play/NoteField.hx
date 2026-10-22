@@ -254,6 +254,8 @@ class NoteField extends BaseField {
 	override function pressed(id:Int, direction:Int) {
 		if (autoplay || (!persistentUpdate && Nevermore.paused)) return;
 
+		if (id == -1) id = playerID;
+
 		var strumline:Strumline = getStrumline(id);
 		if (strumline.ai || strumline.held[direction]) return;
 		strumline.held[direction] = true;
@@ -262,7 +264,7 @@ class NoteField extends BaseField {
 		if (note == null) {
 			ghostTap(strumline, direction);
 		} else {
-			noteHit(note.strumline, note);
+			noteHit(strumline, note);
 		}
 
 		for (i in mirrorInputs) {
