@@ -18,8 +18,10 @@ class MineBehavior extends NoteBehavior {
 	}
 
 	override function applySkin(note:BaseNote, type:ObjectType) {
-		Noteskin.get("mine").applyToNote(note, "note");
-		note.offset.set(-22, -22); // updateHitbox() is stinky
+		if (!note.strumline.skin.applyToNote(note, "mine")) {
+			Noteskin.get("mine", note.strumline.keyCount).applyToNote(note, "note");
+			note.offset.set(-22, -22); // updateHitbox() is stinky (i think it's just bc strum following isnt centered -srt)
+		}
 	}
 
 	override function setupData(data:NoteData) {

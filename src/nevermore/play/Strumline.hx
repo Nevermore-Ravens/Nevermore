@@ -10,7 +10,7 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	function set_keyCount(v:Int):Int {
 		keyCount = v;
 		held = [for (i in 0...keyCount) false];
-		regen();
+		skin = skin.findRelative(v);
 		return v;
 	}
 
@@ -73,7 +73,7 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	public function new(?x:Float, ?y:Float, ?skin:Noteskin) {
 		this.moves = false;
 		super(x, y);
-		this.skin = skin;
+		this.skin = skin.findRelative(keyCount);
 	}
 
 	function regen() {
@@ -84,7 +84,7 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 		var receptor:Receptor = null;
 		for (i in 0...keyCount) {
 			add(receptor = new Receptor(this, i));
-			if (skin != null) skin.apply(receptor, i, "receptor");
+			if (skin != null) skin.applyNoteObject(receptor, "receptor");
 
 			receptor.x += skin.spacing * (i - keyCount * 0.5);
 			receptor.y += (skin.spacing - receptor.height) * 0.5;

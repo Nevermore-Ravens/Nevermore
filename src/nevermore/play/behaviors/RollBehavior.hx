@@ -2,7 +2,7 @@ package nevermore.play.behaviors;
 
 class RollBehavior extends NoteBehavior {
 	override function applySkin(note:BaseNote, type:ObjectType) {
-		note.strumline.skin.applyToNote(note, (note is Sustain) ? 'roll' : 'note');
+		note.strumline.skin.applyToNote(note, type == SUSTAIN ? 'roll' : 'note');
 	}
 
 	override function setup(note:BaseNote) {
