@@ -2,10 +2,10 @@ package nevermore.play;
 
 import flixel.group.FlxSpriteGroup;
 
-class UnderlayGroup extends FlxTypedSpriteGroup<LaneUnderlay> {
+class FieldBackground extends FlxTypedSpriteGroup<Underlay> {
 	public function new(?lines:Array<Strumline>) {
 		super();
-		for (line in lines ?? []) add(new LaneUnderlay(line));
+		for (line in lines ?? []) add(new Underlay(line));
 	}
 
 	override function update(_) {
@@ -19,7 +19,7 @@ class UnderlayGroup extends FlxTypedSpriteGroup<LaneUnderlay> {
 	}
 }
 
-class LaneUnderlay extends FlxSprite {
+class Underlay extends FlxSprite {
 	public var strumline:Strumline;
 	public function new(strumline:Strumline) {
 		super();

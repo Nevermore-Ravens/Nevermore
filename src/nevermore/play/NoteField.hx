@@ -5,7 +5,7 @@ import flixel.FlxCamera;
 import nevermore.play.note.*;
 
 class NoteField extends BaseField {
-	public var underlays:UnderlayGroup;
+	public var background:FieldBackground;
 	public var sustains:FlxTypedSpriteGroup<Sustain>;
 	public var strumlines:FlxTypedSpriteGroup<Strumline>;
 	public var notes:FlxTypedSpriteGroup<Note>;
@@ -96,9 +96,9 @@ class NoteField extends BaseField {
 	}
 
 	public function new(?lines:Array<Strumline>, ?playerID:Int = 0) {
-		underlays = new UnderlayGroup(lines);
-		underlays.color = FlxColor.BLACK;
-		underlays.alpha = 0; // this should probably be off by default ???
+		background = new FieldBackground(lines);
+		background.color = FlxColor.BLACK;
+		background.alpha = 0; // this should probably be off by default ???
 
 		sustains = new FlxTypedSpriteGroup<Sustain>();
 		sustains.active = false;
@@ -121,8 +121,6 @@ class NoteField extends BaseField {
 
 		this.playerID = playerID;
 
-		add(underlays);
-
 		add(sustains);
 		add(strumlines);
 
@@ -137,12 +135,7 @@ class NoteField extends BaseField {
 	override function update(delta:Float) {
 		super.update(delta);
 
-		for (i => underlay in underlays.members) {
-			var strumline:Strumline = strumlines.members[i];
-
-			underlay.alpha = strumline.alpha * underlays.alpha;
-			underlay.visible = strumline.visible;
-		}
+		background.update(0);
 
 		var updateBehaviors:Bool = false;
 		for (i in 0 ... notes.length) {
@@ -261,12 +254,8 @@ class NoteField extends BaseField {
 	override function pressed(id:Int, direction:Int) {
 		if (autoplay || (!persistentUpdate && Nevermore.paused)) return;
 
-		if (id == -1) id = playerID;
-
 		var strumline:Strumline = getStrumline(id);
-		if (strumline.ai) return;
-
-		if (strumline.held[direction]) return;
+		if (strumline.ai || strumline.held[direction]) return;
 		strumline.held[direction] = true;
 
 		var note:Note = input.tap(id, direction);
@@ -315,7 +304,12 @@ class NoteField extends BaseField {
 	
 	override function draw():Void {
 		if (modchart == null) {
+			if (background.visible && background.alpha > 0) {
+				background.draw();
+			}
+
 			super.draw();
+
 			return;
 		}
 
@@ -334,7 +328,7 @@ class NoteField extends BaseField {
 			// disabled because trying to deal with underlays
 			// while notes are going fucking everywhere across the screen
 			// is just not worth it
-			//underlays.draw();
+			//background.draw();
 
 			for (i => strumline in strumlines.members) {
 				if (!strumline.visible) continue;
