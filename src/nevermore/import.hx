@@ -5,7 +5,6 @@ import flixel.sound.FlxSound;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.tweens.FlxEase;
-import flixel.util.FlxColor;
 
 import nevermore.core.NoteBehavior.ObjectType;
 import nevermore.backend.*;

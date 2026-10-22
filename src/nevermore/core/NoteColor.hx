@@ -16,18 +16,18 @@ enum abstract ColorType(String) from String to String {
 }
 
 class NoteColor {
-	public static final RED:FlxColor = 0xFFFF2B32;
-	public static final BLUE:FlxColor = 0xFF0861FF;
-	public static final PURPLE:FlxColor = 0xFFC228FF;
-	public static final YELLOW:FlxColor = 0xFFFFE900;
-	public static final MAGENTA:FlxColor = 0xFFFF00CB;
-	public static final PINK:FlxColor = 0xFFFF91FF;
-	public static final ORANGE:FlxColor = 0xFFFF831E;
-	public static final TEAL:FlxColor = 0xFF00EDFF;
-	public static final GREEN:FlxColor = 0xFF3FFF3F;
-	public static final LIME:FlxColor = 0xFFA5E123;
-	public static final WHITE:FlxColor = 0xFFFFFFFF;
-	public static final GRAY:FlxColor = 0xFF878787;
+	public static final RED:Color = 0xFFFF2B32;
+	public static final BLUE:Color = 0xFF0861FF;
+	public static final PURPLE:Color = 0xFFC228FF;
+	public static final YELLOW:Color = 0xFFFFE900;
+	public static final MAGENTA:Color = 0xFFFF00CB;
+	public static final PINK:Color = 0xFFFF91FF;
+	public static final ORANGE:Color = 0xFFFF831E;
+	public static final TEAL:Color = 0xFF00EDFF;
+	public static final GREEN:Color = 0xFF3FFF3F;
+	public static final LIME:Color = 0xFFA5E123;
+	public static final WHITE:Color = 0xFFFFFFFF;
+	public static final GRAY:Color = 0xFF878787;
 
 	// these games don't necessarily *have* a set quant list
 	// as quants depend on the skin, rather than the game setting them (like in this scenario)

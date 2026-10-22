@@ -8,6 +8,7 @@ import haxe.io.Path;
 
 class Noteskin {
 	public static var cache:NoteskinCache = new NoteskinCache();
+	public static final colors:Array<String> = ['purple', 'blue', 'green', 'red'];
 
 	public static function load(key:String, ?keyCount:Int) {
 		cache.set(key, keyCount);

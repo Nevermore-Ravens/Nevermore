@@ -43,7 +43,7 @@ class BasicNoteskin {
 	*/
 	public static function create(key:String, keyCount:Int, luminized:Bool) {
 		var directions = [for (idx in directionList[keyCount - 1]) Note.directions[idx]];
-		var colors = [for (idx in directionList[keyCount - 1]) Note.colors[idx]];
+		var colors = [for (idx in directionList[keyCount - 1]) Noteskin.colors[idx]];
 		var angles = angleList[keyCount - 1];
 
 		return new Noteskin({

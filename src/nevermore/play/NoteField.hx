@@ -97,7 +97,7 @@ class NoteField extends BaseField {
 
 	public function new(?lines:Array<Strumline>, ?playerID:Int = 0) {
 		background = new FieldBackground(lines);
-		background.color = FlxColor.BLACK;
+		background.color = Color.BLACK;
 		background.alpha = 0; // this should probably be off by default ???
 
 		sustains = new FlxTypedSpriteGroup<Sustain>();

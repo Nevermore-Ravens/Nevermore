@@ -27,7 +27,7 @@ class Underlay extends FlxSprite {
 		active = false;
 		moves = false;
 
-		makeGraphic(1, 1, FlxColor.WHITE); // set to white so you can set your own colours
+		makeGraphic(1, 1, 0xFFFFFFFF); // set to white so you can set your own colours
 		scale.set(strumline.width + 40, FlxG.height);
 		updateHitbox();
 	}

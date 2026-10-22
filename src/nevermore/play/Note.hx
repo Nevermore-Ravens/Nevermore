@@ -5,7 +5,6 @@ import nevermore.core.timing.BaseClock;
 import nevermore.modchart.ModchartManager;
 
 class Note extends BaseNote {
-	public static final colors:Array<String> = ['purple', 'blue', 'green', 'red'];
 	public static final directions:Array<String> = ['left', 'down', 'up', 'right'];
 
 	public static var colorShader:NoteShader = new NoteShader();
