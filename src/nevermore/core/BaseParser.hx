@@ -7,29 +7,29 @@ import moonchart.formats.BasicFormat;
 import moonchart.formats.*;
 import haxe.io.Path;
 
+/**
+* A class meant for parsing a chart file and giving the result in a readable format.
+* If you have Moonchart labeled as a library on your project, it will automatically
+* use an implementation of the library for you.
+* If you don't have Moonchart labeled, you'll have to write your own parser by extending this class.
+**/
 class BaseParser {
 	public function new() {}
 
-	// sm = StepMania
-	// ssc = Spinal Shark Collective
-	// osu = osu!mania (no std/taiko/catch sorry)
-	// qua = Quaver
-	// chart = Guitar/Clone Hero
-	static var extensions:Array<String> = ['sm', 'ssc', 'osu', 'qua', 'chart'];
-
-	// supports 2 methods
-	// load('songs/Fuck/Fuck.sm', 'hard');
-	// load('songs/Fuck/hard.osu');
-	//
-	// first method will load the file and use the diff specified
-	// second method will just load the path specified
-	// if the file doesn't exist for either, `result` gets thrown instead
+	/**
+	* Parses a chart file from a given path.
+	* @param path The path to the chart file. (ex. `assets/songs/Game Time/file.sm`)
+	* @param diff The difficulty for this chart file.
+	* Is only applicable for files such as `.sm`, `.ssc`, and `.chart`.
+	*
+	* @return The data of the chart (and according difficulty) in a readable, universal format.
+	**/
 	public function load(path:String, ?diff:String):Chart {
 		var result:Chart = Song.dummyData();
 
 		var singleDiff:Bool = diff.length == 0;
 
-		if (!FileSystem.exists(path)) return result;
+		if (!exists(path)) return result;
 
 		var format = FormatDetector.instanceFromFiles([path]);
 		var meta:BasicMetaData = format.getChartMeta();
@@ -69,7 +69,16 @@ class BaseParser {
 		return result;
 	}
 
-	public function exists(path:String, ?diff:String):Bool return false;
+	/**
+	* Whether or not a chart file exists.
+	* @param path The path to the chart file.
+	* @param diff What difficulty to check for.
+	* Is only applicable for files such as `.json` (FNF Legacy), `.osu`, and `.qua`
+	* (not in this function however).
+	*
+	* @return The result of the file check.
+	**/
+	public function exists(path:String, ?diff:String):Bool return FileSystem.exists(path);
 }
 
 #else
@@ -83,4 +92,5 @@ class BaseParser {
 
 	public function exists(path:String, ?diff:String):Bool return false;
 }
+
 #end
