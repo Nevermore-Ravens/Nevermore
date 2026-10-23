@@ -24,7 +24,7 @@ class AssetHandler {
 
 	/**
 	* The list of audio formats this handler supports.
-	* FLaC and MP3 are limited to 8.4.0 only, as it uses
+	* FLaC and MP3 are limited to Lime 8.4.0 only, as it uses
 	* SDL_sound instead of their own decoders.
 	**/
 	public var audioFormats:Array<String> = [
