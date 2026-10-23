@@ -16,41 +16,83 @@ class ChartEvent {
 	}
 }
 
+/**
+* A universal chart format that contains notes, timing points, scroll velocities, and more.
+**/
 @:structInit
 @:publicFields
 class Chart {
+	/**
+	* The song name for this chart.
+	* Not the ID/internal name, but what shows up on your playfield/HUD.
+	**/
 	var title:String = 'Unknown';
+
+	/**
+	* The list of timing points (or "BPM Changes") for this chart.
+	**/
 	var timingPoints:Array<TimingPoint>;
+
+	/**
+	* The list of scroll velocities for this chart.
+	**/
 	var scrollVelocities:Array<ScrollVelocity> = [];
+
+	/**
+	* The list of notes available for this chart.
+	**/
 	var notes:Array<NoteData> = [];
+
+	/**
+	* The scroll speed for this chart.
+	**/
 	var speed:Float = 1;
+
+	/**
+	* The audio offset for this chart, in milliseconds.
+	**/
 	var offset:Float = 0;
+
+	/**
+	* The amount of keys per strumline this chart uses.
+	**/
 	var keyCount:Int = 4;
+
+	/**
+	* The list of events parsed for this chart.
+	**/
 	var events:Array<ChartEvent> = [];
 
 	var meta:Dynamic = null;
 
-	/*
-		some formats (like quaver) reset quant
-		on a new bpm change
-		so we use this.
-	*/
+	/**
+	* Whether this chart will affect how snaps are calculated.
+	* If true, snaps are calculated relative to where the nearest timing point is.
+	* Else, snaps will reset for every new timing point change.
+	* This is exceptionally useful for files like osu!mania or Quaver, where they don't have offset
+	* and instead bake it directly into the notes/timing points instead.
+	**/
 	var snapRelativeToChanges:Bool = true;
 
-	// gets the amount of chords in the chart
-	// this does NOT work like etterna !!! it is ROW based
-	// which means quads will not count as 2 jumps
-	// hands don't count as a jump
-	// ecetera
-	// for clarification
-	// length == 2 / jumps
-	// length == 3 / hands
-	// length == 4 / quads 
+	/**
+	* Finds the amount of chords in this chart instance.
+	* Will not count quads as 2 jumps, or hands as one jump.
+	* 
+	* @param playerID Which side/strumline to check for.
+	* @param length The threshold of what chords are allowed to be detected at.
+	* If the chord length is over or under this value, it will not add it towards
+	* the overall chord amount.
+	* If this value is `0`, it will count any chord with a length over 1.
+	*
+	* @return The amount of specified chords in this chart.
+	**/
 	function getChordCount(?playerID:Int = 0, ?length:Int = 2):Int {
-		length = Std.int(Math.max(length, 2)); // Stops the compiler from whining
+		if (length != 0) {
+			length = Std.int(Math.max(length, 2));
+		}
 
 		var count:Int = 0;
-		var chordLength:Int = 1; // at least 1 note per now
+		var chordLength:Int = 1; // at least 1 note per row
 
 		var lastTime:Float = 0.0;
 
@@ -75,7 +117,7 @@ class Chart {
 			// this was not a chord
 			// or we either just passed one
 			else if (chordLength != 1) {
-				if (chordLength == length) count++;
+				if (length == 0 || chordLength == length) count++;
 				chordLength = 1;
 			}
 
@@ -85,6 +127,11 @@ class Chart {
 		return count;
 	}
 
+	/**
+	* Finds the amount of holds that are hittable in this chart.
+	* @param playerID What side/strumline to check for.
+	* @return The hold count for this chart.
+	**/
 	function getHoldCount(?playerID:Int = 0):Int {
 		var count:Int = 0;
 		for (i in 0 ... notes.length) {
@@ -98,6 +145,14 @@ class Chart {
 		return count;
 	}
 
+	/**
+	* Finds the amount of times a certain note type appears in this chart.
+	* @param playerID The side/strumline to check for.
+	* @param type What type to look out for.
+	* If this value is blank, it will default to `getNoteCount()`.
+	*
+	* @return The amount of times `type` has appeared in this chart.
+	**/
 	function getTypeCount(?playerID:Int = 0, type:String = ''):Int {
 		if (type.length == 0) return getNoteCount(playerID);
 
@@ -113,8 +168,16 @@ class Chart {
 		return count;
 	}
 
-	// counts all notes in the chart as long as the note is hittable, excluding fakes
-	// includes mines as they aren't meant to be hit, but can
+	/**
+	* Finds the amount of hittable notes in this chart.
+	* That includes types that you should be avoiding, such as mines.
+	*
+	* @param playerID What side/strumline to look for.
+	* @param ignoreTypes Whether the function will ignore checking for types.
+	* If true, it will count any note it sees, no matter what.
+	*
+	* @return The amount of notes in this chart.
+	**/
 	function getNoteCount(?playerID:Int = 0, ?ignoreTypes:Bool = false):Int {
 		var count:Int = 0;
 		for (i in 0 ... notes.length) {
@@ -130,8 +193,16 @@ class Chart {
 		return count;
 	}
 
-	// counts all notes in the chart are supposed to be hit, excluding fakes
-	// does NOT include mines, as they aren't meant to be hit
+	/**
+	* Finds the amount of normalized notes in this chart
+	* This does not include types that you need to avoid, like mines.
+	*
+	* @param playerID What side/strumline to look for.
+	* @param ignoreTypes Whether the function will ignore checking for types.
+	* If true, it will count any note it sees, no matter what.
+	*
+	* @return The amount of notes in this chart.
+	**/
 	function getNormalizedNoteCount(?playerID:Int = 0, ?ignoreTypes:Bool = false):Int {
 		var count:Int = 0;
 		for (i in 0 ... notes.length) {
@@ -148,14 +219,23 @@ class Chart {
 		return count;
 	}
 
+	/**
+	* Sorts all notes in this chart, from earliest to latest.
+	**/
 	function sortNotes() {
 		notes.sort((a, b) -> return Std.int(a.time - b.time));
 	}
 
+	/**
+	* Sorts all timing points in this chart, from earliest to latest.
+	**/
 	function sortTimingPoints() {
 		timingPoints.sort((a, b) -> return Std.int(a.time - b.time));
 	}
 
+	/**
+	* Sorts all scroll velocities in this chart, from earliest to latest.
+	**/
 	function sortScrollVelocities() {
 		scrollVelocities.sort((a, b) -> return Std.int(a.time - b.time));
 	}
