@@ -220,6 +220,38 @@ class Chart {
 	}
 
 	/**
+	* Clears any possible stacked notes in the chart.
+	* Most charts don't have this problem, but it can be very common in
+	* games like osu! or Friday Night Funkin', where the chart editor will
+	* sometimes place a note in the same spot twice.
+	**/
+	function clearStackedNotes() {
+		sortNotes(); // sort it before in case we miss a stacked note by accident
+
+		var cleanedNotes:Array<NoteData> = [];
+		for (i => note in notes) {
+			if (i != 0) {
+				for (evilNote in cleanedNotes) {
+					if (note == evilNote) continue;
+
+					var matches:Bool = note.player == evilNote.player && note.lane == evilNote.lane;
+					if (!matches || Math.abs(note.time - evilNote.time) > 2.0) continue;
+
+					cleanedNotes.remove(evilNote);
+					break;
+				}
+			}
+
+			cleanedNotes.push(note);
+			if (note.type.length != 0) {
+				NoteBehavior.get(note.type).setupData(note);
+			}
+		}
+
+		notes = cleanedNotes.filter(function(note:NoteData) return note != null);
+	}
+
+	/**
 	* Sorts all notes in this chart, from earliest to latest.
 	**/
 	function sortNotes() {

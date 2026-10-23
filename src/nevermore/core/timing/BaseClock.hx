@@ -64,6 +64,21 @@ class BaseClock {
 	public var metronome:Bool = false;
 
 	/**
+	* The current step of the clock.
+	**/
+	public var step:Float;
+	
+	/**
+	* The current beat of the clock.
+	**/
+	public var beat:Float;
+
+	/**
+	* The current measure of the clock.
+	**/
+	public var measure:Float;
+
+	/**
 	* A signal that gets dispatched whenever a step is hit.
 	**/
 	public var stepHit:FlxTypedSignal<Int -> Void>;
@@ -192,13 +207,8 @@ class BaseClock {
 	public var metronomeSound:FlxSound;
 	public var measureSound:FlxSound;
 
-	public var step:Float;
 	var iStep:Int;
-
-	public var beat:Float;
 	var iBeat:Int;
-
-	public var measure:Float;
 	var iMeasure:Int;
 
 	/**
