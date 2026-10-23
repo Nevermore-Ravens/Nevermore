@@ -194,7 +194,7 @@ class Chart {
 	}
 
 	/**
-	* Finds the amount of normalized notes in this chart
+	* Finds the amount of normalized notes in this chart.
 	* This does not include types that you need to avoid, like mines.
 	*
 	* @param playerID What side/strumline to look for.
