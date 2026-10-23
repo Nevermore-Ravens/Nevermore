@@ -15,6 +15,9 @@ enum abstract ColorType(String) from String to String {
 	var CUSTOM = 'Custom';
 }
 
+/**
+* Contains customization for colouring of notes, by either lanes or snap/quantization.
+**/
 class NoteColor {
 	public static final RED:Color = 0xFFFF2B32;
 	public static final BLUE:Color = 0xFF0861FF;
@@ -29,13 +32,22 @@ class NoteColor {
 	public static final WHITE:Color = 0xFFFFFFFF;
 	public static final GRAY:Color = 0xFF878787;
 
-	// these games don't necessarily *have* a set quant list
-	// as quants depend on the skin, rather than the game setting them (like in this scenario)
-	// the quant list you see here is dependent on the game's default noteskin
-	// sm being "default" (no shit)
-	// itg being metal/cel
-	// etterna being the byzero series
-	// etc
+	/**
+	* A list of quantization types that are able to be used.
+
+	NOTE:
+
+	These games don't necessarily *have* a set quantization list.
+	Quants depend on the skin, rather than the game having a hardcoded list (like in this class).
+	The quants you see here is dependent on the corresponding game's default noteskin.
+	For example:
+
+	* StepMania - "Default"
+	* In The Groove - "Metal"
+	* NotITG - "Cel"
+	* Etterna - "ByZero" Series
+	* ...
+	**/
 	public static var quantList:Map<String, Array<Int>> = [
 		'StepMania' => [
 			RED,     // 4th
@@ -95,6 +107,9 @@ class NoteColor {
 			WHITE
 		],
 
+		// might change this to quaver later
+		// they use the exact same colours and
+		// i also don't know where av got their colours from
 		'ArrowVortex' => [
 			RED,     // 4th
 			BLUE,    // 8th
@@ -124,6 +139,9 @@ class NoteColor {
 		]
 	];
 
+	/**
+	* A list of custom lane colours that are able to be used.
+	**/
 	public static var list:Map<String, Array<Int>> = [
 		'Custom' => [
 			0xFFFFFFFF,
@@ -133,30 +151,54 @@ class NoteColor {
 		]
 	];
 
+	/**
+	* Whether colouring will be based on what lane the note is in, or 
+	* what snap the note is in; relative to the note's time. 
+	**/
 	public static var bySnap:Bool = true;
+
+	/**
+	* The name of the current quantization list being used.
+	**/
 	static var quantType(default, set):QuantType;
 	static function set_quantType(v:QuantType):QuantType {
 		currentQuants = quantList[v];
 		return quantType = v;
 	}
 
+	/**
+	* The name of the current lane colour list being used.
+	**/
 	static var type(default, set):ColorType;
 	static function set_type(v:ColorType):ColorType {
 		current = list[v];
 		return type = v;
 	}
 
-	// colouring based on the note's snap timing
+	/**
+	* The list of the current quants being used.
+	**/
 	public static var currentQuants:Array<Int>;
 
-	// colouring based on what lane the note is in
+	/**
+	* The list of the current lane colours being used.
+	**/
 	public static var current:Array<Int>;
 
+	/**
+	* Resets the colours back to default.
+	**/
 	public static function reset() {
 		quantType = STEPMANIA;
 		type = CUSTOM;
 	}
 
+	/**
+	* Returns the corresponding colour based on a given note.
+	* @param note The note to be checking.
+	* @return The colour to be applied. If `note.luminize` is false,
+	* it will return white instead.
+	**/
 	public static function get(note:BaseNote):Int {
 		if (!note.luminize) return WHITE;
 
