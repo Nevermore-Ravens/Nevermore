@@ -63,8 +63,9 @@ class SyncClock extends BaseClock {
 		#else
 
 		// Our method
-		if (audioTime == _lastTime) time += delta;
-		else {
+		if (audioTime == _lastTime) {
+			time += delta;
+		} else {
 			if (Math.abs(songTime - time) >= delta) time = songTime;
 			else time += delta;
 
