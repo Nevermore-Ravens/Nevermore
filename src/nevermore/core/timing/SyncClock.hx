@@ -12,6 +12,8 @@ class SyncClock extends BaseClock {
 	}
 
 	override function update(delta:Float) {
+		if (!active) return;
+
 		delta *= (rate * 1000);
 
 		if (audio == null || !audio.playing) {
