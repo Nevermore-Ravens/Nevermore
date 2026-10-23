@@ -4,10 +4,18 @@ import nevermore.play.*;
 import nevermore.core.timing.BaseClock;
 import flixel.group.FlxSpriteGroup;
 
+/**
+* Manages inputs and process them to judge the player accordingly.
+* In laymen's terms, the input system.
+**/
 class FieldInput extends InputManager {
 	var parent:NoteField;
 	var notes:FlxTypedSpriteGroup<Note>;
 	var sustains:FlxTypedSpriteGroup<Sustain>;
+
+	/**
+	* How many times a second the sustain will be considered "hit".
+	**/
 	var sustainInterval:Float = 0.12;
 
 	var clock(get, never):BaseClock;
@@ -23,9 +31,13 @@ class FieldInput extends InputManager {
 		this.sustains = sustains;
 	}
 
-	// you don't have to do inputs like this
-	// a simple sort and then list[0] should do the job 
-	// but for something this caliber it needs to handle it a bit more accurately
+	/**
+	* Finds a tap note, and then removes it.
+	* Also manages rolls somewhat.
+	* @param id The player/strumline ID to look out for.
+	* @param direction The key direction that was pressed.
+	* @return The note that was hit.
+	**/
 	override function tap(id:Int, direction:Int):Note {
 		var strumline:Strumline = null;
 		var receptor:Receptor = null;
@@ -188,16 +200,22 @@ class FieldInput extends InputManager {
 		parent.sustainHit(strumline, sustain, curHolds[curHolds.length - 1] == sustain);
 	}
 
-	// attempts to recreate the "regrab" system from stepmania/etterna
-	// instead of immediately dropping the sustain when the player lets go,
-	// we give them a little bit of leeway by holding onto the sustain for a *little* longer,
-	// and then finally letting the sustain go
-	//
-	// this allows for relatively great-feeling sustain gameplay
-	// without it being too hand-holdy (if the length of time is short enough),
-	// especially if there's a note right after the end of a sustain
-	//
-	// this same concept applies to rolls as well, since they heavily utilize this functionality
+	/**
+	* Judges a specific sustain and will either drop or keep holding.
+	* Specifically, it attempts to recreate the "regrab" system from StepMania/Etterna.
+	* Instead of immediately dropping the sustain when the player letes go,
+	* give them a little bit of leeway by holding onto
+	* the sustain for a *little* longer, and then finally letting the sustain go.
+	*
+	* This allows for relataively great-feeling sustain gameplay without it being too
+	* hand-holdy (if the length of time is short enough), especially if there's a note
+	* right after the end of said sustain.
+	*
+	* This same concept applies to rolls as well, since they heavily utilize this functionality.
+	*
+	* @param strumline The strumline connected to this sustain.
+	* @param sustain The sustain to be judged.
+	**/
 	override function regrabTimer(strumline:Strumline, sustain:Sustain) {
 		var receptor:Receptor = sustain.receptor;
 		var clock:BaseClock = parent.clock;
@@ -270,6 +288,11 @@ class FieldInput extends InputManager {
 		parent.sustainHit(strumline, sustain, curHolds[curHolds.length - 1] == sustain);
 	}
 
+	/**
+	* Automatically plays a specific note.
+	* @param strumline The strumline connected to the note.
+	* @param note The note to be played.
+	**/
 	override function autoplay(strumline:Strumline, note:Note) {
 		if (!note.behavior.normalized || note.adjustedTime - clock.time > 0) return;
 

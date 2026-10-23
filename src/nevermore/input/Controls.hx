@@ -11,9 +11,15 @@ enum ListenerType {
 	RELEASED;
 }
 
+/**
+* A container for keyboard/gamepad bindings.
+**/
 class Controls {
 	public static var initialized:Bool = false;
 
+	/**
+	* The connected instance for keyboard bindings.
+	**/
 	public static var keyboard:Input = new Input([
 		0 => [KeyCode.A, KeyCode.LEFT],
 		1 => [KeyCode.S, KeyCode.DOWN],
@@ -51,6 +57,9 @@ class Controls {
 		[11,12,13,14,4,15,16,17,18]
 	]);
 
+	/**
+	* The connected instance for gamepad/controller bindings.
+	**/
 	public static var gamepad:Input = new Input([
 		0 => [GamepadButton.X, GamepadButton.DPAD_LEFT],
 		1 => [GamepadButton.A, GamepadButton.DPAD_DOWN],
@@ -90,6 +99,9 @@ class Controls {
 		[11,12,13,14,4,15,16,17,18]
 	]);
 
+	/**
+	* Initializes the control/input system.
+	**/
 	public static function init() {
 		if (initialized) return;
 		initialized = true;
