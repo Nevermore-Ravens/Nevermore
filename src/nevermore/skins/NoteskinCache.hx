@@ -21,7 +21,7 @@ class NoteskinCache {
 
 	public function get(key:String, ?keyCount:Int, ?luminized:Bool = false) {
 		key = Path.normalize(key);
-		keyCount ??= Nevermore.keyCount;
+		keyCount ??= 4;
 
 		set(key, keyCount, luminized);
 		return list.get(getMapKey(key, keyCount, luminized));
@@ -29,7 +29,7 @@ class NoteskinCache {
 
 	public function set(key:String, ?keyCount:Int, ?luminized:Bool = false) {
 		key = Path.normalize(key);
-		keyCount ??= Nevermore.keyCount;
+		keyCount ??= 4;
 		var mapKey = getMapKey(key, keyCount, luminized); 
 
 		if (exists(mapKey)) return;
