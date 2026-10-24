@@ -64,30 +64,55 @@ class NevermoreSettings {
 	**/
 	var holdGrain:Int = 5;
 
-	// How many times the NOTEFIELDS will render per second! setting this to your monitor's HZ value or double is recommended.
+	/**
+	* How many times note fields will render per second.
+	* Setting this to your monitor's refresh rate (or double) is recommended.
+	**/
 	var notefieldFramerate = 60;
 }
 
 class Nevermore {
+	/**
+	* The current version of Nevermore.
+	**/
 	public static final version:String = '1.0.0';
 
+	/**
+	* The current modifiable settings of Nevermore.
+	**/
 	public static var settings:NevermoreSettings = null;
-	public static var keyCount:Int = 4;
 	
-	// why does flixel not have a variable for this
+	/**
+	* Whether the game can be considered "paused".
+	* Used for note field inputs.
+	*
+	* (why does flixel not have a variable for this)
+	**/
 	public static var paused(get, never):Bool;
 	static function get_paused():Bool {
 		return !FlxG.state.persistentUpdate && FlxG.state.subState != null;
 	}
 
+	/**
+	* If Nevermore was initialized or not.
+	**/
 	public static var initialized:Bool = false;
 
+	/**
+	* The current commit that Nevermore is on.
+	**/
 	public static var commit(get, never):Commit;
 	static function get_commit():Commit return Git.commit;
 
+	/**
+	* The current branch that Nevermore is on.
+	**/
 	public static var branch(get, never):String;
 	static function get_branch():String return Git.branch;
 
+	/**
+	* Initializes Nevermore.
+	**/
 	public static function init() {
 		if (initialized) return;
 		initialized = true;
