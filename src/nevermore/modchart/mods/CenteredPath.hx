@@ -16,7 +16,8 @@ class CenteredPath extends BaseModifier {
 	override function modifiesDistance(_):Bool {return true;}
 	override function adjustDistance(_, distance:Float, _, _, _, _, field:Strumline, _):Float {
 		var centeredLane:Float = centeredPath + centeredPathLANE;
-		var adjustedCrotchet:Float = Conductor.crotchet * field.speed;
+		// adjust crotchet to the speed
+		var adjustedCrotchet:Float = Conductor.crotchet * (field.pixelsPerMS * field.speed) / Conductor.clock.rate;
 		var lerpedCenter:Float = FlxMath.lerp(field.constantSize, adjustedCrotchet, centeredPathType);
 		
 		final mainOff = lerpedCenter * centeredLane;

@@ -278,13 +278,13 @@ class Sustain extends Note {
 		var angleUp:Float = 0;
 		var angleDown:Float = 0;
 
-		var curDist = distance * yMult;
-		var curY = offsetY;
+		var curDist = distance;
+		var curY = offsetY * yMult;
 
 		updateFrames(clock.time);
 		
 		var newDist:Float = modchart.adjustDistance(this, curDist, lane, player, strumline, SUSTAIN);
-		final rawY:Float = (y - distance);
+		final rawY:Float = (y - distance * yMult);
 		final newY:Float = rawY + (newDist * yMult);
 		modchartPos.set(x, newY, 0);
 		modchart.scrollMult = yMult;
@@ -312,7 +312,7 @@ class Sustain extends Note {
 
 			final height:Float = (rects == 0) ? Math.min(Math.abs(height), backupTailHeight) : ((rects == sustainDivisions) ? backupHoldHeight - sustainTopY : backupHoldHeight) * Nevermore.settings.holdGrain;
 			curY += height * oldScaleY * yMult;
-			curDist = (distance + curY) * yMult;
+			curDist = distance + (curY * yMult - offsetY);
 
 			final newDist: Float = modchart.adjustDistance(this, curDist, lane, player, strumline, SUSTAIN);
 			final newY: Float = rawY + (newDist * yMult);
@@ -321,7 +321,7 @@ class Sustain extends Note {
 			nextScale.set(oldScaleX, oldScaleY);
 			modchart.scrollMult = yMult;
 			modchart.adjustPos(this, modchartPosLow, newDist, curDist, lane, player, strumline, SUSTAIN);
-			modchart.adjustScale(this, nextScale, curDist, lane, player, strumline, SUSTAIN);
+			modchart.adjustScale(this, nextScale, newDist, lane, player, strumline, SUSTAIN);
 			
 			modchartPosLow.set(
 				FlxMath.lerp(modchartPosLow.x, baseX, sexuality),
@@ -350,14 +350,14 @@ class Sustain extends Note {
 
 		Note.modchartVertices[0].set(
 			modchartPos.x - offsetX + this.offsetX,
-			modchartPos.y + offsetY + this.offsetY,
+			modchartPos.y + offsetY,
 			modchartPos.z + this.offsetZ
 		);
 		modchart.adjustVertex(this, Note.modchartVertices[0], modchartPos, newDist, curDist, lane, player, strumline, SUSTAIN);
 		Note.modchartVertices[0].project();
 		Note.modchartVertices[1].set(
 			modchartPos.x + offsetX + this.offsetX,
-			modchartPos.y - offsetY + this.offsetY,
+			modchartPos.y - offsetY,
 			modchartPos.z + this.offsetZ
 		);
 		modchart.adjustVertex(this, Note.modchartVertices[1], modchartPos, newDist, curDist, lane, player, strumline, SUSTAIN);
@@ -379,14 +379,14 @@ class Sustain extends Note {
 
 			Note.modchartVertices[2].set(
 				modchartPos.x - offsetX + this.offsetX,
-				modchartPos.y + offsetY + this.offsetY,
+				modchartPos.y + offsetY,
 				modchartPos.z + this.offsetZ
 			);
 			modchart.adjustVertex(this, Note.modchartVertices[2], modchartPos, newDist, curDist, lane, player, strumline, SUSTAIN);
 			Note.modchartVertices[2].project();
 			Note.modchartVertices[3].set(
 				modchartPos.x + offsetX + this.offsetX,
-				modchartPos.y - offsetY + this.offsetY,
+				modchartPos.y - offsetY,
 				modchartPos.z + this.offsetZ
 			);
 			modchart.adjustVertex(this, Note.modchartVertices[3], modchartPos, newDist, curDist, lane, player, strumline, SUSTAIN);
@@ -415,14 +415,14 @@ class Sustain extends Note {
 
 		Note.modchartVertices[2].set(
 			modchartPos.x - offsetX + this.offsetX,
-			modchartPos.y + offsetY + this.offsetY,
+			modchartPos.y + offsetY,
 			modchartPos.z + this.offsetZ
 		);
 		modchart.adjustVertex(this, Note.modchartVertices[2], modchartPos, newDist, curDist, lane, player, strumline, SUSTAIN);
 		Note.modchartVertices[2].project();
 		Note.modchartVertices[3].set(
 			modchartPos.x + offsetX + this.offsetX,
-			modchartPos.y - offsetY + this.offsetY,
+			modchartPos.y - offsetY,
 			modchartPos.z + this.offsetZ
 		);
 		modchart.adjustVertex(this, Note.modchartVertices[3], modchartPos, newDist, curDist, lane, player, strumline, SUSTAIN);

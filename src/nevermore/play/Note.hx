@@ -113,14 +113,14 @@ class Note extends BaseNote {
 		final oldScaleX:Float = scale.x;
 		final oldScaleY:Float = scale.y;
 
-		var newDistance:Float = modchart.adjustDistance(this, distance * mult, lane, player, strumline, NOTE);
+		var newDistance:Float = modchart.adjustDistance(this, distance, lane, player, strumline, NOTE);
 		
-		var rawY:Float = y - distance;
+		var rawY:Float = y - distance * mult;
 		modchartPos.set(x + width * 0.5, (rawY + (newDistance * mult)) + height * 0.5, 0);
 
-		modchart.adjustPos(this, modchartPos, newDistance, distance * mult, lane, player, strumline, NOTE);
+		modchart.adjustPos(this, modchartPos, newDistance, distance, lane, player, strumline, NOTE);
 		modchart.adjustScale(this, scale, newDistance, lane, player, strumline, NOTE); // TODO: add newDistance to the args of this and getStealth
-		stealth = modchart.getStealth(this, newDistance, distance * mult, modchartPos, lane, player, strumline, NOTE);
+		stealth = modchart.getStealth(this, newDistance, distance, modchartPos, lane, player, strumline, NOTE);
 		modchartPos.z += offsetZ;
 
 		x = modchartPos.x - width * 0.5;
@@ -140,7 +140,7 @@ class Note extends BaseNote {
 			mult,
 			rawY + ((newDistance + 2) * mult),
 			newDistance + 2,
-			(distance * mult) + 2,
+			distance + 2,
 			player,
 			strumline,
 			NOTE
@@ -159,7 +159,7 @@ class Note extends BaseNote {
 		}
 
 		for (i => vert in modchartVertices) {
-			modchart.adjustVertex(this, vert, modchartPos, newDistance, distance * mult, lane, player, strumline, NOTE);
+			modchart.adjustVertex(this, vert, modchartPos, newDistance, distance, lane, player, strumline, NOTE);
 			vert.project();
 		}
 
