@@ -8,20 +8,46 @@ import flixel.graphics.frames.FlxFrame;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
 
+/**
+* A rhythm object for anything that displays on a notefield.
+**/
 class NoteObject extends FlxSprite {
-	public var lane:Int;
 	/**
-	 * Whether the coloring method will be based on luminostity or regular tinting.
-	 */
+	* What lane this object is corresponding to.
+	**/
+	public var lane:Int;
+
+	/**
+	* Whether the coloring method will be based on luminosity, or regular tinting.
+	**/
 	public var luminize:Bool = false;
 
+	/**
+	* Offsets this object's position on the X axis.
+	* Negative goes left, positive goes right.
+	**/
 	public var offsetX:Float;
+
+	/**
+	* Offsets this object's position on the Y axis.
+	* Negative goes down, positive goes up.
+	**/
 	public var offsetY:Float;
+
+	/**
+	* Offsets this object's position on the Z axis.
+	* Negative goes backwards, positive goes forwards towards the screen.
+	* Only used in modchart rendering.
+	**/
 	public var offsetZ:Float;
 
 	// actually used for modchart rendering but maybe there'll be another purpose
 	var _drawFrame:FlxFrame;
 
+	/**
+	* Prepares this object's matrix, so it can be drawn later.
+	* @param camera The camera to be drawn to.
+	**/
 	function prepareMatrix(camera:FlxCamera) {
 		_matrix.translate(-origin.x, -origin.y);
 		_matrix.scale(scale.x, scale.y);
@@ -53,6 +79,10 @@ class NoteObject extends FlxSprite {
 	}
 
 	#if !NEVERMORE_NO_MODCHARTS
+	/**
+	* Prepares this object's vertices for modchart rendering.
+	* @param z iactuallydon'tknowwhatthisisforsrthelp
+	**/
 	function prepareModchartVertices(z:Float) {
 		Note.modchartVertices[0].set(_matrix.transformX(0, 0), _matrix.transformY(0, 0), z);
 		Note.modchartVertices[1].set(_matrix.transformX(_frame.frame.width, 0), _matrix.transformY(_frame.frame.width, 0), z);
@@ -60,6 +90,9 @@ class NoteObject extends FlxSprite {
 		Note.modchartVertices[3].set(_matrix.transformX(_frame.frame.width, _frame.frame.height), _matrix.transformY(_frame.frame.width, _frame.frame.height), z);
 	}
 
+	/**
+	* 
+	**/
 	function getOrientAngle(modchart:ModchartManager, pos:Vector3, scrollMult:Float, yPos:Float, distance:Float, unadjustedDistance:Float, player:Int, strumline:Strumline, type:ObjectType) {
 		final orient:Float = modchart.config.orient;
 		if (orient == 0)

@@ -4,6 +4,7 @@ import flixel.group.FlxSpriteGroup;
 import nevermore.skins.Noteskin;
 import nevermore.play.Sustain;
 
+// i'll write docs for this later im tired
 class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	public var field:NoteField;
 	public var keyCount(default, set):Int = 4;

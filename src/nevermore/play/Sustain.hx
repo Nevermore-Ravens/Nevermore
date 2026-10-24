@@ -8,10 +8,9 @@ import nevermore.core.timing.BaseClock;
 import nevermore.modchart.ModchartManager;
 #end
 
-// TODO:
-// refer to top of Note.hx
-// especially this class
-// because rolls still have to be added
+/**
+* An object type that you hold all the way through until the end.
+**/
 class Sustain extends Note {
 	public static var vertices:Array<Float> = [0, 0, 0, 0, 0, 0, 0, 0];
 	public var forceHeightRecalc:Bool = false;
@@ -48,11 +47,30 @@ class Sustain extends Note {
 		return v;
 	}
 
+	/**
+	* Whether this sustain was hit or not.
+	**/
 	public var wasHit:Bool;
+
+	/**
+	* The amount of time left until this sustain will be dropped.
+	**/
 	public var regrabTimer:Float;
+
+	/**
+	* The opacity of this sustain, relative to the regrab timer.
+	**/
 	public var regrabAlpha:Float;
+
+	/**
+	* How many ticks are left until the sustain is counted as "hit"
+	**/
 	public var untilTick:Float;
 
+	/**
+	* The time at which this sustain will end, visually, in milliseconds.
+	* Used for scroll velocities.
+	**/
 	public var visualEnd:Float;
 	override function setup(strumline:Strumline, data:NoteData):Note {
 		wasHit = false;
@@ -147,16 +165,18 @@ class Sustain extends Note {
 			drawDebug();
 		#end
 	}
-	
-	// NOTE:
-	// this method of drawing sustains relies on FlxAnimation.frame
-	// which is directly from the atlas itself
-	//
-	// if your noteksin is using sparrow atlas and your pieces/tail are rotated
-	// flixel doesn't fix that via code, it just parses it as is
-	// meaning drawing the flxframe this way will draw it as it is shown in the sheet
-	//
-	// tldr if your sustain frames are rotated you're fucked
+
+	/**
+	NOTE:
+	This method of drawing sustains relies on `FlxAnimate.frame`,
+	which is directly from the `png` file itself.
+
+	If your noteskin is a sparrow atlas, and your pieces/tail are rotated,
+	HaxeFlixel doesn't fix it via code, it will just parse it as is;
+	meaning drawing the `FlxFrame` this way will draw as it's shown in the `png` file.
+
+	TLDR: If your sustain frames are rotated, you're fucked.
+	**/
 	override function drawComplex(camera:FlxCamera) {
 		final camX = camera.scroll.x * scrollFactor.x;
 
