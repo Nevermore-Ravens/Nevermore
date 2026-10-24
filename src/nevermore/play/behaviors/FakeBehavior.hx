@@ -1,5 +1,10 @@
 package nevermore.play.behaviors;
 
+/**
+* Custom behavior for fakes, from StepMania 4+.
+* Fakes are transparent notes that aren't hittable,
+* and don't count as an actual note: hence "Fake" note.
+**/
 class FakeBehavior extends NoteBehavior {
 	public function new() {
 		super();

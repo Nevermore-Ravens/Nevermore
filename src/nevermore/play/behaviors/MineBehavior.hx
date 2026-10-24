@@ -3,6 +3,12 @@ package nevermore.play.behaviors;
 import nevermore.core.timing.BaseClock;
 import nevermore.skins.Noteskin;
 
+/**
+* Custom behavior for mines from Dance Dance Revolution/StepMania.
+* Mines are notes that should be avoided, rather than hit.
+* When they *are* hit, they do a massive damage to your health,
+* so you need to be careful whenever they're around.
+**/
 class MineBehavior extends NoteBehavior {
 	public function new() {
 		super();
