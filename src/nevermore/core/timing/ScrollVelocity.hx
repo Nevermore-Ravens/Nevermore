@@ -20,6 +20,11 @@ class ScrollVelocity {
 	**/
 	var visualTime:Float = 0.0;
 
+	public function new(?time:Float = 0.0, ?multiplier:Float = 1.0) {
+		this.time = time;
+		this.multiplier = multiplier;
+	}
+
 	/**
 	* Converts a specified position in time to visual position, or "pixels".
 	* @param noteTime The point in time in which this should occur.

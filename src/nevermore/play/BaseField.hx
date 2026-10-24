@@ -195,7 +195,8 @@ class BaseField extends FlxSpriteGroup {
 		for (note in chart.notes) {
 			note.lane = lanes[note.lane];
 			if (!modifiers.sustains) note.length = 0;
-			if (!modifiers.scrollVelocities) continue;
+			
+			if (!scrollVelocities) continue;
 
 			note.visualTime = clock.velocityMap.getPosition(note.time);
 			if (note.length > 0) {
