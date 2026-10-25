@@ -190,7 +190,9 @@ class Statistics {
 	public function update(delta:Float) {
 		_timer += delta;
 		if (_timer < 1) return;
+		_timer = 0.0;
 
+		if (_nps == 0) return;
 		nps = _nps;
 		_nps = 0;
 	}
