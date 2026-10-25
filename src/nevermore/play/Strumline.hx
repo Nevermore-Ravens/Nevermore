@@ -127,6 +127,10 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	/**
 	* Initializes this strumline object.
 	* @param x The position of this strumline, on the X axis.
+	* NOTE: The X axis of strumlines are not anchored to the top left,
+	* like normal groups/sprites. Instead, the X axis anchors to
+	* the middle of the strumline instead.
+	*
 	* @param y The position of this strumline, on the Y axis.
 	* @param skin The noteskin this strumline will be using.
 	* @return This new strumline instance.
