@@ -101,6 +101,30 @@ class Statistics {
 	}
 
 	/**
+	* The ratio of your "Marvelous" and "Perfect" judgement counts.
+	* Commonly referred to as "MA", in most games.
+	*
+	* Keep in mind, this implies your judgement system at least has a
+	* higher judgement than "Perfect".
+	**/
+	public var marvelousAttack(get, never):Float;
+	function get_marvelousAttack():Float {
+		return judgements[0].hits / judgements[1].hits;
+	}
+
+	/**
+	* The ratio of your "Perfect" and "Great" judgement counts.
+	* Commonly referred to as "PA", in most games.
+	*
+	* Keep in mind, this implies your judgement system at least has a
+	* higher judgement than "Perfect".
+	**/
+	public var perfectAttack(get, never):Float;
+	function get_perfectAttack():Float {
+		return judgements[1].hits / judgements[2].hits;
+	}
+
+	/**
 	* How many notes have been hit by the player.
 	**/
 	public var noteHits:Int = 0;
