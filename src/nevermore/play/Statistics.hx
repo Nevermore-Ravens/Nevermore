@@ -14,10 +14,16 @@ class NoteHitData {
 	var deviation:Float = 0;
 
 	/**
-	* Whether this hit should count towards number calculation.
-	* (ie. mean, standard deviation)
+	* What lane/column this hit occured at.
 	**/
-	var count:Bool = true;
+	var lane:Int = 0;
+
+	/**
+	* Whether this hit broke the player's combo.
+	* Will not count this towards number calculation
+	* (such as mean, or standard deviation), if true.
+	**/
+	var comboBreak:Bool = false;
 }
 
 /**
@@ -66,7 +72,7 @@ class Statistics {
 		var deviation:Float = 0.0;
 		var amount:Int = 0;
 		for (hit in hitData) {
-			if (!hit.count) continue;
+			if (hit.comboBreak) continue;
 
 			amount++;
 			deviation += hit.deviation;
@@ -89,7 +95,7 @@ class Statistics {
 		var squaredDeviation:Float = 0.0;
 		var amount:Int = 0;
 		for (hit in hitData) {
-			if (!hit.count) continue;
+			if (hit.comboBreak) continue;
 
 			amount++;
 			totalDeviation += hit.deviation;
@@ -101,10 +107,23 @@ class Statistics {
 	}
 
 	/**
-	* The ratio of your "Marvelous" and "Perfect" judgement counts.
+	* The ratio of the player's "Ridiculous" and "Marvelous" judgement counts.
+	* Unused, because Nevermore doesn't have the concept of a "Ridiculous" judgement,
+	* not to mention this is an Etterna-specific feature.
+	*
+	* However, you *can* replicate this by setting your hit windows to StepMania J7,
+	* and using the `marvelousAttack` variable.
+	**/
+	public var ridiculousAttack(get, never):Float;
+	function get_ridiculousAttack():Float {
+		return 0.0;
+	}
+
+	/**
+	* The ratio of the player's "Marvelous" and "Perfect" judgement counts.
 	* Commonly referred to as "MA", in most games.
 	*
-	* Keep in mind, this implies your judgement system at least has a
+	* Keep in mind, this assumes your judgement system at least has a
 	* higher judgement than "Perfect".
 	**/
 	public var marvelousAttack(get, never):Float;
@@ -113,15 +132,49 @@ class Statistics {
 	}
 
 	/**
-	* The ratio of your "Perfect" and "Great" judgement counts.
+	* The ratio of the player's "Perfect" and "Great" judgement counts.
 	* Commonly referred to as "PA", in most games.
 	*
-	* Keep in mind, this implies your judgement system at least has a
+	* Keep in mind, this assumes your judgement system at least has a
 	* higher judgement than "Perfect".
 	**/
 	public var perfectAttack(get, never):Float;
 	function get_perfectAttack():Float {
 		return judgements[1].hits / judgements[2].hits;
+	}
+
+	/**
+	* The ratio of the note hits on the player's left hand and right hand hits.
+	* Commonly referred to in Etterna as "LA".
+	* Assumes this play was done on 4K.
+	**/
+	public var leftAttack(get, never):Float;
+	function get_leftAttack():Float {
+		var leftCount:Int = 0;
+
+		for (hit in hitData) {
+			if (hit.comboBreak || hit.lane > 1) continue;
+			leftCount++;
+		}
+
+		return leftCount / (hitData.length - leftCount);
+	}
+
+	/**
+	* The ratio of the note hits on the player's right hand and left hand hits.
+	* Commonly referred to in Etterna as "RA".
+	* Assumes this play was done on 4K.
+	**/
+	public var rightAttack(get, never):Float;
+	function get_rightAttack():Float {
+		var rightCount:Int = 0;
+
+		for (hit in hitData) {
+			if (hit.comboBreak || hit.lane < 3) continue;
+			rightCount++;
+		}
+
+		return rightCount / (hitData.length - rightCount);
 	}
 
 	/**
