@@ -106,9 +106,7 @@ class Noteskin {
 				continue;
 
 			var obj = Reflect.field(data, field);
-			if (Reflect.isObject(obj))
-				sections.set(field, NoteskinSection.create(this, obj));
-			else if (instanceFields.contains(field))
+			if (instanceFields.contains(field))
 				Reflect.setProperty(this, field, obj);
 		}
 
@@ -116,6 +114,9 @@ class Noteskin {
 			spacing = 160 * scale;
 		if (fields.contains("fallback"))
 			fallback = findFallback(this, data.fallback);
+
+		// load the sections after properties
+		append(data);
 	}
 
 	public function hasSection(section:String) {
@@ -148,6 +149,9 @@ class Noteskin {
 		var fields = Reflect.fields(data);
 
 		for (field in fields) {
+			if (field == "fallback")
+				continue;
+
 			var obj = Reflect.field(data, field);
 			if (Reflect.isObject(obj))
 				sections.set(field, NoteskinSection.create(this, obj));

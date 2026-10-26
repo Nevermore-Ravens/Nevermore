@@ -47,7 +47,6 @@ class BasicNoteskin {
 		var angles = angleList[keyCount - 1];
 
 		return new Noteskin({
-			spacing: 160 * scale,
 			scale: scale,
 
 			receptor: {
