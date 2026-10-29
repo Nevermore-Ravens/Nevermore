@@ -117,72 +117,76 @@ class FieldInput extends InputManager {
 		return note;
 	}
 	
-	// kind of buggy but whatever idk how they should work anyways
-	// i don't play osu Lol Lmao
+	/**
+	* Attempts to recreate the release timing hold system from osu!mania/Quaver.
+	* When the player lets go of a sustain, we track the deviation of how 
+	* far away they were from the end of the sustain.
+	*
+	* If the player released too early, and the deviation is higher than the highest window,
+	* it's safe to assume the player dropped the sustain entirely.
+	* Otherwise, judge the sustain accordingly.
+	**/
 	override function releaseTimings(strumline:Strumline, sustain:Sustain) {
 		var receptor:Receptor = sustain.receptor;
 
 		var curHolds:Array<Sustain> = strumline.curHolds;
 		var held:Bool = strumline.held[sustain.lane];
 
-		function finishHold(sustain:Sustain) {
+		var deviation:Float = clock.time - (sustain.adjustedTime + sustain.length);
+
+		// ai strumlines don't have to deal with release timings
+		if (strumline.ai) {
+			if (deviation >= 0) {
+				curHolds.remove(sustain);
+				sustain.kill();
+
+				if (strumline.ai) {
+					receptor.glow('standard');
+					receptor.isHolding = false;
+				}
+
+				parent.sustainFinished(strumline, sustain, deviation);
+				receptor.isHolding = held;
+			}
+
+		// the player probably let go of the sustain
+		} else if (!held) {
 			curHolds.remove(sustain);
 
-			sustain.visible = false;
-			sustain.regrabAlpha = 0;
+			// if the deviation is before the window,
+			// assume they dropped it
+			if (deviation < -Judgement.max.window) {
+				parent.sustainDropped(strumline, sustain);
+				sustain.regrabAlpha = 0.2;
+				sustain.wasHit = false;
+			// else hit it like normal
+			} else {
+				parent.sustainFinished(strumline, sustain, deviation);
+				sustain.kill();
 
-			receptor.isHolding = false;
-			if (strumline.ai) {
-				receptor.glow('standard');
-				receptor.isHolding = false;
+				receptor.isHolding = held;
+				sustain.untilTick = 0; // Hit it one last time, to make sure
 			}
-			sustain.untilTick = 0; // Hit it one last time, to make sure
+
+			return;
 		}
 
-		if (!strumline.ai) {
-			if (!held) {
-				var deviation:Float = (sustain.adjustedTime + sustain.length) - clock.time;
-
-				if (Math.abs(deviation) <= Judgement.max.window) {
-					// now we actually finish
-					finishHold(sustain);
-					sustain.kill();
-
-					parent.sustainFinished(strumline, sustain, deviation);
-				} else {
-					curHolds.remove(sustain);
-					sustain.regrabAlpha = 0.2;
-					sustain.wasHit = false;
-					parent.sustainDropped(sustain.strumline, sustain);
-				}
-				return;
-			}
-		}
-
-		sustain.regrabAlpha = sustain.adjustedTime + sustain.length <= clock.time ? 0 : 1;
+		sustain.regrabAlpha = 1;
 
 		// only clip if it's past the sustain
+		// TODO: make this work for sv's (this DEFINITELY doesn't work with sv's)
 		if (!parent.scrollVelocities)
-			sustain.timeOffset = -Math.min(sustain.adjustedTime - clock.time, 0);
+			sustain.timeOffset = Math.max(clock.time - sustain.adjustedTime, 0);
 		else if (clock.time >= sustain.adjustedTime)
-			sustain.timeOffset = clock.visualTime - sustain.visualTime;
-
-		sustain.forceHeightRecalc = true;
+			sustain.timeOffset = Math.min(clock.visualTime - sustain.visualTime, 0);
+		
+		sustain.forceHeightRecalc = deviation <= 0;
 		receptor.isHolding = true;
 
 		if (!curHolds.contains(sustain)) {
 			// we want the most recent, but we also dont wanna prioritize super short sustains
-			final idx = sustain.length >= 250 ? curHolds.length : 0;
+			final idx:Int = sustain.length >= 250 ? curHolds.length : 0;
 			curHolds.insert(idx, sustain);
-		} else if (sustain.adjustedTime + sustain.length <= clock.time) {
-			// technically finished, but not really
-			// as we need to check if the player is holding for too long
-			finishHold(sustain);
-
-			if (strumline.ai) {
-				sustain.kill();
-				parent.sustainFinished(strumline, sustain, 0);
-			}
 		}
 
 		sustain.untilTick -= FlxG.elapsed;
@@ -207,7 +211,7 @@ class FieldInput extends InputManager {
 	* give them a little bit of leeway by holding onto
 	* the sustain for a *little* longer, and then finally letting the sustain go.
 	*
-	* This allows for relataively great-feeling sustain gameplay without it being too
+	* This allows for relatively great-feeling sustain gameplay without it being too
 	* hand-holdy (if the length of time is short enough), especially if there's a note
 	* right after the end of said sustain.
 	*
@@ -269,7 +273,7 @@ class FieldInput extends InputManager {
 			}
 			sustain.untilTick = 0; // Hit it one last time, to make sure
 
-			var deviation:Float = (sustain.adjustedTime + sustain.length) - clock.time;
+			var deviation:Float = clock.time - (sustain.adjustedTime + sustain.length);
 			parent.sustainFinished(strumline, sustain, deviation);
 		}
 

@@ -49,7 +49,9 @@ class NoteField extends BaseField {
 	public dynamic function noteMissed(strumline:Strumline, note:Note):Void {}
 
 	/**
-	* Callback for when a sustain on either strumline was hit.
+	* Callback for when a sustain on either strumline was "hit".
+	* "Hit" is usually dependent on how the input system handles holds,
+	* but usually means every tick that the hold is held.
 	* @param strumline The corresponding strumline.
 	* @param note The sustain that was hit.
 	* @param mostRecent If this sustain was the most recent one to have been hit.
