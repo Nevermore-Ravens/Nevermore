@@ -69,7 +69,6 @@ class NoteObject extends FlxSprite {
 			_matrix.tx = Math.floor(_matrix.tx);
 			_matrix.ty = Math.floor(_matrix.ty);
 		}
-		_matrix.translate(camera.scroll.x * scrollFactor.x, camera.scroll.y * scrollFactor.y);
 	}
 
 	override function drawComplex(camera:FlxCamera) {
