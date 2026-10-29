@@ -16,6 +16,12 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	public var field:NoteField;
 
 	/**
+	* The ID connected to this strumline.
+	* Can be used in parallel with `BaseField.playerID`.
+	**/
+	public var player:Int = 0;
+
+	/**
 	* The amount of keys used for this strumline.
 	**/
 	public var keyCount(default, set):Int = 4;
