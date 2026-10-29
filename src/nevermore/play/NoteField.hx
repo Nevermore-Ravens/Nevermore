@@ -89,9 +89,9 @@ class NoteField extends BaseField {
 	override function set_playerID(v:Int):Int {
 		v = FlxMath.minInt(v, strumlines.length - 1);
 
-		for (i => line in strumlines.members) {
+		for (line in strumlines.members) {
 			if (multiplayer) line.ai = autoplay;
-			else line.ai = (v == i) ? autoplay : true;
+			else line.ai = (v == line.player) ? autoplay : true;
 		}
 
 		player = getStrumline(v);
@@ -111,24 +111,22 @@ class NoteField extends BaseField {
 
 	/**
 	* Whether multiple people can play at once.
-	* Intended for gamepad use only, since you can only
-	* have one keyboard plugged in at a time.
+	* Intended for gamepad use only, since you can only have
+	* one keyboard plugged in at a time.
 	**/
 	public var multiplayer(default, set):Bool = false;
 
 	function set_multiplayer(v:Bool):Bool {
-		for (i => line in strumlines.members) {
+		for (line in strumlines.members) {
 			if (v) line.ai = autoplay;
-			else line.ai = (playerID == i) ? autoplay : true;
+			else line.ai = (playerID == line.player) ? autoplay : true;
 		}
 
 		return multiplayer = v;
 	}
 
 	override function set_scrollSpeed(v:Float):Float {
-		for (line in strumlines.members) {
-			line.speed = v;
-		}
+		for (line in strumlines.members) line.speed = v;
 
 		for (sustain in sustains.members) {
 			sustain.forceHeightRecalc = true;
@@ -146,10 +144,7 @@ class NoteField extends BaseField {
 	}
 
 	override function set_scrollDirection(v:ScrollDirection):ScrollDirection {
-		for (line in strumlines.members) {
-			line.direction = v;
-		}
-
+		for (line in strumlines.members) line.direction = v;
 		return scrollDirection = v;
 	}
 
@@ -188,8 +183,9 @@ class NoteField extends BaseField {
 		notes = new FlxTypedSpriteGroup<Note>();
 		notes.active = false;
 
-		for (line in lines ?? []) {
+		for (id => line in lines ?? []) {
 			line.field = this;
+			line.player = id;
 			strumlines.add(line);
 		}
 
@@ -301,7 +297,7 @@ class NoteField extends BaseField {
 	}
 
 	override function getStrumline(id:Int):Strumline {
-		if (id == -1) return player;
+		if (id < 0) id = 0;
 
 		id = FlxMath.minInt(id, strumlines.length - 1);
 		return strumlines.members[id];
@@ -346,8 +342,8 @@ class NoteField extends BaseField {
 		if (autoplay || (!persistentUpdate && Nevermore.paused)) return;
 
 		if (id == -1) id = playerID;
+		var strumline:Strumline = multiplayer ? getStrumline(id) : player;
 
-		var strumline:Strumline = getStrumline(id);
 		if (strumline.ai || strumline.held[direction]) return;
 		strumline.held[direction] = true;
 
@@ -366,7 +362,9 @@ class NoteField extends BaseField {
 	override function released(id:Int, direction:Int) {
 		if (autoplay) return;
 
-		var strumline:Strumline = getStrumline(id);
+		if (id == -1) id = playerID;
+		var strumline:Strumline = multiplayer ? getStrumline(id) : player;
+
 		if (strumline.ai) return;
 
 		strumline.held[direction] = false;
