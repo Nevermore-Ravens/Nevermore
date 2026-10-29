@@ -6,6 +6,7 @@ import nevermore.modchart.ModchartManager;
 import nevermore.backend.Git.Commit;
 
 import nevermore.play.behaviors.*;
+import nevermore.skins.*;
 
 enum abstract ScrollDirection(String) from String to String {
 	var UP = 'Up';
@@ -128,6 +129,8 @@ class Nevermore {
 		NoteBehavior.register('Roll', RollBehavior);
 
 		NoteColor.reset();
+
+		NoteskinSection.register('grid', GridSection);
 
 		#if !NEVERMORE_NO_MODCHARTS 
 		ModchartManager.setupRedirects();

@@ -113,6 +113,8 @@ abstract class NoteskinSection<T> {
 
 	// i may have to figure out a better way for this, there's a lot of parameters
 	public function new(style:String, parent:Noteskin, spritesheet:String, animations:Array<NoteskinAnim<T>>, ?scale:Float, ?antialiasing:Bool, ?angles:Array<Float>, ?colors:Array<Int>, ?luminize:Array<Bool>) {
+		this.parent = parent;
+
 		this.style = style;
 		this.spritesheet = spritesheet;
 		this.animations = animations;

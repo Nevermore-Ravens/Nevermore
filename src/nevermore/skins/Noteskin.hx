@@ -89,7 +89,7 @@ class Noteskin {
 		luminized ??= alreadyLuminized;
 		if (keyCount == loadKeyCount && luminized == alreadyLuminized)
 			return this;
-		return get(loadKey, keyCount, alreadyLuminized);
+		return get(loadKey, keyCount, luminized);
 	}
 
 	public function new(data:Dynamic, ?root:String = "", ?alreadyLuminized:Bool = false, ?loadKey:String = "", ?loadKeyCount:Int = 0) {
