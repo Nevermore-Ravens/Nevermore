@@ -80,7 +80,7 @@ class NoteObject extends FlxSprite {
 	#if !NEVERMORE_NO_MODCHARTS
 	/**
 	* Prepares this object's vertices for modchart rendering.
-	* @param z iactuallydon'tknowwhatthisisforsrthelp
+	* @param z The initial z position to use for all the vertices.
 	**/
 	function prepareModchartVertices(z:Float) {
 		Note.modchartVertices[0].set(_matrix.transformX(0, 0), _matrix.transformY(0, 0), z);
@@ -90,7 +90,17 @@ class NoteObject extends FlxSprite {
 	}
 
 	/**
-	* 
+	* Grabs the angle between the input `pos` and a recalculated position from the following parameters.
+	*
+	* @param modchart The associated modchart to use for grabbing modifier values and calculating position.
+	* @param pos The initial position and what to use for the recalculation. It will be restored to it's inital values given during the call.
+	* @param scrollMult The initial scrolling multiplier to use for position calculations.
+	* @param yPos The y value to start with when recalculating `pos`.
+	* @param distance The amount of pixels away from a receptor in a upscroll context.
+	* @param unadjustedDistance The original `distance`, before modifiers effected it's value.
+	* @param player The strumline index of the object.
+	* @param strumline The strumline of which the object belongs to.
+	* @param type What the object should be assumed to be. (A static receptor to catch notes (`RECEPTOR`), A scrolling note (`NOTE`), or A long note to hold (`SUSTAIN`))
 	**/
 	function getOrientAngle(modchart:ModchartManager, pos:Vector3, scrollMult:Float, yPos:Float, distance:Float, unadjustedDistance:Float, player:Int, strumline:Strumline, type:ObjectType) {
 		final orient:Float = modchart.config.orient;
@@ -103,7 +113,7 @@ class NoteObject extends FlxSprite {
 		final cacheZ:Float = pos.z;
 		modchart.scrollMult = scrollMult;
 		pos.set(x + width * 0.5, yPos + height * 0.5, 0);
-		modchart.adjustPos(this, pos, distance, unadjustedDistance, lane, player, strumline, RECEPTOR);
+		modchart.adjustPos(this, pos, distance, unadjustedDistance, lane, player, strumline, type);
 
 		// cachePoint is just diff
 		Note.cachePoint.set(pos.x - cacheX, pos.y - cacheY);

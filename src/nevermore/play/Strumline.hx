@@ -159,7 +159,11 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 		var receptor:Receptor = null;
 		for (i in 0...keyCount) {
 			add(receptor = new Receptor(this, i));
+			// over on another project, we gotta figure out a good and non-hacky way to luminize the strums ONLY.
+			receptor.luminize = luminize;
 			if (skin != null) skin.applyNoteObject(receptor, "receptor");
+			receptor.glow("standard");
+			receptor.updateHitbox();
 
 			receptor.x += skin.spacing * (i - keyCount * 0.5);
 			receptor.y += (skin.spacing - receptor.height) * 0.5;
