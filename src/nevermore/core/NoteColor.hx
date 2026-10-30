@@ -203,6 +203,6 @@ class NoteColor {
 		if (!note.luminize) return WHITE;
 
 		if (bySnap) return currentQuants[note.data.snapID];
-		return current[note.lane % (current.length - 1)];
+		return current[note.lane % current.length];
 	}
 }
