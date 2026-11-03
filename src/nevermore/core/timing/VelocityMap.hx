@@ -43,10 +43,10 @@ class VelocityMap {
 		var last:ScrollVelocity = list[0];
 
 		for (i in 0...list.length) {
-			var point = list[i];
+			var point:ScrollVelocity = list[i];
 
-			if (pos >= point.time) last = point;
-			else break;
+			if (pos < point.time) break;
+			last = point;
 		}
 
 		return last;

@@ -29,6 +29,8 @@ class TimingMap {
 	/**
 	* Resets this instance of the map.
 	* @param points The list of timing points to use for this map.
+	* If the array is empty, a point will automatically be added.
+	*
 	* @return The modified instance of this timing map.
 	**/
 	public function reset(points:Array<TimingPoint>):TimingMap {
@@ -78,8 +80,8 @@ class TimingMap {
         var last:TimingPoint = list[0];
 
         for (point in list) {
-            if (pos >= point.time) last = point;
-            else break;
+            if (pos < point.time) break;
+            last = point;
         }
 
 		return last;
@@ -95,7 +97,7 @@ class TimingMap {
 	**/
 	@:pure public function getRow(pos:Float, ?point:TimingPoint):Int {
 		var result:Float = 0.0;
-		if (length <= 1) {
+		if (length == 1) {
 			result = pos / Util.crotchet(tempo);
 		} else result = getBeat(pos, point ?? getByTime(pos));
 
@@ -111,7 +113,7 @@ class TimingMap {
 	* @return The beat at the position specified.
 	**/
 	@:pure public function getBeat(pos:Float, ?point:TimingPoint):Float {
-		if (length <= 1) return pos / Util.crotchet(tempo);
+		if (length == 1) return pos / Util.crotchet(tempo);
 		point ??= getByTime(pos);
 
 		var crotchet:Float = Util.crotchet(point.tempo);
@@ -128,7 +130,7 @@ class TimingMap {
 	* @return The measure at the position specified.
 	**/
 	@:pure public function getMeasure(pos:Float, ?point:TimingPoint):Float {
-		if (length <= 1) return (pos / Util.crotchet(tempo)) / 4;
+		if (length == 1) return (pos / Util.crotchet(tempo)) / 4;
 		point ??= getByTime(pos);
 
 		var crotchet:Float = Util.crotchet(point.tempo);
