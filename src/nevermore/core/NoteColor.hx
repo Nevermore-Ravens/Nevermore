@@ -43,7 +43,7 @@ class NoteColor {
 	For example:
 
 	* StepMania - "Default"
-	* StepMania (3.9) - "Note" (3.9 has a default noteskin but it's not snapped, just randomly picked colours (?))
+	* StepMania (3.9) - "Note" (3.9 has a default noteskin but it's not snapped, just randomly changing colours)
 	* In The Groove - "Metal"
 	* NotITG - "Cel"
 	* Etterna - "ByZero" Series
