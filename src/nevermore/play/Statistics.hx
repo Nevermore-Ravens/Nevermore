@@ -107,7 +107,7 @@ class Statistics {
 	}
 
 	/**
-	* The ratio of the player's "Ridiculous" and "Marvelous" judgement counts.
+	* The ratio of the player's "Ridiculous" and "Flawless" judgement counts.
 	* Unused, because Nevermore doesn't have the concept of a "Ridiculous" judgement,
 	* not to mention this is an Etterna-specific feature.
 	*
@@ -120,7 +120,7 @@ class Statistics {
 	}
 
 	/**
-	* The ratio of the player's "Marvelous" and "Perfect" judgement counts.
+	* The ratio of the player's "Flawless" and "Perfect" judgement counts.
 	* Commonly referred to as "MA", in most games.
 	*
 	* Keep in mind, this assumes your judgement system at least has a

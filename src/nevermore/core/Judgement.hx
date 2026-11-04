@@ -4,11 +4,11 @@ package nevermore.core;
 * A handler for the list of judgements you can get.
 * Can also be used as an instanced object.
 * ```hx
-* var marvelous:Judgement = Judgement.current[0];
+* var flawless:Judgement = Judgement.current[0];
 * var perfect:Judgement = Judgement.current[1];
 * var great:Judgement = Judgement.current[...];
 
-* trace(marvelous.window);
+* trace(flawless.window);
 * trace(perfect.window);
 * ```
 **/
@@ -43,7 +43,7 @@ class Judgement {
 
 	/**
 	* The tightest judgement available for the current list of judgements.
-	* (in StepMania context, Marvelous)
+	* (in StepMania context, Flawless)
 	**/
 	public static var min(get, never):Judgement;
 	static function get_min():Judgement return current[0];
@@ -74,7 +74,7 @@ class Judgement {
 
 		register('Default', [
 			{
-				name: 'Fantastic',
+				name: 'Flawless',
 				window: HitWindows.current[0]
 			},
 			{
@@ -138,7 +138,7 @@ class Judgement {
 
 	/**
 	* How tight this judgement will be to obtain, in milliseconds.
-	* (ex. Marvelous = 22.5ms, Perfect = 45ms, Great = 90ms)
+	* (ex. Flawless = 22.5ms, Perfect = 45ms, Great = 90ms)
 	**/
 	public var window:Float = 0.0;
 

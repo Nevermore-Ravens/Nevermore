@@ -151,7 +151,7 @@ class NoteColor {
 
 	/**
 	* Whether colouring will be based on what lane the note is in, or 
-	* what snap the note is in; relative to the note's time. 
+	* what snap the note is in; relative to the note's time.
 	**/
 	public static var bySnap:Bool = true;
 
