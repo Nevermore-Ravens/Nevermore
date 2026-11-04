@@ -28,6 +28,7 @@ class NoteColor {
 	public static final ORANGE:Color = 0xFFFF831E;
 	public static final TEAL:Color = 0xFF00EDFF;
 	public static final GREEN:Color = 0xFF3FFF3F;
+	public static final GREEN_CYAN:Color = 0xFF2AFEB7;
 	public static final LIME:Color = 0xFFA5E123;
 	public static final WHITE:Color = 0xFFFFFFFF;
 	public static final GRAY:Color = 0xFF878787;
@@ -44,7 +45,7 @@ class NoteColor {
 
 	* StepMania - "Default"
 	* StepMania (3.9) - "Note" (3.9 has a default noteskin but it's not snapped, just randomly changing colours)
-	* In The Groove - "Metal"
+	* (Not)In The Groove - "Cel" / "Metal" (both use the same colours)
 	* NotITG - "Cel"
 	* Etterna - "ByZero" Series
 	* ...
@@ -93,17 +94,18 @@ class NoteColor {
 		],
 
 		'In The Groove' => [
-			RED,    // 4th
-			BLUE,   // 8th
+			RED, // 4th
+			BLUE, // 8th
 			PURPLE, // 12th
-			GREEN,  // 16th
-			TEAL,   // 20th 
-			TEAL,   // 24th
-			ORANGE, // 32nd
-			TEAL,   // 48th
-			TEAL,   // 64th
-			TEAL,   // 96th
-			TEAL    // 192nd
+			GREEN, // 16th
+			GREEN_CYAN, // 20th
+			PURPLE, // 24th
+			YELLOW, // 32nd
+			PURPLE, // 48th
+			GREEN_CYAN, // 64th
+			GREEN_CYAN, // 96th
+			GREEN_CYAN, // 192nd
+
 		],
 
 		// these probably aren't accurate ????
