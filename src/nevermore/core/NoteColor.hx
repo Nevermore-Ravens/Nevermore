@@ -4,10 +4,10 @@ import nevermore.play.BaseNote;
 
 enum abstract QuantType(String) from String to String {
 	var STEPMANIA = 'StepMania';
+	var STEPMANIA_39 = 'StepMania (3.9)';
 	var ITG = 'In The Groove';
 	var FFR = 'Flash Flash Revolution';
 	var ETTERNA = 'Etterna';
-	var ARROWVORTEX = 'ArrowVortex';
 	var CUSTOM = 'Custom';
 }
 
@@ -43,6 +43,7 @@ class NoteColor {
 	For example:
 
 	* StepMania - "Default"
+	* StepMania (3.9) - "Note"
 	* In The Groove - "Metal"
 	* NotITG - "Cel"
 	* Etterna - "ByZero" Series
@@ -59,6 +60,20 @@ class NoteColor {
 			TEAL,    // 32nd
 			MAGENTA, // 48th
 			GRAY,    // 64th
+			GRAY,    // 96th
+			GRAY     // 192nd
+		],
+
+		'StepMania (3.9)' => [
+			RED,     // 4th
+			BLUE,    // 8th
+			PURPLE,  // 12th
+			YELLOW,  // 16th
+			GRAY,    // 20th 
+			PINK,    // 24th
+			ORANGE,  // 32nd
+			TEAL,    // 48th
+			GREEN,   // 64th
 			GRAY,    // 96th
 			GRAY     // 192nd
 		],
@@ -105,23 +120,6 @@ class NoteColor {
 			GREEN,
 			WHITE,
 			WHITE
-		],
-
-		// might change this to quaver later
-		// they use the exact same colours and
-		// i also don't know where av got their colours from
-		'ArrowVortex' => [
-			RED,     // 4th
-			BLUE,    // 8th
-			PURPLE,  // 12th
-			YELLOW,  // 16th
-			GRAY,    // 20th 
-			PINK,    // 24th
-			ORANGE,  // 32nd
-			TEAL,    // 48th
-			GREEN,   // 64th
-			GRAY,    // 96th
-			GRAY     // 192nd
 		],
 
 		'Custom' => [
