@@ -9,8 +9,8 @@ import nevermore.modchart.ModchartManager;
 #end
 
 /**
-* An object type that you hold all the way through until the end.
-**/
+A rhythm object type that you hold all the way through until the end.
+*/
 class Sustain extends Note {
 	public static var vertices:Array<Float> = [0, 0, 0, 0, 0, 0, 0, 0];
 	public var forceHeightRecalc:Bool = false;
@@ -48,33 +48,33 @@ class Sustain extends Note {
 	}
 
 	/**
-	* Whether this sustain was hit or not.
-	**/
+	Whether this sustain was hit or not.
+	*/
 	public var wasHit:Bool;
 
 	/**
-	* The amount of time left until this sustain will be dropped.
-	**/
+	The amount of time left until this sustain will be dropped.
+	*/
 	public var regrabTimer:Float;
 
 	/**
-	* The opacity of this sustain, relative to the regrab timer.
-	**/
+	The opacity of this sustain, relative to the regrab timer.
+	*/
 	public var regrabAlpha:Float;
 
 	/**
-	* How many ticks are left until the sustain is counted as "hit"
-	**/
+	How many ticks are left until the sustain is counted as "hit".
+	*/
 	public var untilTick:Float;
 
 	/**
-	* The time at which this sustain will end, visually, in milliseconds.
-	* Used for scroll velocities.
-	**/
+	The time at which this sustain will end, visually, in milliseconds.  
+	Used for scroll velocities.
+	*/
 	public var visualEnd:Float;
 	override function setup(strumline:Strumline, data:NoteData):Note {
 		wasHit = false;
-		regrabTimer = Judgement.max.window / 1000;
+		regrabTimer = Judgement.max.window / Constants.MS_PER_SEC;
 		regrabAlpha = 0.7;
 		untilTick = 0;
 
@@ -172,11 +172,11 @@ class Sustain extends Note {
 	which is directly from the `png` file itself.
 
 	If your noteskin is a sparrow atlas, and your pieces/tail are rotated,
-	HaxeFlixel doesn't fix it via code, it will just parse it as is;
+	HaxeFlixel doesn't fix it via code, it will just parse it as is;  
 	meaning drawing the `FlxFrame` this way will draw as it's shown in the `png` file.
 
 	TLDR: If your sustain frames are rotated, you're fucked.
-	**/
+	*/
 	override function drawComplex(camera:FlxCamera) {
 		final camX = camera.scroll.x * scrollFactor.x;
 
@@ -241,7 +241,7 @@ class Sustain extends Note {
 	}
 	function updateFrames(time:Float) {
 		inline function getSustainFrame(anim:FlxAnimation):Int {
-			var frameIndex:Float = Math.abs(time / 1000 * anim.frameRate) % anim.frames.length;
+			var frameIndex:Float = Math.abs(time / Constants.MS_PER_SEC * anim.frameRate) % anim.frames.length;
 			return anim.frames[Math.floor(frameIndex)];
 		}
 

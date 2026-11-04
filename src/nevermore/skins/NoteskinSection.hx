@@ -38,23 +38,24 @@ abstract class NoteskinSection<T> {
 	}
 
 	/**
-	 * To be given in `NoteskinSection.new` (and preferably only there), a reference to the Noteskin instance holding this section.
-	 */
+	To be given in `NoteskinSection.new` (and preferably only there), a reference to the Noteskin instance holding this section.
+	*/
 	private var parent:Noteskin = null;
+	
 	/**
-	 * To be loaded in `NoteskinSection.new`, a reference to the frames used for this section.
-	 */
+	To be loaded in `NoteskinSection.new`, a reference to the frames used for this section.
+	*/
 	private var frames:FlxFramesCollection = null;
+
 	/**
-	 * To be loaded in `NoteskinSection.new`, a reference to the luminized frames used for this section, may end up just being `frames`.
-	 */
+	To be loaded in `NoteskinSection.new`, a reference to the luminized frames used for this section, may end up just being `frames`.
+	*/
 	private var luminizedFrames:FlxFramesCollection = null;
 
 	/**
-	 * Since NoteskinSection is abstract, this variable determines which extension to use.
-	 *
-	 * Typically "sparrow", but allows potential for other animation styles such as "grid".
-	 */
+	Since NoteskinSection is abstract, this variable determines which extension to use.
+	Typically "sparrow", but allows potential for other animation styles such as "grid".
+	*/
 	public var style:String = "sparrow";
 	public var spritesheet:String;
 	public var animations:Array<NoteskinAnim<T>>;

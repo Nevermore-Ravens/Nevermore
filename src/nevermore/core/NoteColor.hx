@@ -16,8 +16,8 @@ enum abstract ColorType(String) from String to String {
 }
 
 /**
-* Contains customization for colouring of notes, by either lanes or snap/quantization.
-**/
+Contains customization for colouring of notes, by either lanes or snap/quantization.
+*/
 class NoteColor {
 	public static final RED:Color = 0xFFFF2B32;
 	public static final BLUE:Color = 0xFF0861FF;
@@ -34,22 +34,22 @@ class NoteColor {
 	public static final GRAY:Color = 0xFF878787;
 
 	/**
-	* A list of quantization types that are able to be used.
+	A list of quantization types that are able to be used.
 
 	NOTE:
 
-	These games don't necessarily *have* a set quantization list.
-	Quants depend on the skin, rather than the game having a hardcoded list (like in this class).
-	The quants you see here is dependent on the corresponding game's default noteskin.
+	These games don't necessarily *have* a set quantization list.  
+	Quants depend on the skin, rather than the game having a hardcoded list (like in this class).  
+	The quants you see here is dependent on the corresponding game's default noteskin.  
 	For example:
 
 	* StepMania - "Default"
 	* FFR - "Default"
-	* StepMania (3.9) - "Note" (3.9 has a default noteskin but it's not snapped, just randomly changing colours)
+	* StepMania (3.9) - "Note" (3.9 *has* a default noteskin but it's not snapped, just randomly changing colours)
 	* (Not)In The Groove - "Cel" / "Metal" (both use the same colours)
 	* Etterna - "ByZero" Series
 	* ...
-	**/
+	*/
 	public static var quantList:Map<String, Array<Int>> = [
 		'StepMania' => [
 			RED,     // 4th

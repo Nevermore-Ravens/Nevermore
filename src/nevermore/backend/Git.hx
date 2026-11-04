@@ -11,12 +11,12 @@ class Commit {
 }
 
 /**
-* Provides Git history about Nevermore, like the current commit (short/long) hash,
-* commit count, and the branch.
-*
-* Requires a `.git` folder in the library's root folder,
-* and for `--depth=1` to not be applied.
-**/
+Provides Git history about Nevermore, like the current commit (short/long) hash,
+commit count, and the branch.
+
+Requires a `.git` folder in the library's root folder,
+and for `--depth=1` to not be applied.
+*/
 class Git {
 	public static var commit(get, never):Commit;
 	static function get_commit():Commit {

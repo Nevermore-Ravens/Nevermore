@@ -17,45 +17,45 @@ enum InputPreference {
 }
 
 /**
-* Links both keyboard and gamepad into one callback.
-* Extend this to make your own input system.
-* (see `input/FieldInput`)
-**/
+Links both keyboard and gamepad into one callback.   
+Extend this to make your own input system.  
+(see `input/FieldInput`)
+*/
 class InputManager {
 	/**
-	* Callback for when a key/button is pressed.
-	**/
+	Callback for when a key/button is pressed.
+	*/
 	public var onPress:Event<(Int, Int) -> Void>;
 
 	/**
-	* Callback for when a key/button is released.
-	**/
+	Callback for when a key/button is released.
+	*/
 	public var onRelease:Event<(Int, Int) -> Void>;
 
 	/**
-	* The last time an action was pressed, in milliseconds;
-	* relative to the application startup.
-	**/
+	The last time an action was pressed, in milliseconds;
+	relative to the application startup.
+	*/
 	public var timestamp:Int = 0;
 	
 	/**
-	* The amount of keys this input system instance will be using.
-	**/
+	The amount of keys this input system instance will be using.
+	*/
 	public var keyCount:Int = 4;
 
 	/**
-	* Which input preference to have for this input system instance.
-	* Allows for keyboard only, gamepad only, or both at once.
-	**/
+	Which input preference to have for this input system instance.   
+	Allows for keyboard only, gamepad only, or both at once.
+	*/
 	public var prefer:InputPreference = ALL;
 
 	/**
-	* The list of gamepads currently connected for this instance.
-	*
-	* (technically you can have a ton of gamepads in this array by
-	* constantly disconnecting and reconnecting the gamepad but
-	* im not worrying about that right now)
-	**/
+	The list of gamepads currently connected for this instance.
+
+	(technically you can have a ton of gamepads in this array by
+	constantly disconnecting and reconnecting a gamepad but
+	im not worrying about that right now)
+	*/
 	public var gamepads:Array<CustomGamepad> = [];
 
 	public function new() {

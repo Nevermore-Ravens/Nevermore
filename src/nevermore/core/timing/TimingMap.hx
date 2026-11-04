@@ -1,8 +1,8 @@
 package nevermore.core.timing;
 
 /**
-* Allows for getting the beat, step, or measure via a set of points.
-**/
+Allows for getting the beat, step, or measure via a set of points.
+*/
 class TimingMap {
 	public var list(default, null):Array<TimingPoint> = [];
 
@@ -10,13 +10,13 @@ class TimingMap {
 	function get_length():Int return list.length;
 
 	/**
-	* The current tempo the map is at.
-	**/
+	The current tempo the map is at.
+	*/
 	public var tempo:Float;
 
 	/**
-	* The current beats per measure the map is at.
-	**/
+	The current beats per measure the map is at.
+	*/
 	public var beatsPerMeasure:Int;
 
 	public function new() {}
@@ -27,12 +27,12 @@ class TimingMap {
 	}
 
 	/**
-	* Resets this instance of the map.
-	* @param points The list of timing points to use for this map.
-	* If the array is empty, a point will automatically be added.
-	*
-	* @return The modified instance of this timing map.
-	**/
+	Resets this instance of the map.
+	@param points The list of timing points to use for this map.
+	If the array is empty, a point will automatically be added.
+
+	@return The modified instance of this timing map.
+	*/
 	public function reset(points:Array<TimingPoint>):TimingMap {
 		if (points.length == 0) points.push({});
 		points.sort((a, b) -> return Std.int(a.time - b.time));
@@ -50,7 +50,7 @@ class TimingMap {
 		// so we don't have to do it later
 		var beat:Float = 0;
 		var measure:Float = 0;
-		var crotchet:Float = Util.crotchet(tempo);
+		var crotchet:Float = Constants.crotchet(tempo);
 		var beatsPerMeasure:Int = beatsPerMeasure;
 		var lastTime:Float = 0;
 		var lastBeat:Float = 0;
@@ -61,7 +61,7 @@ class TimingMap {
 
 			lastTime = point.time;
 			lastBeat = beat;
-			crotchet = Util.crotchet(point.tempo);
+			crotchet = Constants.crotchet(point.tempo);
 			beatsPerMeasure = point.beatsPerMeasure;
 
 			point.beat = beat;
@@ -72,10 +72,10 @@ class TimingMap {
 	}
 
 	/**
-	* Gets the timing point at a specified point in time.
-	* @param pos The song time.
-	* @return The point at the position specified.
-	**/
+	Gets the timing point at a specified point in time.
+	@param pos The song time.
+	@return The point at the position specified.
+	*/
 	@:pure public function getByTime(pos:Float):TimingPoint {
         var last:TimingPoint = list[0];
 
@@ -88,52 +88,52 @@ class TimingMap {
 	}
 
 	/**
-	* Gets the row at a specified position.
-	* @param pos The song time.
-	* @param point The timing point to use as reference.
-	* If no point is given, it will make its own.
-	*
-	* @return The row at the position specified.
-	**/
+	Gets the row at a specified position.
+	@param pos The song time.
+	@param point The timing point to use as reference.
+	If no point is given, it will make its own.
+
+	@return The row at the position specified.
+	*/
 	@:pure public function getRow(pos:Float, ?point:TimingPoint):Int {
 		var result:Float = 0.0;
 		if (length == 1) {
-			result = pos / Util.crotchet(tempo);
+			result = pos / Constants.crotchet(tempo);
 		} else result = getBeat(pos, point ?? getByTime(pos));
 
-		return Math.round(result * Util.rowsPerBeat);
+		return Math.round(result * Constants.rowsPerBeat);
 	}
 
 	/**
-	* Gets the beat at a specified position.
-	* @param pos The song time.
-	* @param point The timing point to use as reference.
-	* If no point is given, it will make its own.
-	*
-	* @return The beat at the position specified.
-	**/
+	Gets the beat at a specified position.
+	@param pos The song time.
+	@param point The timing point to use as reference.
+	If no point is given, it will make its own.
+
+	@return The beat at the position specified.
+	*/
 	@:pure public function getBeat(pos:Float, ?point:TimingPoint):Float {
-		if (length == 1) return pos / Util.crotchet(tempo);
+		if (length == 1) return pos / Constants.crotchet(tempo);
 		point ??= getByTime(pos);
 
-		var crotchet:Float = Util.crotchet(point.tempo);
+		var crotchet:Float = Constants.crotchet(point.tempo);
 		var distance:Float = (pos - point.time) / crotchet;
 		return point.beat + distance;
 	}
 
 	/**
-	* Gets the measure at a specified position.
-	* @param pos The song time.
-	* @param point The timing point to use as reference.
-	* If no point is given, it will make its own.
-	*
-	* @return The measure at the position specified.
-	**/
+	Gets the measure at a specified position.
+	@param pos The song time.
+	@param point The timing point to use as reference.
+	If no point is given, it will make its own.
+
+	@return The measure at the position specified.
+	*/
 	@:pure public function getMeasure(pos:Float, ?point:TimingPoint):Float {
-		if (length == 1) return (pos / Util.crotchet(tempo)) / 4;
+		if (length == 1) return (pos / Constants.crotchet(tempo)) / beatsPerMeasure;
 		point ??= getByTime(pos);
 
-		var crotchet:Float = Util.crotchet(point.tempo);
+		var crotchet:Float = Constants.crotchet(point.tempo);
 		var distance:Float = (pos - point.time) / crotchet;
 		return point.measure + (distance / point.beatsPerMeasure);
 	}

@@ -1,21 +1,22 @@
 package nevermore.input;
 
+import haxe.Constraints.Constructible;
 import nevermore.play.*;
 import nevermore.core.timing.BaseClock;
 import flixel.group.FlxSpriteGroup;
 
 /**
-* Manages inputs and process them to judge the player accordingly.
-* In laymen's terms, the input system.
-**/
+Manages inputs and processes them to judge the player accordingly.  
+In laymen's terms, the input system.
+*/
 class FieldInput extends InputManager {
 	var parent:NoteField;
 	var notes:FlxTypedSpriteGroup<Note>;
 	var sustains:FlxTypedSpriteGroup<Sustain>;
 
 	/**
-	* How many times a second the sustain will be considered "hit".
-	**/
+	How many times a second the sustain will be considered "hit".
+	*/
 	var sustainInterval:Float = 0.12;
 
 	var clock(get, never):BaseClock;
@@ -32,12 +33,12 @@ class FieldInput extends InputManager {
 	}
 
 	/**
-	* Finds a tap note, and then removes it.
-	* Also manages rolls somewhat.
-	* @param id The player/strumline ID to look out for.
-	* @param direction The key direction that was pressed.
-	* @return The note that was hit.
-	**/
+	Finds a tap note, and then removes it.  
+	Also manages rolls somewhat.
+	@param id The player/strumline ID to look out for.
+	@param direction The key direction that was pressed.
+	@return The note that was hit.
+	*/
 	override function tap(id:Int, direction:Int):Note {
 		var strumline:Strumline = null;
 		var receptor:Receptor = null;
@@ -50,7 +51,7 @@ class FieldInput extends InputManager {
 
 			receptor = sustain.strumline.members[sustain.lane];
 
-			sustain.regrabTimer = 0.25;
+			sustain.regrabTimer = Constants.rollRegrabWindow;
 			parent.sustainHit(sustain.strumline, sustain, true);
 			receptor.glow();
 
@@ -118,14 +119,14 @@ class FieldInput extends InputManager {
 	}
 	
 	/**
-	* Attempts to recreate the release timing hold system from osu!mania/Quaver.
-	* When the player lets go of a sustain, we track the deviation of how 
-	* far away they were from the end of the sustain.
-	*
-	* If the player released too early, and the deviation is higher than the highest window,
-	* it's safe to assume the player dropped the sustain entirely.
-	* Otherwise, judge the sustain accordingly.
-	**/
+	Attempts to recreate the release timing hold system from osu!mania/Quaver.  
+	When the player lets go of a sustain, we track the deviation of how 
+	far away they were from the end of the sustain.
+
+	If the player released too early, and the deviation is higher than the highest window,
+	it's safe to assume the player dropped the sustain entirely.  
+	Otherwise, judge the sustain accordingly.
+	*/
 	override function releaseTimings(strumline:Strumline, sustain:Sustain) {
 		var receptor:Receptor = sustain.receptor;
 
@@ -205,21 +206,21 @@ class FieldInput extends InputManager {
 	}
 
 	/**
-	* Judges a specific sustain and will either drop or keep holding.
-	* Specifically, it attempts to recreate the "regrab" system from StepMania/Etterna.
-	* Instead of immediately dropping the sustain when the player letes go,
-	* give them a little bit of leeway by holding onto
-	* the sustain for a *little* longer, and then finally letting the sustain go.
-	*
-	* This allows for relatively great-feeling sustain gameplay without it being too
-	* hand-holdy (if the length of time is short enough), especially if there's a note
-	* right after the end of said sustain.
-	*
-	* This same concept applies to rolls as well, since they heavily utilize this functionality.
-	*
-	* @param strumline The strumline connected to this sustain.
-	* @param sustain The sustain to be judged.
-	**/
+	Judges a specific sustain and will either drop or keep holding.  
+	Specifically, it attempts to recreate the "regrab" system from StepMania/Etterna.  
+	Instead of immediately dropping the sustain when the player lets go,
+	we give them a little bit of leeway by holding onto  
+	the sustain for a *little* longer, and then finally letting the sustain go.
+
+	This allows for relatively great-feeling sustain gameplay without it being too  
+	hand-holdy (if the length of time is short enough), especially if there's a note
+	right after the end of said sustain.
+
+	This same concept applies to rolls as well, since they heavily utilize this functionality.
+
+	@param strumline The strumline connected to this sustain.
+	@param sustain The sustain to be judged.
+	*/
 	override function regrabTimer(strumline:Strumline, sustain:Sustain) {
 		var receptor:Receptor = sustain.receptor;
 		var clock:BaseClock = parent.clock;
@@ -228,7 +229,7 @@ class FieldInput extends InputManager {
 		var playerHeld:Bool = (held || sustain.regrabTimer > 0);
 		var heldKey:Bool = (!strumline.ai && playerHeld) || (strumline.ai && sustain.adjustedTime <= clock.time);
 
-		final regrabLimit:Float = sustain.isRoll ? 0.25 : Judgement.max.window / 1000;
+		final regrabLimit:Float = sustain.isRoll ? Constants.rollRegrabWindow : Constants.holdRegrabWindow;
 
 		if (sustain.regrabTimer < regrabLimit && held && !strumline.ai) { // regrab logic would never happen in botplay
 			receptor.glow('standard');
@@ -293,10 +294,10 @@ class FieldInput extends InputManager {
 	}
 
 	/**
-	* Automatically plays a specific note.
-	* @param strumline The strumline connected to the note.
-	* @param note The note to be played.
-	**/
+	Automatically plays a specific note.
+	@param strumline The strumline connected to the note.
+	@param note The note to be played.
+	*/
 	override function autoplay(strumline:Strumline, note:Note) {
 		if (!note.behavior.normalized || note.adjustedTime - clock.time > 0) return;
 

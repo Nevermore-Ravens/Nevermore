@@ -16,28 +16,28 @@ import nevermore.backend.memory.Memory;
 #end
 
 /**
-* Displays info about the game/Nevermore,
-* like app/garbage collector memory and framerate.
-*
-* By pressing F5, you can also see additional info
-* about Nevermore, like Git history.
-**/
+Displays info about the game/Nevermore,
+like app/garbage collector memory and framerate.
+
+By pressing F5, you can also see additional info
+about Nevermore, like Git history.
+*/
 class InfoCounter extends Sprite {
 	/**
-	* The rate at which this counter updates, in milliseconds.
-	**/
-	public static var pollingRate:Float = 1000;
+	The rate at which this counter updates, in milliseconds.
+	*/
+	public static var pollingRate:Float = Constants.MS_PER_SEC;
 	
 	/**
-	* The font this counter will use.
-	* If you're using your own font, set this before making the counter.
-	**/
+	The font this counter will use.  
+	If you're using your own font, set this before making the counter.
+	*/
 	public static var font:String = 'nevermore/fonts/Nunito-Medium.ttf';
 
 	/**
-	* The amount of memory in bytes that has not been cleared
-	* by the application's garbage collector.
-	**/
+	The amount of memory in bytes that has not been cleared
+	by the application's garbage collector.
+	*/
 	var gcMemory(get, never):Float;
 	function get_gcMemory():Float {
 		#if hl
@@ -50,8 +50,8 @@ class InfoCounter extends Sprite {
 	}
 
 	/**
-	* The amount of memory in bytes that is in use by the application.
-	**/
+	The amount of memory in bytes that is in use by the application.
+	*/
 	var appMemory(get, never):Float;
 	function get_appMemory():Float {
 		#if hl
@@ -64,16 +64,16 @@ class InfoCounter extends Sprite {
 	}
 
 	/**
-	* The main section of the counter.
-	* This displays framerate and memory information.
-	**/
+	The main section of the counter.  
+	This displays framerate and memory information.
+	*/
 	var main:InfoContainer;
 
 	/**
-	* Extra section of the counter.
-	* This displays info about Nevermore, and
-	* can be turned on or off by pressing F5 on your keyboard.
-	**/
+	Extra section of the counter.  
+	This displays info about Nevermore, and
+	can be turned on or off by pressing F5 on your keyboard.
+	*/
 	var extra:InfoContainer;
 
 	public function new() {
@@ -140,7 +140,7 @@ class InfoCounter extends Sprite {
 		_frameTime += delta;
 		_time += delta;
 
-		if (_frameTime >= 1000) {
+		if (_frameTime >= Constants.MS_PER_SEC) {
 			framerate = _framerate;
 			_frameTime = _framerate = 0;
 		}

@@ -7,13 +7,13 @@ import nevermore.modchart.ModchartManager;
 import nevermore.core.Chart;
 
 /**
-* A class that handles the general gameplay of a rhythm game.
-* Offers the essentials to make your own notefield, if need be.
-**/
+A class that handles the general gameplay of a rhythm game.  
+Offers the essentials to make your own notefield, if need be.
+*/
 class BaseField extends FlxSpriteGroup {
 	/**
-	* The song clock for this field.
-	**/
+	The song clock for this field.
+	*/
 	public var clock(get, default):BaseClock;
 	function get_clock():BaseClock {
 		clock ??= Conductor.clock;
@@ -21,8 +21,8 @@ class BaseField extends FlxSpriteGroup {
 	}
 
 	/**
-	* The amount of keys this field will be using.
-	**/
+	The amount of keys this field will be using.
+	*/
 	public var keyCount(default, set):Int = 4;
 	function set_keyCount(v:Int):Int {
 		keyCount = v;
@@ -31,83 +31,83 @@ class BaseField extends FlxSpriteGroup {
 	}
 
 	/**
-	* Works like `FlxState.persistentUpdate` in the context for inputs.
-	**/
+	Works like `FlxState.persistentUpdate` in the context for inputs.
+	*/
 	public var persistentUpdate:Bool = false;
 
 	/**
-	* The note count per each strumline, from left to right.
-	**/
+	The note count per each strumline, from left to right.
+	*/
 	public var noteCount:Array<Int> = [];
 
 	/**
-	* The player's ID for a specific strumline.
-	**/
+	The player's ID for a specific strumline.
+	*/
 	public var playerID(default, set):Int = 0;
 	function set_playerID(v:Int):Int {
 		return playerID = v;
 	}
 
 	/**
-	* The scroll speed for this field.
-	**/
+	The scroll speed for this field.
+	*/
 	public var scrollSpeed(default, set):Float;
 	function set_scrollSpeed(v:Float):Float {
 		return scrollSpeed = v;
 	}
 
 	/**
-	* The scroll direction for this field.
-	**/
+	The scroll direction for this field.
+	*/
 	public var scrollDirection(default, set):ScrollDirection;
 	function set_scrollDirection(v:ScrollDirection):ScrollDirection {
 		return scrollDirection = v;
 	}
 
 	/**
-	* Whether this field will play by itself or not.
-	**/
+	Whether this field will play by itself or not.
+	*/
 	public var autoplay(default, set):Bool = false;
 	function set_autoplay(v:Bool):Bool {
 		return autoplay = v;
 	}
 
 	/**
-	* Whether this field will try rendering scroll velocities.
-	**/
+	Whether this field will try rendering scroll velocities.
+	*/
 	public var scrollVelocities:Bool = true;
 
 	/**
-	* Handles note spawning callbacks for this field.
-	**/
+	Handles note spawning callbacks for this field.
+	*/
 	public var spawner:NoteSpawner;
 
 	/**
-	* This field's modchart.
-	* If this is null, it will use normal HaxeFlixel rendering.
-	**/
+	This field's modchart.  
+	If this is null, it will use normal HaxeFlixel rendering.
+	*/
 	#if !NEVERMORE_NO_MODCHARTS
 	public var modchart:ModchartManager;
 	#end
 
 	/**
-	* The input system for this field.
-	* Initialize this for making your own input system.
-	**/
+	The input system for this field.  
+	Initialize this for making your own input system.
+	*/
 	public var input:InputManager;
 
 	/**
-	* Gets a strumline instance.
-	* @param id The ID for the wanted strumline.
-	* @return The corresponding strumline.
-	**/
+	Gets a strumline instance.
+	@param id The ID for the wanted strumline.
+	@return The corresponding strumline.
+	*/
 	public function getStrumline(id:Int):Strumline {
 		return null;
 	}
 
 	/**
-	* The list of notes used for this field, from the chart file.
-	**/
+	The list of notes used for this field, from the chart file.
+	*/
 	public var unspawnedNotes(get, never):Array<NoteData>;
 	function get_unspawnedNotes():Array<NoteData> return spawner.list;
 
@@ -148,11 +148,11 @@ class BaseField extends FlxSpriteGroup {
 	}
 
 	/**
-	* Loads a chart into the field.
-	* @param chart The chart instance to load.
-	* @param modifiers Any custom modifiers to use for this field.
-	* (see `play/Modifiers`)
-	**/
+	Loads a chart into the field.
+	@param chart The chart instance to load.
+	@param modifiers Any custom modifiers to use for this field.
+	(see `play/Modifiers`)
+	*/
 	public function load(chart:Chart, ?modifiers:Modifiers) {
 		modifiers ??= {};
 		if (chart.scrollVelocities.length <= 1) {
@@ -182,10 +182,10 @@ class BaseField extends FlxSpriteGroup {
 	}
 
 	/**
-	* Applies modifiers to a given chart.
-	* @param chart The chart to modify.
-	* @param modifiers The modifiers to be used.
-	**/
+	Applies modifiers to a given chart.
+	@param chart The chart to modify.
+	@param modifiers The modifiers to be used.
+	*/
 	function applyModifiers(chart:Chart, modifiers:Modifiers) {
 		var keySeq = [for (i in 0...keyCount) i];
 		if (modifiers.mirroredNotes) keySeq.reverse();
@@ -209,14 +209,14 @@ class BaseField extends FlxSpriteGroup {
 	function noteSpawned(data:NoteData) {}
 
 	/**
-	* Is called whenever an action was pressed.
-	* Add this to `input.onPress`.
-	**/
+	Is called whenever an action was pressed.  
+	Add this to `input.onPress`.
+	*/
 	function pressed(id:Int, direction:Int) {}
 
 	/**
-	* Is called whenever an action was released.
-	* Add this to `input.onRelease`.
-	**/
+	Is called whenever an action was released.  
+	Add this to `input.onRelease`.
+	*/
 	function released(id:Int, direction:Int) {}
 }

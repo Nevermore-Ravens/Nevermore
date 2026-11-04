@@ -5,28 +5,28 @@ import flixel.FlxCamera;
 import nevermore.play.note.*;
 
 /**
-* A gameplay field containing notes, sustains, inputs, and modchart rendering.
-* Use this for either adding custom functionality, or for making your gameplay state.
-**/
+A gameplay field containing notes, sustains, inputs, and modchart rendering.
+Use this for either adding custom functionality, or for making your gameplay state.
+*/
 class NoteField extends BaseField {
 	/**
-	* The strumline background for this notefield.
-	**/
+	The strumline background for this notefield.
+	*/
 	public var background:FieldBackground;
 
 	/**
-	* The group of sustains to be rendered/updated.
-	**/
+	The group of sustains to be rendered/updated.
+	*/
 	public var sustains:FlxTypedSpriteGroup<Sustain>;
 
 	/**
-	* The group of strumlines to render.
-	**/
+	The group of strumlines to render.
+	*/
 	public var strumlines:FlxTypedSpriteGroup<Strumline>;
 
 	/**
-	* The group of notes to be rendered/updated.
-	**/
+	The group of notes to be rendered/updated.
+	*/
 	public var notes:FlxTypedSpriteGroup<Note>;
 
 	// whether the game will allow you to write sustain inputs like osu!mania or quaver
@@ -35,55 +35,55 @@ class NoteField extends BaseField {
 	public var releaseTimings:Bool = false;
 
 	/**
-	* Callback for when a note on either strumline was hit.
-	* @param strumline The corresponding strumline.
-	* @param note The note that was hit.
-	**/
+	Callback for when a note on either strumline was hit.
+	@param strumline The corresponding strumline.
+	@param note The note that was hit.
+	*/
 	public dynamic function noteHit(strumline:Strumline, note:Note):Void {}
 
 	/**
-	* Callback for when a note was missed.
-	* @param strumline The corresponding strumline.
-	* @param note The note that was missed.
-	**/
+	Callback for when a note was missed.
+	@param strumline The corresponding strumline.
+	@param note The note that was missed.
+	*/
 	public dynamic function noteMissed(strumline:Strumline, note:Note):Void {}
 
 	/**
-	* Callback for when a sustain on either strumline was "hit".
-	* "Hit" is usually dependent on how the input system handles holds,
-	* but usually means every tick that the hold is held.
-	* @param strumline The corresponding strumline.
-	* @param note The sustain that was hit.
-	* @param mostRecent If this sustain was the most recent one to have been hit.
-	**/
+	Callback for when a sustain on either strumline was "hit".  
+	"Hit" is usually dependent on how the input system handles holds,
+	but usually means every tick that the hold is held.
+	@param strumline The corresponding strumline.
+	@param note The sustain that was hit.
+	@param mostRecent If this sustain was the most recent one to have been hit.
+	*/
 	public dynamic function sustainHit(strumline:Strumline, sustain:Sustain, mostRecent:Bool):Void {}
 
 	/**
-	* Callback for when a sustain on either strumline was finished/held all the way through.
-	* @param strumline The corresponding strumline.
-	* @param sustain The sustain that was finished.
-	* @param deviation The deviation at which the strumline was released.
-	* Useful for recreating release timing judgements.
-	**/
+	Callback for when a sustain on either strumline was finished/held all the way through.
+	@param strumline The corresponding strumline.
+	@param sustain The sustain that was finished.
+	@param deviation The deviation at which the strumline was released.
+	Useful for recreating release timing judgements.
+	*/
 	public dynamic function sustainFinished(strumline:Strumline, sustain:Sustain, deviation:Float):Void {}
 
 	/**
-	* Callback for when a sustain was dropped, not missed entirely.
-	* @param strumline The corresponding strumline.
-	* @param sustain The sustain that was dropped.
-	**/
+	Callback for when a sustain was dropped, not missed entirely.
+	@param strumline The corresponding strumline.
+	@param sustain The sustain that was dropped.
+	*/
 	public dynamic function sustainDropped(strumline:Strumline, sustain:Sustain):Void {}
 
 	/**
-	* Callback for when a tap was registered, but no note was detected/hit.
-	* @param strumline The corresponding strumline.
-	* @param dir The direction of the input, ranging from 0 to the key count.
-	**/
+	Callback for when a tap was registered, but no note was detected/hit.
+	@param strumline The corresponding strumline.
+	@param dir The direction of the input, ranging from 0 to the key count.
+	*/
 	public dynamic function ghostTap(strumline:Strumline, dir:Int):Void {}
 
 	/**
-	* A pointer to the instance to the main player's strumline.
-	**/
+	A pointer to the instance to the main player's strumline.
+	*/
 	public var player:Strumline;
 
 	override function set_playerID(v:Int):Int {
@@ -110,10 +110,10 @@ class NoteField extends BaseField {
 	}
 
 	/**
-	* Whether multiple people can play at once.
-	* Intended for gamepad use only, since you can only have
-	* one keyboard plugged in at a time.
-	**/
+	Whether multiple people can play at once.  
+	Intended for gamepad use only, since you can only have
+	one keyboard plugged in at a time.
+	*/
 	public var multiplayer(default, set):Bool = false;
 
 	function set_multiplayer(v:Bool):Bool {
@@ -149,9 +149,9 @@ class NoteField extends BaseField {
 	}
 
 	/**
-	* Whether a sound will play every time you're supposed to hit a note.
-	* Can help with mental sync, or trying to sync up a chart properly.
-	**/
+	Whether a sound will play every time you're supposed to hit a note.  
+	Can help with mental sync, or trying to sync up a chart properly.
+	*/
 	public var assistTicks:Bool = false;
 	public var tickSound:FlxSound;
 
@@ -165,12 +165,12 @@ class NoteField extends BaseField {
 	}
 
 	/**
-	* Initializes a new note field.
-	* @param lines The strumlines to use for this notefield.
-	* @param playerID The ID that the player will be playing,
-	* with is corresponding strumline.
-	* @return This new notefield instance.
-	**/
+	Initializes a new note field.
+	@param lines The strumlines to use for this notefield.
+	@param playerID The ID that the player will be playing,
+	with its corresponding strumline.
+	@return This new notefield instance.
+	*/
 	public function new(?lines:Array<Strumline>, ?playerID:Int = 0) {
 		background = new FieldBackground(lines);
 		background.alpha = 0; // this should probably be off by default ???
@@ -208,9 +208,9 @@ class NoteField extends BaseField {
 	}
 
 	/**
-	* The amount of milliseconds the game will take after a note goes
-	* past the strumline to stop rendering the note.
-	**/
+	The amount of milliseconds the game will take after a note goes
+	past the strumline to stop rendering the note.
+	*/
 	var killDelay:Float = 300;
 	override function update(delta:Float) {
 		super.update(delta);
@@ -304,12 +304,12 @@ class NoteField extends BaseField {
 	}
 
 	/**
-	* Recycles a note object belonging to a specific group.
-	* @param data The corresponding data.
-	* @param group The group to be recycled from.
-	* @param cls The note class to be recycling.
-	* @return The newly recycled note object.
-	**/
+	Recycles a note object belonging to a specific group.
+	@param data The corresponding data.
+	@param group The group to be recycled from.
+	@param cls The note class to be recycling.
+	@return The newly recycled note object.
+	*/
 	function addNote<T:Note>(data:NoteData, group:FlxTypedSpriteGroup<T>, cls:Class<T>):T {
 		var obj:T = group.recycle(cls);
 		group.remove(obj, true); // keep ordering
@@ -391,7 +391,7 @@ class NoteField extends BaseField {
 
 	#if !NEVERMORE_NO_MODCHARTS	
 	var queueFramerate:Float = Nevermore.settings.notefieldFramerate;
-	var queueTimer:Float = 1000; // Force draw on first frame
+	var queueTimer:Float = Constants.MS_PER_SEC; // Force draw on first frame
 	
 	override function draw():Void {
 		if (modchart == null) {

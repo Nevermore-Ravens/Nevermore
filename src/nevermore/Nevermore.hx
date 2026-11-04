@@ -19,27 +19,27 @@ enum abstract ScrollDirection(String) from String to String {
 @:publicFields
 class NevermoreSettings {
 	/**
-	 * Shifts the time of all notes forward or backward.
-	 * Moves where a hit is considered 0 milliseconds, relative to the audio.
-	 * Lower values mean notes will spawn earlier, so you have to hit earlier, and vice versa.
-	**/
+	Shifts the time of all notes forward or backward.  
+	Moves where a hit is considered 0 milliseconds, relative to the audio.  
+	Lower values mean notes will spawn earlier, so you have to hit earlier, and vice versa.
+	*/
 	var inputOffset:Float = 0;
 
 	/**
-	 * Otherwise known as moving the "judgement line".
-	 * Moves where a hit is considered 0 milliseconds relative to the receptors, and not the audio.
-	 * Lower values moves the line to be "after" the receptors.
-	**/                                     
+	Otherwise known as moving the "judgement line".  
+	Moves where a hit is considered 0 milliseconds relative to the receptors, and not the audio.  
+	Lower values moves the line to be "after" the receptors.
+	*/                                     
 	var visualOffset:Float = 0;
 
 	/**
-	 * The delay in the audio driver itself.
-	 * When audio is played, it doesn't play *exactly* when it should,
-	 * resulting in it playing a couple milliseconds later.
-	 * This causes the time of the sound object being slightly behind
-	 * than where the actual sound position is.
-	 * This variable accounts for that.
-	**/
+	The delay in the audio driver itself.  
+	When audio is played, it doesn't play *exactly* when it should,
+	resulting in it playing a couple milliseconds later.  
+	This causes the time of the sound object being slightly behind
+	than where the actual sound position is.  
+	This variable accounts for that.
+	*/
 
 	// TODO (maybe):
 	// this variable doesn't actually do shit lol
@@ -50,70 +50,70 @@ class NevermoreSettings {
 
 	#if !NEVERMORE_NO_QUANTIZATION
 	/**
-	 * Changes note colours to resemble what beat they are snapped at.
-	 * Uses StepMania's noteskin colours by default.
-	 * (see core/NoteColor.hx)
-	**/
+	Changes note colours to have custom luminosity.
+	For quants, Nevermore uses StepMania's noteskin colours by default.
+	(see core/NoteColor.hx)
+	*/
 	var quantization:Bool = false;
 	#end
 
 	/**
-	 * How many times the game will compress sustain vertices.
-	 * Higher values will stretch the hold graphic for more performance.
-	 * Recommended to be at lower values if you're playing modcharts,
-	 * but otherwise higher values for casual play.
-	**/
+	How many times the game will compress sustain vertices.  
+	Higher values will stretch the hold graphic for more performance.  
+	Recommended to be at lower values if you're playing modcharts,
+	but otherwise higher values for casual play.
+	*/
 	var holdGrain:Int = 5;
 
 	/**
-	* How many times note fields will render per second.
-	* Setting this to your monitor's refresh rate (or double) is recommended.
-	**/
+	How many times note fields will render per second.  
+	Setting this to your monitor's refresh rate (or double) is recommended.
+	*/
 	var notefieldFramerate = 60;
 }
 
 class Nevermore {
 	/**
-	* The current version of Nevermore.
-	**/
+	The current version of Nevermore.
+	*/
 	public static final version:String = '1.0.0';
 
 	/**
-	* The current modifiable settings of Nevermore.
-	**/
+	The current modifiable settings of Nevermore.
+	*/
 	public static var settings:NevermoreSettings = null;
 	
 	/**
-	* Whether the game can be considered "paused".
-	* Used for note field inputs.
-	*
-	* (why does flixel not have a variable for this)
-	**/
+	Whether the game can be considered "paused".  
+	Used for note field inputs.
+
+	(why does flixel not have a variable for this)
+	*/
 	public static var paused(get, never):Bool;
 	static function get_paused():Bool {
 		return !FlxG.state.persistentUpdate && FlxG.state.subState != null;
 	}
 
 	/**
-	* If Nevermore was initialized or not.
-	**/
+	If Nevermore was initialized or not.
+	*/
 	public static var initialized:Bool = false;
 
 	/**
-	* The current commit that Nevermore is on.
-	**/
+	The current commit that Nevermore is on.
+	*/
 	public static var commit(get, never):Commit;
 	static function get_commit():Commit return Git.commit;
 
 	/**
-	* The current branch that Nevermore is on.
-	**/
+	The current branch that Nevermore is on.
+	*/
 	public static var branch(get, never):String;
 	static function get_branch():String return Git.branch;
 
 	/**
-	* Initializes Nevermore.
-	**/
+	Initializes Nevermore.
+	*/
 	public static function init() {
 		if (initialized) return;
 		initialized = true;

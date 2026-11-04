@@ -3,11 +3,11 @@ package nevermore.skins;
 import nevermore.play.Note;
 
 /**
-	Not actually a instance of Noteskin but instead a loader for basic/sparrow only noteskins.
-**/
+Not actually a instance of Noteskin but instead a loader for basic/sparrow only noteskins.
+*/
 class BasicNoteskin {
 	/**
-	* The scale to use basic noteskin creation.
+	The scale to use basic noteskin creation.
 	*/
 	public static var scale:Float = 0.7;
 
@@ -35,11 +35,11 @@ class BasicNoteskin {
 	];
 
 	/**
-	* Loads a skin using only a sparrow atlas.
-	*
-	* @param key Which sparrow atlas to load.
-	* @param keyCount Which keyCount this is meant for. Will determine the animation list.
-	* @param luminized Whether this is using a luminized varient.
+	Loads a skin using only a sparrow atlas.
+
+	@param key Which sparrow atlas to load.
+	@param keyCount Which keyCount this is meant for. Will determine the animation list.
+	@param luminized Whether this is using a luminized varient.
 	*/
 	public static function create(key:String, keyCount:Int, luminized:Bool) {
 		var directions = [for (idx in directionList[keyCount - 1]) Note.directions[idx]];
