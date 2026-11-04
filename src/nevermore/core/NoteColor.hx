@@ -44,9 +44,9 @@ class NoteColor {
 	For example:
 
 	* StepMania - "Default"
+	* FFR - "Default"
 	* StepMania (3.9) - "Note" (3.9 has a default noteskin but it's not snapped, just randomly changing colours)
 	* (Not)In The Groove - "Cel" / "Metal" (both use the same colours)
-	* NotITG - "Cel"
 	* Etterna - "ByZero" Series
 	* ...
 	**/
@@ -65,6 +65,7 @@ class NoteColor {
 			GRAY     // 192nd
 		],
 
+		// looking for this if you want arrowvortex/quaver arrow colours
 		'StepMania (3.9)' => [
 			RED,     // 4th
 			BLUE,    // 8th
@@ -94,34 +95,31 @@ class NoteColor {
 		],
 
 		'In The Groove' => [
-			RED, // 4th
-			BLUE, // 8th
-			PURPLE, // 12th
-			GREEN, // 16th
+			RED, 		// 4th
+			BLUE, 		// 8th
+			PURPLE, 	// 12th
+			GREEN, 		// 16th
 			GREEN_CYAN, // 20th
-			PURPLE, // 24th
-			YELLOW, // 32nd
-			PURPLE, // 48th
+			PURPLE, 	// 24th
+			YELLOW, 	// 32nd
+			PURPLE, 	// 48th
 			GREEN_CYAN, // 64th
 			GREEN_CYAN, // 96th
-			GREEN_CYAN, // 192nd
-
+			GREEN_CYAN  // 192nd
 		],
 
-		// these probably aren't accurate ????
-		// i tried the best i could
 		'Flash Flash Revolution' => [
-			RED,
-			RED,
-			PURPLE,
-			BLUE,
-			WHITE,
-			PINK,
-			YELLOW,
-			ORANGE,
-			GREEN,
-			WHITE,
-			WHITE
+			RED,    // 4th
+			RED,    // 8th
+			PURPLE, // 12th
+			BLUE,   // 16th
+			WHITE,  // 20th
+			PURPLE, // 24th
+			YELLOW, // 32nd
+			PINK,   // 48th
+			ORANGE, // 64th
+			WHITE,  // 96th
+			WHITE   // 192nd
 		],
 
 		'Custom' => [
