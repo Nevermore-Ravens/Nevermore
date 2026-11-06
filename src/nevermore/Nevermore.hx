@@ -166,7 +166,7 @@ class Nevermore {
 		Sys.println('Initialized controls.');
 
 		HitWindows.reset(config.hitWindows);
-		Sys.println('Initialized hit windows "${config.hitWindows}"');
+		Sys.println('Initialized hit windows "${config.hitWindows}".');
 
 		Judgement.reset(config.judgements);
 		Sys.println('Initialized judgements "${config.judgements}".');
