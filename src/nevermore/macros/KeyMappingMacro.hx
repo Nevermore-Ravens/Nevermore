@@ -1,4 +1,4 @@
-package nevermore.input;
+package nevermore.macros;
 
 import haxe.macro.Context;
 
