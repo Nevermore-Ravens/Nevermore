@@ -99,8 +99,4 @@ class HitWindows {
 		current = list[v];
 		return type = v;
 	}
-
-	public static function reset(type:String) {
-		HitWindows.type = type;
-	}
 }

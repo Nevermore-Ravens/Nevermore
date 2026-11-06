@@ -53,13 +53,6 @@ class Judgement {
 	}
 
 	/**
-	Resets the amount of times the current set of judgements have been hit.
-	*/
-	public static function resetHits() {
-		for (judge in current) judge.hits = 0;
-	}
-
-	/**
 	The tightest judgement available for the current list of judgements.  
 	(in StepMania context, Flawless)
 	*/
@@ -87,7 +80,7 @@ class Judgement {
 	}
 
 	/**
-	Resets the judgement system.
+	Resets the judgement system, and automatically re-applies the hit windows.
 	@param judges The default judgements to use.
 	*/
 	public static function reset(judges:String) {
@@ -101,8 +94,17 @@ class Judgement {
 	*/
 	public static function resetWindows() {
 		for (i => judge in current) {
+			if (i >= HitWindows.current.length) break;
+
 			judge.window = HitWindows.current[i];
 		}
+	}
+
+	/**
+	Resets the amount of times the current set of judgements have been hit.
+	*/
+	public static function resetHits() {
+		for (judge in current) judge.hits = 0;
 	}
 
 	/**

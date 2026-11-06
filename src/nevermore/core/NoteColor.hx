@@ -157,7 +157,7 @@ class NoteColor {
 	/**
 	The name of the current quantization list being used.
 	*/
-	static var quantType(default, set):QuantType;
+	public static var quantType(default, set):QuantType;
 	static function set_quantType(v:QuantType):QuantType {
 		currentQuants = quantList[v];
 		return quantType = v;
@@ -166,7 +166,7 @@ class NoteColor {
 	/**
 	The name of the current lane colour list being used.
 	*/
-	static var type(default, set):ColorType;
+	public static var type(default, set):ColorType;
 	static function set_type(v:ColorType):ColorType {
 		current = list[v];
 		return type = v;
@@ -181,16 +181,6 @@ class NoteColor {
 	The list of the current lane colours being used.
 	*/
 	public static var current:Array<Int>;
-
-	/**
-	Resets the colours back to default.
-	@param quants The default quantization colours.
-	@param lanes The defaule lane colours.
-	**/
-	public static function reset(quants:String, lanes:String) {
-		quantType = quants;
-		type = lanes;
-	}
 
 	/**
 	Returns the corresponding colour based on a given note.

@@ -157,27 +157,29 @@ class Nevermore {
 		Sys.println('');
 
 		Assets.init(config.assets);
-		Sys.println('Initialized assets folder "${config.assets}".');
+		Sys.println('Linked the assets folder "${config.assets}".');
 
 		FlxG.plugins.add(new Conductor());
-		Sys.println('Initialized the conductor.');
+		Sys.println('Started the conductor/head clock.');
 
 		Controls.init();
-		Sys.println('Initialized controls.');
+		Sys.println('Initialized inputs.');
 
-		HitWindows.reset(config.hitWindows);
-		Sys.println('Initialized hit windows "${config.hitWindows}".');
+		HitWindows.type = config.hitWindows;
+		Sys.println('Using "${config.hitWindows}" hit windows.');
 
 		Judgement.reset(config.judgements);
-		Sys.println('Initialized judgements "${config.judgements}".');
+		Sys.println('Using "${config.judgements}" judgements.');
 
-		NoteColor.reset(config.quants, config.laneColors);
-		Sys.println('Initialized note colors, using "${config.quants}" quants and "${config.laneColors}" lanes.');
+		NoteColor.quantType = config.quants;
+		Sys.println('Using "${config.quants}" quantization colors.');
+		NoteColor.type = config.laneColors;
+		Sys.println('Using "${config.laneColors}" lane colors.');
 
 		NoteBehavior.register('Fake', FakeBehavior);
 		NoteBehavior.register('Mine', MineBehavior);
 		NoteBehavior.register('Roll', RollBehavior);
-		Sys.println('Added note behaviors: ${NoteBehavior._list}');
+		Sys.println('Registered note behaviors: ${NoteBehavior._list}');
 
 		NoteskinSection.register('grid', GridSection);
 
