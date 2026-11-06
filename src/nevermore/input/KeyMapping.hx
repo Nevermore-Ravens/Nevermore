@@ -2,6 +2,7 @@ package nevermore.input;
 
 import lime.ui.KeyCode;
 import openfl.ui.Keyboard;
+import nevermore.macros.KeyMappingMacro;
 
 /**
  * Conversion utilities for `KeyCode`s, and `Keyboard`s/`FlxKey`s.
