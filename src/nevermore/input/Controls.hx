@@ -21,40 +21,32 @@ class Controls {
 	The connected instance for keyboard bindings.
 	*/
 	public static var keyboard:Input = new Input([
-		0 => [KeyCode.A, KeyCode.LEFT],
-		1 => [KeyCode.S, KeyCode.DOWN],
-		2 => [KeyCode.SEMICOLON, KeyCode.UP],
-		3 => [KeyCode.SINGLE_QUOTE, KeyCode.RIGHT],
+		0 => [KeyCode.D, KeyCode.LEFT],
+		1 => [KeyCode.F, KeyCode.DOWN],
+		2 => [KeyCode.J, KeyCode.UP],
+		3 => [KeyCode.K, KeyCode.RIGHT],
 
 		4 => [KeyCode.SPACE],
-		5 => [KeyCode.S],
-		6 => [KeyCode.D],
-		7 => [KeyCode.F],
-		8 => [KeyCode.J],
-		9 => [KeyCode.K],
-		10 => [KeyCode.L],
 
-		11 => [KeyCode.A],
-		12 => [KeyCode.S],
-		13 => [KeyCode.D],
-		14 => [KeyCode.F],
-		15 => [KeyCode.H],
-		16 => [KeyCode.J],
-		17 => [KeyCode.K],
-		18 => [KeyCode.L],
-
-		19 => [KeyCode.F],
-		20 => [KeyCode.J],
+		5 => [KeyCode.D],
+		6 => [KeyCode.F],
+		7 => [KeyCode.J],
+		8 => [KeyCode.K],
+		
+		9 => [KeyCode.A],
+		10 => [KeyCode.S],
+		11 => [KeyCode.L],
+		12 => [KeyCode.H],
 	], [
 		[4],
-		[19,20],
-		[19,4,20],
-		[0,1,2,3],
-		[0,1,4,2,3],
-		[5,6,7,8,9,10],
-		[5,6,7,4,8,9,10],
-		[11,12,13,14,15,16,17,18],
-		[11,12,13,14,4,15,16,17,18]
+		[6, 7],
+		[6, 4, 7],
+		[0, 1, 2, 3],
+		[0, 1, 4, 2, 3],
+		[10, 5, 6, 7, 8, 11],
+		[10, 5, 6, 4, 7, 8, 11],
+		[9, 10, 5, 6, 12, 7, 8, 11],
+		[9, 10, 5, 6, 4, 12, 7, 8, 11]
 	]);
 
 	/**
@@ -69,34 +61,23 @@ class Controls {
 
 		5 => [GamepadButton.DPAD_LEFT],
 		6 => [GamepadButton.DPAD_DOWN],
-		7 => [GamepadButton.DPAD_RIGHT],
+		7 => [GamepadButton.DPAD_UP],
+		8 => [GamepadButton.DPAD_RIGHT],
 
-		8 => [GamepadButton.X],
-		9 => [GamepadButton.Y],
-		10 => [GamepadButton.B],
-
-		11 => [GamepadButton.DPAD_LEFT],
-		12 => [GamepadButton.DPAD_DOWN],
-		13 => [GamepadButton.DPAD_UP],
-		14 => [GamepadButton.DPAD_RIGHT],
-
-		15 => [GamepadButton.X],
-		16 => [GamepadButton.A],
-		17 => [GamepadButton.Y],
-		18 => [GamepadButton.B],
-
-		19 => [GamepadButton.DPAD_LEFT],
-		20 => [GamepadButton.B],
+		9 => [GamepadButton.X],
+		10 => [GamepadButton.A],
+		11 => [GamepadButton.Y],
+		12 => [GamepadButton.B],
 	], [
 		[4],
-		[19,20],
-		[19,4,20],
-		[0,1,2,3],
-		[0,1,4,2,3],
-		[5,6,7,8,9,10],
-		[5,6,7,4,8,9,10],
-		[11,12,13,14,15,16,17,18],
-		[11,12,13,14,4,15,16,17,18]
+		[5, 12],
+		[5, 4, 12],
+		[0, 1, 2, 3],
+		[0, 1, 4, 2, 3],
+		[5, 6, 8, 9, 11, 12],
+		[5, 6, 8, 4, 9, 11, 12],
+		[5, 6, 7, 8, 9, 10, 11, 12],
+		[5, 6, 7, 8, 4, 9, 10, 11, 12]
 	]);
 
 	/**
