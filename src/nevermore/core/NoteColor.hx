@@ -29,7 +29,6 @@ class NoteColor {
 	public static final TEAL:Color = 0xFF00EDFF;
 	public static final GREEN:Color = 0xFF3FFF3F;
 	public static final GREEN_CYAN:Color = 0xFF2AFEB7;
-	public static final LIME:Color = 0xFFA5E123;
 	public static final WHITE:Color = 0xFFFFFFFF;
 	public static final GRAY:Color = 0xFF878787;
 
@@ -138,8 +137,8 @@ class NoteColor {
 	];
 
 	/**
-	* A list of custom lane colours that are able to be used.
-	**/
+	A list of custom lane colours that are able to be used.
+	*/
 	public static var list:Map<String, Array<Int>> = [
 		'Custom' => [
 			0xFFFFFFFF,
@@ -150,14 +149,14 @@ class NoteColor {
 	];
 
 	/**
-	* Whether colouring will be based on what lane the note is in, or 
-	* what snap the note is in; relative to the note's time.
-	**/
-	public static var bySnap:Bool = true;
+	Whether colouring will be based on what lane the note is in, or 
+	what snap the note is in; relative to the note's time.
+	*/
+	public static var bySnap:Bool = false;
 
 	/**
-	* The name of the current quantization list being used.
-	**/
+	The name of the current quantization list being used.
+	*/
 	static var quantType(default, set):QuantType;
 	static function set_quantType(v:QuantType):QuantType {
 		currentQuants = quantList[v];
@@ -165,8 +164,8 @@ class NoteColor {
 	}
 
 	/**
-	* The name of the current lane colour list being used.
-	**/
+	The name of the current lane colour list being used.
+	*/
 	static var type(default, set):ColorType;
 	static function set_type(v:ColorType):ColorType {
 		current = list[v];
@@ -174,29 +173,31 @@ class NoteColor {
 	}
 
 	/**
-	* The list of the current quants being used.
-	**/
+	The list of the current quants being used.
+	*/
 	public static var currentQuants:Array<Int>;
 
 	/**
-	* The list of the current lane colours being used.
-	**/
+	The list of the current lane colours being used.
+	*/
 	public static var current:Array<Int>;
 
 	/**
-	* Resets the colours back to default.
+	Resets the colours back to default.
+	@param quants The default quantization colours.
+	@param lanes The defaule lane colours.
 	**/
-	public static function reset() {
-		quantType = STEPMANIA;
-		type = CUSTOM;
+	public static function reset(quants:String, lanes:String) {
+		quantType = quants;
+		type = lanes;
 	}
 
 	/**
-	* Returns the corresponding colour based on a given note.
-	* @param note The note to be checking.
-	* @return The colour to be applied. If `note.luminize` is false,
-	* it will return white instead.
-	**/
+	Returns the corresponding colour based on a given note.
+	@param note The note to be checking.
+	@return The colour to be applied. If `note.luminize` is false,
+	it will return white instead.
+	*/
 	public static function get(note:BaseNote):Int {
 		if (!note.luminize) return WHITE;
 

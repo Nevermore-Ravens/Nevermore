@@ -51,7 +51,7 @@ class FieldInput extends InputManager {
 
 			receptor = sustain.strumline.members[sustain.lane];
 
-			sustain.regrabTimer = Constants.rollRegrabWindow;
+			sustain.regrabTimer = Constants.ROLL_REGRAB_WINDOW;
 			parent.sustainHit(sustain.strumline, sustain, true);
 			receptor.glow();
 
@@ -229,7 +229,7 @@ class FieldInput extends InputManager {
 		var playerHeld:Bool = (held || sustain.regrabTimer > 0);
 		var heldKey:Bool = (!strumline.ai && playerHeld) || (strumline.ai && sustain.adjustedTime <= clock.time);
 
-		final regrabLimit:Float = sustain.isRoll ? Constants.rollRegrabWindow : Constants.holdRegrabWindow;
+		final regrabLimit:Float = sustain.isRoll ? Constants.ROLL_REGRAB_WINDOW : Constants.HOLD_REGRAB_WINDOW;
 
 		if (sustain.regrabTimer < regrabLimit && held && !strumline.ai) { // regrab logic would never happen in botplay
 			receptor.glow('standard');

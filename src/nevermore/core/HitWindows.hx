@@ -100,7 +100,7 @@ class HitWindows {
 		return type = v;
 	}
 
-	public static function init() {
-		type = STEPMANIA_J4;
+	public static function reset(type:String) {
+		HitWindows.type = type;
 	}
 }

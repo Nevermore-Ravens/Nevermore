@@ -31,6 +31,7 @@ class NoteBehavior {
 	To write to this, use `register()`.  
 	To read this, use either `getList()` or `get()`.
 	*/
+	@:allow(nevermore.Nevermore)
 	static var _list:Map<String, NoteBehavior> = [];
 
 	public static var base:NoteBehavior = new NoteBehavior();

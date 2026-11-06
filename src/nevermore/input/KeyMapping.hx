@@ -13,7 +13,7 @@ class KeyMapping {
 
 	// DO NOT. MAKE THIS INLINE.
 	// YOU WILL GET A 100K LINE FILE TO COMPILE
-	public static function codeToBoard(code:Int) {
+	public static/* inline */function codeToBoard(code:Int) {
 		@:privateAccess return Keyboard.__convertKeyCode(code);
 	}
 	public static inline function boardToCode(key:Int) {

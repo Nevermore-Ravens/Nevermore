@@ -1,5 +1,9 @@
 package nevermore.core;
 
+enum abstract JudgementType(String) from String to String {
+	var STEPMANIA_5 = 'StepMania';
+}
+
 /**
 A handler for the list of judgements you can get.  
 Can also be used as an instanced object.
@@ -18,7 +22,21 @@ class Judgement {
 	The list of available judgements your game can use/have.  
 	To write to this, use `register()`.
 	*/
-	public static var list:Map<String, Array<Judgement>> = [];
+	public static var list:Map<String, Array<Judgement>> = [
+		'StepMania' => [
+			{name: 'Flawless'},
+			{name: 'Perfect'},
+			{name: 'Great'},
+			{
+				name: 'Good',
+				breaksCombo: true
+			},
+			{
+				name: 'Bad',
+				breaksCombo: true
+			}
+		]
+	];
 
 	/**
 	The current judgements being used.
@@ -64,39 +82,27 @@ class Judgement {
 		if (!list.exists(v)) return type;
 
 		current = list[v];
+		resetWindows();
 		return type = v;
 	}
 
 	/**
-	Initializes the judgement and hit windows system.
+	Resets the judgement system.
+	@param judges The default judgements to use.
 	*/
-	public static function init() {
-		HitWindows.init();
+	public static function reset(judges:String) {
+		type = judges;
+		resetWindows();
+	}
 
-		register('Default', [
-			{
-				name: 'Flawless',
-				window: HitWindows.current[0]
-			},
-			{
-				name: 'Perfect',
-				window: HitWindows.current[1]
-			},
-			{
-				name: 'Great',
-				window: HitWindows.current[2]
-			},
-			{
-				name: 'Good',
-				window: HitWindows.current[3]
-			},
-			{
-				name: 'Bad',
-				breaksCombo: true,
-				window: HitWindows.current[4]
-			}
-		]);
-		type = 'Default';
+	/**
+	Resets the hit windows of this judge set back to normal,
+	relative to what `HitWindows.type` currently is.
+	*/
+	public static function resetWindows() {
+		for (i => judge in current) {
+			judge.window = HitWindows.current[i];
+		}
 	}
 
 	/**

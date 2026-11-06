@@ -15,6 +15,6 @@ class RollBehavior extends NoteBehavior {
 
 		// 250 milliseconds
 		// (same window from stepmania)
-		cast(note, Sustain).regrabTimer = Constants.rollRegrabWindow;
+		cast(note, Sustain).regrabTimer = Constants.ROLL_REGRAB_WINDOW;
 	}
 }

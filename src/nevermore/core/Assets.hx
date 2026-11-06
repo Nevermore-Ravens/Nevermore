@@ -199,13 +199,6 @@ being able to access assets specifically for Nevermore.
 */
 class Assets {
 	/**
-	The root directory that assets will be looked in for.  
-	Change this before calling `Assets.init()`, if you have a
-	different name for your assets.
-	*/
-	public static var rootFolder:String = 'assets';
-
-	/**
 	The main instance for all assets.  
 	Modify/use this for your game, if need be.
 	*/
@@ -224,9 +217,18 @@ class Assets {
 	public static var cache:AssetCache;
 
 	/**
-	Initializes the asset system.
+	Whether the asset system has been initialized or not.
 	*/
-	public static function init() {
+	public static var initialized:Bool = false;
+
+	/**
+	Initializes the asset system.
+	@param rootFolder The root folder for your asset system, relative to the executable.
+	*/
+	public static function init(rootFolder:String) {
+		if (initialized) return;
+		initialized = true;
+
 		cache = new AssetCache();
 
 		main = new AssetHandler(rootFolder);

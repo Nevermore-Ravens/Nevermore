@@ -72,6 +72,35 @@ class NevermoreSettings {
 	var notefieldFramerate = 60;
 }
 
+@:structInit
+@:publicFields
+class NevermoreInitialization {
+	/**
+	The judgements to use for this instance of Nevermore.
+	*/
+	var judgements:String = 'StepMania';
+
+	/**
+	The hit windows to use for this instance of Nevermore.
+	*/
+	var hitWindows:String = 'StepMania J4';
+
+	/**
+	The quantization colours to use for this instance of Nevermore.
+	*/
+	var quants:String = 'StepMania';
+
+	/**
+	The lane colours to use for this instance of Nevermore.
+	*/
+	var laneColors:String = 'Custom';
+
+	/**
+	The root asset folder to use for this instance of Nevermore.
+	*/
+	var assets:String = 'assets';
+}
+
 class Nevermore {
 	/**
 	The current version of Nevermore.
@@ -113,22 +142,42 @@ class Nevermore {
 
 	/**
 	Initializes Nevermore.
+	@param config What type of configurations you want Nevermore to use as a default.
+	Not to be confused with `NevermoreSettings`.
 	*/
-	public static function init() {
+	public static function init(?config:NevermoreInitialization) {
 		if (initialized) return;
 		initialized = true;
 
-		Assets.init();
+		config ??= {};
+		settings = {};
+
+		Sys.println('Starting Nevermore...');
+		Sys.println('Version: $version, commit ${commit.shortHash}');
+		Sys.println('');
+
+		Assets.init(config.assets);
+		Sys.println('Initialized assets folder "${config.assets}".');
 
 		FlxG.plugins.add(new Conductor());
+		Sys.println('Initialized the conductor.');
+
 		Controls.init();
-		Judgement.init();
+		Sys.println('Initialized controls.');
+
+		HitWindows.reset(config.hitWindows);
+		Sys.println('Initialized hit windows "${config.hitWindows}"');
+
+		Judgement.reset(config.judgements);
+		Sys.println('Initialized judgements "${config.judgements}".');
+
+		NoteColor.reset(config.quants, config.laneColors);
+		Sys.println('Initialized note colors, using "${config.quants}" quants and "${config.laneColors}" lanes.');
 
 		NoteBehavior.register('Fake', FakeBehavior);
 		NoteBehavior.register('Mine', MineBehavior);
 		NoteBehavior.register('Roll', RollBehavior);
-
-		NoteColor.reset();
+		Sys.println('Added note behaviors: ${NoteBehavior._list}');
 
 		NoteskinSection.register('grid', GridSection);
 
@@ -141,6 +190,7 @@ class Nevermore {
 			Assets.cache.clearUnused();
 		});
 
-		settings = {};
+		Sys.println('Done!');
+		Sys.println('');
 	}
 }

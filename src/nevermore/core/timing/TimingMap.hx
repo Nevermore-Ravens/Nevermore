@@ -101,7 +101,7 @@ class TimingMap {
 			result = pos / Constants.crotchet(tempo);
 		} else result = getBeat(pos, point ?? getByTime(pos));
 
-		return Math.round(result * Constants.rowsPerBeat);
+		return Math.round(result * Constants.ROWS_PER_BEAT);
 	}
 
 	/**
