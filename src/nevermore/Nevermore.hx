@@ -54,7 +54,7 @@ class NevermoreSettings {
 	For quants, Nevermore uses StepMania's noteskin colours by default.
 	(see core/NoteColor.hx)
 	*/
-	var quantization:Bool = false;
+	var luminize:Bool = false;
 	#end
 
 	/**

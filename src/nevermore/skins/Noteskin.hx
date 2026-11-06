@@ -15,7 +15,7 @@ class Noteskin {
 	}
 
 	public static function get(key:String, ?keyCount:Int, ?quants:Bool = false):Noteskin {
-		quants = Nevermore.settings.quantization && quants; // i may remove this
+		quants = Nevermore.settings.luminize && quants; // i may remove this
 		return cache.get(key, keyCount, quants);
 	}
 

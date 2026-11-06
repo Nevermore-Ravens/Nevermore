@@ -113,7 +113,7 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	Whether this strumline (and its connected objects)
 	are allowed to have custom colouring.
 	*/
-	public var luminize:Bool = Nevermore.settings.quantization;
+	public var luminize:Bool = Nevermore.settings.luminize;
 
 	/**
 	What direction this strumline is scrolling in.
