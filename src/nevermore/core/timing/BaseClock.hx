@@ -3,94 +3,94 @@ package nevermore.core.timing;
 import flixel.util.FlxSignal;
 
 /**
-* A clock instance that acts as a "metronome".
-* It keeps track of what beat the audio is at, along with steps, measures, and what position.
-*
-* Extend this if you're looking to make your own sync.
-**/
+A clock instance that acts as a "metronome".  
+It keeps track of what beat the audio is at, along with steps, measures, and the general position of the song/audio.
+
+Extend this if you're looking to make your own sync.
+*/
 class BaseClock {
 	/**
-	* The audio connected to this clock instance.
-	**/
+	The audio connected to this clock instance.
+	*/
 	public var audio:FlxSound;
 
 	/**
-	* The raw audio position of this clock, in milliseconds.
-	**/
+	The raw audio position of this clock, in milliseconds.
+	*/
 	public var audioTime:Float;
 
 	/**
-	* The audio position of this clock with offset taken into account, in milliseconds.
-	**/
+	The audio position of this clock with offset taken into account, in milliseconds.
+	*/
 	public var songTime:Float;
 
 	/**
-	* The audio position of this clock with offset taken into account, in milliseconds.
-	* Make sure to use this as your sync.
-	**/
+	The audio position of this clock with offset taken into account, in milliseconds.  
+	Make sure to use this as your sync.
+	*/
 	public var time:Float;
 
 	/**
-	* Basically `time`, but it takes scroll velocities into account.
-	* Use this for note visual positions ONLY.
-	**/
+	Basically `time`, but it takes scroll velocities into account.  
+	Use this for note visual positions ONLY.
+	*/
 	public var visualTime:Float;
 
 	/**
-	* The audio offset for this clock.
-	* Negative = Time moves forward.
-	* Positive = Time moves backward.
+	The audio offset for this clock.  
+	Negative = Time moves forward.  
+	Positive = Time moves backward.
 	**/
 	public var offset:Float;
 
 	/**
-	* The timing points for this clock.
-	**/
+	The timing points for this clock.
+	*/
 	public var timingMap:TimingMap;
 
 	/**
-	* The scroll velocities for this clock.
-	**/
+	The scroll velocities for this clock.
+	*/
 	public var velocityMap:VelocityMap;
 
 	/**
-	* Whether this clock is allowed to update or not.
-	**/
+	Whether this clock is allowed to update or not.
+	*/
 	public var active:Bool = true;
 
 	/**
-	* Whether a sound will be played every time a beat is hit or not.
-	**/
+	Whether a sound will be played every time a beat is hit or not.
+	*/
 	public var metronome:Bool = false;
 
 	/**
-	* The current step of the clock.
-	**/
+	The current step of the clock.
+	*/
 	public var step:Float;
 	
 	/**
-	* The current beat of the clock.
-	**/
+	The current beat of the clock.
+	*/
 	public var beat:Float;
 
 	/**
-	* The current measure of the clock.
-	**/
+	The current measure of the clock.
+	*/
 	public var measure:Float;
 
 	/**
-	* A signal that gets dispatched whenever a step is hit.
-	**/
+	A signal that gets dispatched whenever a step is hit.
+	*/
 	public var stepHit:FlxTypedSignal<Int -> Void>;
 
 	/**
-	* A signal that gets dispatched whenever a beat is hit.
-	**/
+	A signal that gets dispatched whenever a beat is hit.
+	*/
 	public var beatHit:FlxTypedSignal<Int -> Void>;
 
 	/**
-	* A signal that gets dispatched whenever a measure is hit.
-	**/
+	A signal that gets dispatched whenever a measure is hit.
+	*/
 	public var measureHit:FlxTypedSignal<Int -> Void>;
 	
 	public function new(?audio:FlxSound) {
@@ -151,9 +151,9 @@ class BaseClock {
 	}
 
 	/**
-	* Resets this clock back to default.
-	* Make sure to run this *after* initialzing.
-	**/
+	Resets this clock back to default.  
+	Make sure to run this *after* initialzing.
+	*/
 	public function reset(?chart:Chart) {
 		chart ??= Song.dummyData();
 
@@ -169,9 +169,10 @@ class BaseClock {
 	public function update(delta:Float) {
 		if (!active) return;
 
-		if (audio == null || !audio.playing) {
-			audioTime += (delta * 1000) * rate;
-		} else {
+		delta *= (rate * Constants.MS_PER_SEC);
+
+		if (audio == null || !audio.playing) audioTime += delta;
+		else {
 			@:privateAccess
 			audioTime = audio._channel.position;
 		}
@@ -245,12 +246,14 @@ class BaseClock {
 	trying to make incrementing work like I wanted it to when I could just set up setting faster.
 
 	Realistically, it depends on what you're doing and what you need it for, especially in the game engine you're developing in.
-	**/
+	*/
 	function updateBeats(pos:Float) {
 		var point:TimingPoint = null;
 		
 		if (timingMap.length > 1) {
 			point = timingMap.getByTime(pos);
+			timingMap.tempo = point.tempo;
+			timingMap.beatsPerMeasure = point.beatsPerMeasure;
 		}
 
 		beat = timingMap.getBeat(pos, point);

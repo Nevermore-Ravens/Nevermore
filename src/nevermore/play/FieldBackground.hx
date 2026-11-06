@@ -3,10 +3,10 @@ package nevermore.play;
 import flixel.group.FlxSpriteGroup;
 
 /**
-* Displays a set of backgrounds under a given set of strumlines.
-* Most communities refer to this as "lane underlays".
-* Both `color` and `alpha` work on this as well, so you can make your own colours.
-**/
+Displays a set of backgrounds under a given set of strumlines.  
+Most communities refer to this as "lane underlays".  
+Both `color` and `alpha` work on this as well, so you can make your own colours.
+*/
 class FieldBackground extends FlxTypedSpriteGroup<Underlay> {
 	public function new(?lines:Array<Strumline>) {
 		super();

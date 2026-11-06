@@ -4,10 +4,10 @@ import nevermore.play.BaseNote;
 
 enum abstract QuantType(String) from String to String {
 	var STEPMANIA = 'StepMania';
+	var STEPMANIA_39 = 'StepMania (3.9)';
 	var ITG = 'In The Groove';
 	var FFR = 'Flash Flash Revolution';
 	var ETTERNA = 'Etterna';
-	var ARROWVORTEX = 'ArrowVortex';
 	var CUSTOM = 'Custom';
 }
 
@@ -16,8 +16,8 @@ enum abstract ColorType(String) from String to String {
 }
 
 /**
-* Contains customization for colouring of notes, by either lanes or snap/quantization.
-**/
+Contains customization for colouring of notes, by either lanes or snap/quantization.
+*/
 class NoteColor {
 	public static final RED:Color = 0xFFFF2B32;
 	public static final BLUE:Color = 0xFF0861FF;
@@ -28,26 +28,28 @@ class NoteColor {
 	public static final ORANGE:Color = 0xFFFF831E;
 	public static final TEAL:Color = 0xFF00EDFF;
 	public static final GREEN:Color = 0xFF3FFF3F;
+	public static final GREEN_CYAN:Color = 0xFF2AFEB7;
 	public static final LIME:Color = 0xFFA5E123;
 	public static final WHITE:Color = 0xFFFFFFFF;
 	public static final GRAY:Color = 0xFF878787;
 
 	/**
-	* A list of quantization types that are able to be used.
+	A list of quantization types that are able to be used.
 
 	NOTE:
 
-	These games don't necessarily *have* a set quantization list.
-	Quants depend on the skin, rather than the game having a hardcoded list (like in this class).
-	The quants you see here is dependent on the corresponding game's default noteskin.
+	These games don't necessarily *have* a set quantization list.  
+	Quants depend on the skin, rather than the game having a hardcoded list (like in this class).  
+	The quants you see here is dependent on the corresponding game's default noteskin.  
 	For example:
 
 	* StepMania - "Default"
-	* In The Groove - "Metal"
-	* NotITG - "Cel"
+	* FFR - "Default"
+	* StepMania (3.9) - "Note" (3.9 *has* a default noteskin but it's not snapped, just randomly changing colours)
+	* (Not)In The Groove - "Cel" / "Metal" (both use the same colours)
 	* Etterna - "ByZero" Series
 	* ...
-	**/
+	*/
 	public static var quantList:Map<String, Array<Int>> = [
 		'StepMania' => [
 			RED,     // 4th
@@ -59,6 +61,21 @@ class NoteColor {
 			TEAL,    // 32nd
 			MAGENTA, // 48th
 			GRAY,    // 64th
+			GRAY,    // 96th
+			GRAY     // 192nd
+		],
+
+		// looking for this if you want arrowvortex/quaver arrow colours
+		'StepMania (3.9)' => [
+			RED,     // 4th
+			BLUE,    // 8th
+			PURPLE,  // 12th
+			YELLOW,  // 16th
+			GRAY,    // 20th 
+			PINK,    // 24th
+			ORANGE,  // 32nd
+			TEAL,    // 48th
+			GREEN,   // 64th
 			GRAY,    // 96th
 			GRAY     // 192nd
 		],
@@ -78,50 +95,31 @@ class NoteColor {
 		],
 
 		'In The Groove' => [
-			RED,    // 4th
-			BLUE,   // 8th
-			PURPLE, // 12th
-			GREEN,  // 16th
-			TEAL,   // 20th 
-			TEAL,   // 24th
-			ORANGE, // 32nd
-			TEAL,   // 48th
-			TEAL,   // 64th
-			TEAL,   // 96th
-			TEAL    // 192nd
+			RED, 		// 4th
+			BLUE, 		// 8th
+			PURPLE, 	// 12th
+			GREEN, 		// 16th
+			GREEN_CYAN, // 20th
+			PURPLE, 	// 24th
+			YELLOW, 	// 32nd
+			PURPLE, 	// 48th
+			GREEN_CYAN, // 64th
+			GREEN_CYAN, // 96th
+			GREEN_CYAN  // 192nd
 		],
 
-		// these probably aren't accurate ????
-		// i tried the best i could
 		'Flash Flash Revolution' => [
-			RED,
-			RED,
-			PURPLE,
-			BLUE,
-			WHITE,
-			PINK,
-			YELLOW,
-			ORANGE,
-			GREEN,
-			WHITE,
-			WHITE
-		],
-
-		// might change this to quaver later
-		// they use the exact same colours and
-		// i also don't know where av got their colours from
-		'ArrowVortex' => [
-			RED,     // 4th
-			BLUE,    // 8th
-			PURPLE,  // 12th
-			YELLOW,  // 16th
-			GRAY,    // 20th 
-			PINK,    // 24th
-			ORANGE,  // 32nd
-			TEAL,    // 48th
-			GREEN,   // 64th
-			GRAY,    // 96th
-			GRAY     // 192nd
+			RED,    // 4th
+			RED,    // 8th
+			PURPLE, // 12th
+			BLUE,   // 16th
+			WHITE,  // 20th
+			PURPLE, // 24th
+			YELLOW, // 32nd
+			PINK,   // 48th
+			ORANGE, // 64th
+			WHITE,  // 96th
+			WHITE   // 192nd
 		],
 
 		'Custom' => [
@@ -153,7 +151,7 @@ class NoteColor {
 
 	/**
 	* Whether colouring will be based on what lane the note is in, or 
-	* what snap the note is in; relative to the note's time. 
+	* what snap the note is in; relative to the note's time.
 	**/
 	public static var bySnap:Bool = true;
 

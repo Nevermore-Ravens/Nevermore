@@ -1,23 +1,23 @@
 package nevermore.input;
 
 /**
-* An input instance to handle/contain bindings for this type of input.
-*
-* For example: adding `DFJK` as default keyboard inputs:
-* ```hx
-* var keyboard:Input = new Input([
-*	 0 => [KeyCode.D],
-*	 1 => [KeyCode.S],
-*	 2 => [KeyCode.SEMICOLON],
-*	 3 => [KeyCode.SINGLE_QUOTE],
-* ], [
-*	 [0],         // 1K has its bindings set as `D`
-*	 [0, 1],      // 2K has its bindings set as `DF`
-*	 [0, 1, 2],   // 3K has its bindings set as `DFJ`
-*	 [0, 1, 2, 3] // 4K has its bindings set as `DFJK`
-* ]);
-* ```
-**/
+An input instance to handle/contain bindings for this type of input.
+
+For example: adding `DFJK` as default keyboard inputs:
+```haxe
+var keyboard:Input = new Input([
+	0 => [KeyCode.D],
+	1 => [KeyCode.S],
+	2 => [KeyCode.SEMICOLON],
+	3 => [KeyCode.SINGLE_QUOTE],
+], [
+	[0],         // 1K has its bindings set as `D`
+	[0, 1],      // 2K has its bindings set as `DF`
+	[0, 1, 2],   // 3K has its bindings set as `DFJ`
+	[0, 1, 2, 3] // 4K has its bindings set as `DFJK`
+]);
+```
+*/
 class Input {
 	/**
 	* Makes a new binding instance for this type of input.

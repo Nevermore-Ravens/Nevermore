@@ -5,14 +5,14 @@ import nevermore.core.timing.BaseClock;
 import nevermore.modchart.ModchartManager;
 
 /**
-* A rhythm object that resembles a "tap" note.
-**/
+A rhythm object that resembles a "tap" note.
+*/
 class Note extends BaseNote {
 	public static final directions:Array<String> = ['left', 'down', 'up', 'right'];
 
 	/**
-	* A colour shader that's used for custom colouring and modcharting.
-	**/
+	A colour shader that's used for custom colouring and modcharting.
+	*/
 	public static var colorShader:NoteShader = new NoteShader();
 
 	public static var modchartVertices:Array<Vector3> = [
@@ -23,8 +23,8 @@ class Note extends BaseNote {
 	];
 
 	/**
-	* The connected sustain linked to this note.
-	**/
+	The connected sustain linked to this note.
+	*/
 	public var sustain:Sustain;
 
 	override function set_type(v:String):String {
@@ -36,11 +36,11 @@ class Note extends BaseNote {
 	}
 
 	/**
-	* Resets this note back to the default, so it can be reused.
-	* @param strumline The strumline this note is connected to.
-	* @param data The corresponding note data object.
-	* @return This resetted note instance.
-	**/
+	Resets this note back to the default, so it can be reused.
+	@param strumline The strumline this note is connected to.
+	@param data The corresponding note data object.
+	@return This resetted note instance.
+	*/
 	public function setup(strumline:Strumline, data:NoteData):Note {
 		active = false;
 		moves = false;

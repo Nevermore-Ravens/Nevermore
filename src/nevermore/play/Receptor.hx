@@ -7,22 +7,22 @@ import nevermore.modchart.ModchartManager;
 import nevermore.play.Note;
 
 /**
-* An individual receptor for a strumline.
-**/
+An individual receptor for a strumline.
+*/
 class Receptor extends NoteObject {
 	/**
-	* Whether this receptor is currently being held.
-	**/
+	Whether this receptor is currently being held.
+	*/
 	public var isHolding:Bool = false;
 
 	/**
-	* The connected strumline instance of this receptor.
-	**/
+	The connected strumline instance of this receptor.
+	*/
 	public var parent:Strumline;
 
 	/**
-	* For any additional attachments that can be added onto this receptor.
-	**/
+	For any additional attachments that can be added onto this receptor.
+	*/
 	public var attachments:Array<NoteObject> = [];
 
 	public function new(parent:Strumline, lane:Int) {
@@ -39,10 +39,10 @@ class Receptor extends NoteObject {
 	}
 
 	/**
-	* Makes this receptor play a specific animation,
-	* preferably when a related action is done.
-	* @param name The animation name to play.
-	**/
+	Makes this receptor play a specific animation,
+	preferably when a related action is done.
+	@param name The animation name to play.
+	*/
 	public function glow(?name:String) {
 		name ??= 'glow';
 
@@ -119,8 +119,8 @@ class Receptor extends NoteObject {
 	public var stealthColor:Vector3 = new Vector3();
 
 	/**
-	*
-	**/
+	
+	*/
 	public function preDrawCrazy(modchart:ModchartManager, player:Int, direction:ScrollDirection) {
 		modchart.curLane = lane;
 		modchart.curField = player;
@@ -149,8 +149,8 @@ class Receptor extends NoteObject {
 	}
 
 	/**
-	*
-	**/
+	
+	*/
 	public function drawCrazy(modchart:ModchartManager, player:Int, direction:ScrollDirection) {
 		modchart.curLane = lane;
 		modchart.curField = player;
@@ -216,8 +216,8 @@ class Receptor extends NoteObject {
 	}
 
 	/**
-	*
-	**/
+
+	*/
 	public function drawAttachmentCrazy(attachment:NoteObject, modchart:ModchartManager, player:Int, orientAngle:Float) {
 		modchartPos.z += attachment.offsetZ;
 

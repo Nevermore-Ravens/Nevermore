@@ -1,10 +1,10 @@
 package nevermore.backend;
 
 /**
-* Basically a recreation of `FlxColor` to reduce dependency on HaxeFlixel.
-*
-* *Mostly* copypasted.
-**/
+Basically a recreation of `FlxColor` to reduce dependency on HaxeFlixel.
+
+*Mostly* copypasted.
+*/
 abstract Color(Int) from Int from UInt to Int to UInt {
 	public static inline var TRANSPARENT:Color = 0x00000000;
 	public static inline var WHITE:Color = 0xFFFFFFFF;
@@ -24,8 +24,8 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	public static inline var CYAN:Color = 0xFF00FFFF;
 
 	/**
-	* Fields for the red channel of this colour.
-	**/
+	Fields for the red channel of this colour.
+	*/
 	public var red(get, set):Int;
 	inline function get_red():Int {
 		return (this >> 16) & 0xff;
@@ -46,8 +46,8 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* Fields for the green channel of this colour.
-	**/
+	Fields for the green channel of this colour.
+	*/
 	public var green(get, set):Int;
 	inline function get_green():Int {
 		return (this >> 8) & 0xff;
@@ -68,8 +68,8 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* Fields for the blue channel of this colour.
-	**/
+	Fields for the blue channel of this colour.
+	*/
 	public var blue(get, set):Int;
 	inline function get_blue():Int {
 		return this & 0xff;
@@ -90,8 +90,8 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* Fields for the alpha channel of this colour.
-	**/
+	Fields for the alpha channel of this colour.
+	*/
 	public var alpha(get, set):Int;
 	inline function get_alpha():Int {
 		return (this >> 24) & 0xff;
@@ -150,9 +150,9 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* The red, green, and blue channels of this colour, as a 24-bit integer.
-	* (from 0 to 0xFFFFFF)
-	**/
+	The red, green, and blue channels of this colour, as a 24-bit integer.
+	(from 0 to 0xFFFFFF)
+	*/
 	public var rgb(get, set):Color;
 	inline function get_rgb():Color return this & 0x00ffffff;
 
@@ -162,9 +162,9 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/** 
-	* The hue of this colour, in degrees.
-	* (from 0 to 359)
-	**/
+	The hue of this colour, in degrees.
+	(from 0 to 359)
+	*/
 	public var hue(get, set):Float;
 	function get_hue():Float {
 		var hueRad = Math.atan2(Math.sqrt(3) * (greenFloat - blueFloat), 2 * redFloat - greenFloat - blueFloat);
@@ -182,9 +182,9 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* The saturation of this colour.
-	* (from 0 to 1)
-	**/
+	The saturation of this colour.
+	(from 0 to 1)
+	*/
 	public var saturation(get, set):Float;
 	inline function get_saturation():Float {
 		return (max - min) / brightness;
@@ -196,9 +196,9 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* The brightness of this colour.
-	* (from 0 to 1)
-	**/
+	The brightness of this colour.
+	(from 0 to 1)
+	*/
 	public var brightness(get, set):Float;
 	inline function get_brightness():Float return max;
 
@@ -208,9 +208,9 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* The lightness of this colour.
-	* (from 0 to 1)
-	**/
+	The lightness of this colour.
+	(from 0 to 1)
+	*/
 	public var lightness(get, set):Float;
 	inline function get_lightness():Float {
 		return (max + min) / 2;
@@ -222,31 +222,31 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* The most visible channel that this colour contains.
-	**/
+	The most visible channel that this colour contains.
+	*/
 	public var max(get, never):Float;
 	function get_max():Float {
 		return Math.max(redFloat, Math.max(greenFloat, blueFloat));
 	}
 
 	/**
-	* The least visible channel that this colour contains.
-	**/
+	The least visible channel that this colour contains.
+	*/
 	public var min(get, never):Float;
 	function get_min():Float {
 		return Math.min(redFloat, Math.min(greenFloat, blueFloat));
 	}
 
 	/**
-	* Sets the cyan, magenta, yellow, and black channels of this colour.
-	*
-	* @param cyan The cyan channel of this colour, from 0 to 1.
-	* @param magenta The magenta channel of this colour, from 0 to 1.
-	* @param yellow The yellow channel of this colour, from 0 to 1.
-	* @param black The black channel of this colour, from 0 to 1.
-	* @param alpha The alpha channel of this colour, from 0 to 1.
-	* @return The modified instance of this colour.
-	**/
+	Sets the cyan, magenta, yellow, and black channels of this colour.
+
+	@param cyan The cyan channel of this colour, from 0 to 1.
+	@param magenta The magenta channel of this colour, from 0 to 1.
+	@param yellow The yellow channel of this colour, from 0 to 1.
+	@param black The black channel of this colour, from 0 to 1.
+	@param alpha The alpha channel of this colour, from 0 to 1.
+	@return The modified instance of this colour.
+	*/
 	public inline function setCMYB(cyan:Float, magenta:Float, yellow:Float, black:Float, ?alpha:Float = 1):Color {
 		redFloat = (1 - cyan) * (1 - black);
 		greenFloat = (1 - magenta) * (1 - black);
@@ -257,14 +257,14 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* Sets the hue, saturation, and brightness channels of this colour.
-	*
-	* @param hue The hue channel of this colour, from 0 to 1.
-	* @param saturation The saturation channel of this colour, from 0 to 1.
-	* @param brightness The brightness channel of this colour, from 0 to 1.
-	* @param alpha The alpha channel of this colour, from 0 to 1.
-	* @return The modified instance of this colour.
-	**/
+	Sets the hue, saturation, and brightness channels of this colour.
+
+	@param hue The hue channel of this colour, from 0 to 1.
+	@param saturation The saturation channel of this colour, from 0 to 1.
+	@param brightness The brightness channel of this colour, from 0 to 1.
+	@param alpha The alpha channel of this colour, from 0 to 1.
+	@return The modified instance of this colour.
+	*/
 	public inline function setHSB(hue:Float, saturation:Float, brightness:Float, alpha:Float):Color {
 		var chroma:Float = brightness * saturation;
 		var match:Float = brightness - chroma;
@@ -273,14 +273,14 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* Sets the hue, saturation, and lightness channels of this colour.
-	*
-	* @param hue The hue channel of this colour, from 0 to 1.
-	* @param saturation The saturation channel of this colour, from 0 to 1.
-	* @param lightness The lightness channel of this colour, from 0 to 1.
-	* @param alpha The alpha channel of this colour, from 0 to 1.
-	* @return The modified instance of this colour.
-	**/
+	Sets the hue, saturation, and lightness channels of this colour.
+
+	@param hue The hue channel of this colour, from 0 to 1.
+	@param saturation The saturation channel of this colour, from 0 to 1.
+	@param lightness The lightness channel of this colour, from 0 to 1.
+	@param alpha The alpha channel of this colour, from 0 to 1.
+	@return The modified instance of this colour.
+	*/
 	public inline function setHSL(hue:Float, saturation:Float, lightness:Float, alpha:Float):Color
 	{
 		var chroma:Float = (1 - Math.abs(2 * lightness - 1)) * saturation;
@@ -290,14 +290,14 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 	
 	/**
-	* Sets the red, green, and blue channels of this colour.
-	*
-	* @param red The red channel of this colour, from 0 to 1.
-	* @param green The green channel of this colour, from 0 to 1.
-	* @param blue The blue channel of this colour, from 0 to 1.
-	* @param alpha The alpha channel of this colour, from 0 to 1.
-	* @return The modified instance of this colour.
-	**/
+	Sets the red, green, and blue channels of this colour.
+
+	@param red The red channel of this colour, from 0 to 1.
+	@param green The green channel of this colour, from 0 to 1.
+	@param blue The blue channel of this colour, from 0 to 1.
+	@param alpha The alpha channel of this colour, from 0 to 1.
+	@return The modified instance of this colour.
+	*/
 	public inline function setRGBFloat(red:Float, green:Float, blue:Float, alpha:Float = 1):Color {
 		redFloat = red;
 		greenFloat = green;
@@ -308,8 +308,8 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* Internal function used for consistency between `setHSB` and `setHSL`.
-	**/
+	Internal function used for consistency between `setHSB` and `setHSL`.
+	*/
 	inline function setHueChromaMatch(hue:Float, chroma:Float, match:Float, alpha:Float):Color {
 		hue %= 360;
 		chroma += match;
@@ -336,8 +336,8 @@ abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	/**
-	* Internal function used to limit colour values between `0xFF` and `0`.
-	**/
+	Internal function used to limit colour values between `0xFF` and `0`.
+	*/
 	inline function boundChannel(value:Int):Int {
 		return value > 0xff ? 0xff : value < 0 ? 0 : value;
 	}

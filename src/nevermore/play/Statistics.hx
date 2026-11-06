@@ -4,67 +4,67 @@ package nevermore.play;
 @:publicFields
 class NoteHitData {
 	/**
-	* The time at which this hit occurs, in milliseconds.
-	**/
+	The time at which this hit occurs, in milliseconds.
+	*/
 	var time:Int = 0;
 
 	/**
-	* The deviation of this note relative to the song clock, in milliseconds.
-	**/
+	The deviation of this note relative to the song clock, in milliseconds.
+	*/
 	var deviation:Float = 0;
 
 	/**
-	* What lane/column this hit occured at.
-	**/
+	What lane/column this hit occured at.
+	*/
 	var lane:Int = 0;
 
 	/**
-	* Whether this hit broke the player's combo.
-	* Will not count this towards number calculation
-	* (such as mean, or standard deviation), if true.
-	**/
+	Whether this hit broke the player's combo.  
+	Will not count this towards number calculation
+	(such as mean, or standard deviation), if true.
+	*/
 	var comboBreak:Bool = false;
 }
 
 /**
-* A class that offers additional info about the player's current play.
-**/
+A class that offers additional info about the player's current play/score.
+*/
 @:structInit
 class Statistics {
 	/**
-	* The current song being played.
-	**/
+	The current song being played.
+	*/
 	public var songName:String = 'Unknown';
 
 	/**
-	* The current difficulty being played.
-	**/
+	The current difficulty being played.
+	*/
 	public var difficulty:String = '';
 
 	/**
-	* A list of hits + misses for extra data calculation.
-	* Can be used in a hitgraph to show deviation data.
-	**/
+	A list of hits + misses for extra data calculation.
+	Can be used in a hitgraph to show deviation data.
+	*/
 	public var hitData:Array<NoteHitData> = [];
 
 	var _currentHit:Int = 0;
 
 	/**
-	* Registers a hit for the statistics to read.
-	* @param data The data for this hit.
-	**/
+	Registers a hit for the statistics to read.
+	@param data The data for this hit.
+	*/
 	public function registerHit(data:NoteHitData) {
 		hitData[_currentHit++] = data;
 	}
 
 	/**
-	* The current judgements being used for this play.
-	**/
+	The current judgements being used for this play.
+	*/
 	public var judgements:Array<Judgement> = Judgement.current;
 
 	/**
-	* The average deviation of all of the player's hits combined.
-	**/
+	The average deviation of all of the player's hits combined.
+	*/
 	public var mean(get, never):Float;
 	function get_mean():Float {
 		if (hitData.length == 0) return 0.0;
@@ -82,11 +82,11 @@ class Statistics {
 	}
 
 	/**
-	* The standard deviation of all of the player's hits combined.
-	*
-	* (ty etterna server for helping <3)
-	* (i was NOT good at math back in high school)
-	**/
+	The standard deviation of all of the player's hits combined.
+
+	(ty etterna server for helping <3)  
+	(i was NOT good at math back in high school)
+	*/
 	public var standardDeviation(get, never):Float;
 	function get_standardDeviation():Float {
 		if (hitData.length == 0) return 0.0;
@@ -107,47 +107,47 @@ class Statistics {
 	}
 
 	/**
-	* The ratio of the player's "Ridiculous" and "Marvelous" judgement counts.
-	* Unused, because Nevermore doesn't have the concept of a "Ridiculous" judgement,
-	* not to mention this is an Etterna-specific feature.
-	*
-	* However, you *can* replicate this by setting your hit windows to StepMania J7,
-	* and using the `marvelousAttack` variable.
-	**/
+	The ratio of the player's "Ridiculous" and "Flawless" judgement counts.  
+	Unused, because Nevermore doesn't have the concept of a "Ridiculous" judgement,
+	not to mention this is an Etterna-specific feature.
+
+	However, you *can* replicate this by setting your hit windows to StepMania J7,
+	and using the `marvelousAttack` variable.
+	*/
 	public var ridiculousAttack(get, never):Float;
 	function get_ridiculousAttack():Float {
 		return 0.0;
 	}
 
 	/**
-	* The ratio of the player's "Marvelous" and "Perfect" judgement counts.
-	* Commonly referred to as "MA", in most games.
-	*
-	* Keep in mind, this assumes your judgement system at least has a
-	* higher judgement than "Perfect".
-	**/
+	The ratio of the player's "Flawless" and "Perfect" judgement counts.  
+	Commonly referred to as "MA", in most games.
+
+	Keep in mind, this assumes your judgement system at least has a
+	higher judgement than "Perfect".
+	*/
 	public var marvelousAttack(get, never):Float;
 	function get_marvelousAttack():Float {
 		return judgements[0].hits / judgements[1].hits;
 	}
 
 	/**
-	* The ratio of the player's "Perfect" and "Great" judgement counts.
-	* Commonly referred to as "PA", in most games.
-	*
-	* Keep in mind, this assumes your judgement system at least has a
-	* higher judgement than "Perfect".
-	**/
+	The ratio of the player's "Perfect" and "Great" judgement counts.  
+	Commonly referred to as "PA", in most games.
+
+	Keep in mind, this assumes your judgement system at least has a
+	higher judgement than "Perfect".
+	*/
 	public var perfectAttack(get, never):Float;
 	function get_perfectAttack():Float {
 		return judgements[1].hits / judgements[2].hits;
 	}
 
 	/**
-	* The ratio of the note hits on the player's left hand and right hand hits.
-	* Commonly referred to in Etterna as "LA".
-	* Assumes this play was done on 4K.
-	**/
+	The ratio of the note hits on the player's left hand and right hand hits.  
+	Commonly referred to in Etterna as "LA".  
+	Assumes this play was done on 4K.
+	*/
 	public var leftAttack(get, never):Float;
 	function get_leftAttack():Float {
 		var leftCount:Int = 0;
@@ -161,10 +161,10 @@ class Statistics {
 	}
 
 	/**
-	* The ratio of the note hits on the player's right hand and left hand hits.
-	* Commonly referred to in Etterna as "RA".
-	* Assumes this play was done on 4K.
-	**/
+	The ratio of the note hits on the player's right hand and left hand hits.  
+	Commonly referred to in Etterna as "RA".  
+	Assumes this play was done on 4K.
+	*/
 	public var rightAttack(get, never):Float;
 	function get_rightAttack():Float {
 		var rightCount:Int = 0;
@@ -178,34 +178,34 @@ class Statistics {
 	}
 
 	/**
-	* How many notes have been hit by the player.
-	**/
+	How many notes have been hit by the player.
+	*/
 	public var noteHits:Int = 0;
 
 	/**
-	* How many times your combo has been reset to 0.
-	*
-	* Not to be mistaken for `misses`, although this
-	* *does* include misses.
-	**/
+	How many times your combo has been reset to 0.
+
+	Not to be mistaken for `misses`, although this
+	*does* include misses.
+	*/
 	public var comboBreaks:Int = 0;
 
 	/**
-	* How many times a note has gone past the screen,
-	* and not been hit by the player.
-	* Not to be mistaken with `comboBreaks`.
-	**/
+	How many times a note has gone past the screen,
+	and not been hit by the player.  
+	Not to be mistaken with `comboBreaks`.
+	*/
 	public var misses:Int = 0;
 
 	/**
-	* The max combo this play has reached.
-	**/
+	The max combo this play has reached.
+	*/
 	public var maxCombo:Int = 0;
 
 	/**
-	* The amount of notes this player has hit
-	* in a row, without breaking combo.
-	**/
+	The amount of notes this player has hit
+	in a row, without breaking combo.
+	*/
 	public var combo(default, set):Int = 0;
 	function set_combo(v:Int):Int {
 		if (v > maxCombo) maxCombo = v;
@@ -213,10 +213,10 @@ class Statistics {
 	}
 
 	/**
-	* Should be called whenever a note has been hit.
-	* @param behavior The corresponding note's behavior.
-	* @param judge The judge that was obtained upon hitting this note.
-	**/
+	Should be called whenever a note has been hit.
+	@param behavior The corresponding note's behavior.
+	@param judge The judge that was obtained upon hitting this note.
+	*/
 	public function hit(behavior:NoteBehavior, judge:Judgement) {
 		noteHits++;
 		judge.hits++;
@@ -232,8 +232,8 @@ class Statistics {
 	}
 
 	/**
-	* Should be called whenever a note has been missed.
-	**/
+	Should be called whenever a note has been missed.
+	*/
 	public function miss() {
 		comboBreaks++;
 		combo = 0;
@@ -242,15 +242,15 @@ class Statistics {
 	}
 
 	/**
-	* The max amount of notes per second
-	* this play has achieved.
-	**/
+	The max amount of notes per second
+	this play has achieved.
+	*/
 	public var maxNPS:Int = 0;
 
 	/**
-	* The amount of times this player has been
-	* hitting notes for the last second.
-	**/
+	The amount of times this player has been
+	hitting notes for the last second.
+	*/
 	public var nps(default, set):Int = 0;
 	function set_nps(v:Int):Int {
 		if (v > maxNPS) maxNPS = v;
@@ -261,9 +261,9 @@ class Statistics {
 	var _nps:Int = 0;
 
 	/**
-	* Updates the statistics for calculating NPS.
-	* Preferably, call this in your `update()` override.
-	**/
+	Updates the statistics for calculating NPS.  
+	Preferably, call this in your `update()` override.
+	*/
 	public function update(delta:Float) {
 		_timer += delta;
 		if (_timer < 1) return;

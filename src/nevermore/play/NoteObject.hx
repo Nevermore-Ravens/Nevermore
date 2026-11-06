@@ -9,45 +9,45 @@ import flixel.FlxCamera;
 import flixel.FlxSprite;
 
 /**
-* A rhythm object for anything that displays on a notefield.
-**/
+A rhythm object for anything that displays on a notefield.
+*/
 class NoteObject extends FlxSprite {
 	/**
-	* What lane this object is corresponding to.
-	**/
+	What lane this object is corresponding to.
+	*/
 	public var lane:Int;
 
 	/**
-	* Whether the coloring method will be based on luminosity, or regular tinting.
-	**/
+	Whether the coloring method will be based on luminosity, or regular tinting.
+	*/
 	public var luminize:Bool = false;
 
 	/**
-	* Offsets this object's position on the X axis.
-	* Negative goes left, positive goes right.
-	**/
+	Offsets this object's position on the X axis.  
+	Negative goes left, positive goes right.
+	*/
 	public var offsetX:Float;
 
 	/**
-	* Offsets this object's position on the Y axis.
-	* Negative goes down, positive goes up.
-	**/
+	Offsets this object's position on the Y axis.  
+	Negative goes down, positive goes up.
+	*/
 	public var offsetY:Float;
 
 	/**
-	* Offsets this object's position on the Z axis.
-	* Negative goes backwards, positive goes forwards towards the screen.
-	* Only used in modchart rendering.
-	**/
+	Offsets this object's position on the Z axis.  
+	Negative goes backwards, positive goes forwards towards the screen.  
+	Only used in modchart rendering.
+	*/
 	public var offsetZ:Float;
 
 	// actually used for modchart rendering but maybe there'll be another purpose
 	var _drawFrame:FlxFrame;
 
 	/**
-	* Prepares this object's matrix, so it can be drawn later.
-	* @param camera The camera to be drawn to.
-	**/
+	Prepares this object's matrix, so it can be drawn later.
+	@param camera The camera to be drawn to.
+	*/
 	function prepareMatrix(camera:FlxCamera) {
 		_matrix.translate(-origin.x, -origin.y);
 		_matrix.scale(scale.x, scale.y);
@@ -79,9 +79,9 @@ class NoteObject extends FlxSprite {
 
 	#if !NEVERMORE_NO_MODCHARTS
 	/**
-	* Prepares this object's vertices for modchart rendering.
-	* @param z The initial z position to use for all the vertices.
-	**/
+	Prepares this object's vertices for modchart rendering.
+	@param z The initial z position to use for all the vertices.
+	*/
 	function prepareModchartVertices(z:Float) {
 		Note.modchartVertices[0].set(_matrix.transformX(0, 0), _matrix.transformY(0, 0), z);
 		Note.modchartVertices[1].set(_matrix.transformX(_frame.frame.width, 0), _matrix.transformY(_frame.frame.width, 0), z);
@@ -90,18 +90,18 @@ class NoteObject extends FlxSprite {
 	}
 
 	/**
-	* Grabs the angle between the input `pos` and a recalculated position from the following parameters.
-	*
-	* @param modchart The associated modchart to use for grabbing modifier values and calculating position.
-	* @param pos The initial position and what to use for the recalculation. It will be restored to it's inital values given during the call.
-	* @param scrollMult The initial scrolling multiplier to use for position calculations.
-	* @param yPos The y value to start with when recalculating `pos`.
-	* @param distance The amount of pixels away from a receptor in a upscroll context.
-	* @param unadjustedDistance The original `distance`, before modifiers effected it's value.
-	* @param player The strumline index of the object.
-	* @param strumline The strumline of which the object belongs to.
-	* @param type What the object should be assumed to be. (A static receptor to catch notes (`RECEPTOR`), A scrolling note (`NOTE`), or A long note to hold (`SUSTAIN`))
-	**/
+	Grabs the angle between the input `pos` and a recalculated position from the following parameters.
+
+	@param modchart The associated modchart to use for grabbing modifier values and calculating position.
+	@param pos The initial position and what to use for the recalculation. It will be restored to it's inital values given during the call.
+	@param scrollMult The initial scrolling multiplier to use for position calculations.
+	@param yPos The y value to start with when recalculating `pos`.
+	@param distance The amount of pixels away from a receptor in a upscroll context.
+	@param unadjustedDistance The original `distance`, before modifiers effected it's value.
+	@param player The strumline index of the object.
+	@param strumline The strumline of which the object belongs to.
+	@param type What the object should be assumed to be. (A static receptor to catch notes (`RECEPTOR`), A scrolling note (`NOTE`), or A long note to hold (`SUSTAIN`))
+	*/
 	function getOrientAngle(modchart:ModchartManager, pos:Vector3, scrollMult:Float, yPos:Float, distance:Float, unadjustedDistance:Float, player:Int, strumline:Strumline, type:ObjectType) {
 		final orient:Float = modchart.config.orient;
 		if (orient == 0)

@@ -9,8 +9,8 @@ import lime.media.AudioBuffer;
 import haxe.io.Path;
 
 /**
-* Handles directing and returning asset-related objects such as images and audio.
-**/
+Handles directing and returning asset-related objects such as images and audio.
+*/
 class AssetHandler {
 	public var root:String = '';
 	public function new(root:String = '') {
@@ -18,15 +18,15 @@ class AssetHandler {
 	}
 
 	/**
-	* The list of image formats this handler supports.
-	**/
+	The list of image formats this handler supports.
+	*/
 	public var imageFormats:Array<String> = ['png', 'jpg', 'jpeg'];
 
 	/**
-	* The list of audio formats this handler supports.
-	* FLaC and MP3 are limited to Lime 8.4.0 only, as it uses
-	* SDL_sound instead of their own decoders.
-	**/
+	The list of audio formats this handler supports.  
+	FLaC and MP3 are limited to Lime 8.4.0 only, as it uses
+	SDL_sound instead of their own decoders.
+	*/
 	public var audioFormats:Array<String> = [
 		#if (lime >= version("8.4.0"))
 		'ogg', 'wav', 'flac', 'mp3'
@@ -36,11 +36,11 @@ class AssetHandler {
 	];
 
 	/**
-	* Returns an instance of `flixel.graphics.FlxGraphic` for the file specified.
-	*
-	* @param key The path to the file. (ex. `images/test.png`, `images/test`)
-	* @return A `FlxGraphic` instance of the file.
-	**/
+	Returns an instance of `flixel.graphics.FlxGraphic` for the file specified.
+
+	@param key The path to the file. (ex. `images/test.png`, `images/test`)
+	@return A `FlxGraphic` instance of the file.
+	*/
 	public function image(key:String):FlxGraphic {
 		var path:String = getPath(key, imageFormats);
 
@@ -61,11 +61,11 @@ class AssetHandler {
 	}
 
 	/**
-	* Returns a decoded instance of `openfl.media.Sound` for the file specified.
-	*
-	* @param key The path to the file. (ex. `audio/test.ogg`, `audio/test`)
-	* @return A `Sound` instance of the file.
-	**/
+	Returns a decoded instance of `openfl.media.Sound` for the file specified.
+
+	@param key The path to the file. (ex. `audio/test.ogg`, `audio/test`)
+	@return A `Sound` instance of the file.
+	*/
 	public function audio(key:String):Sound {
 		var path:String = getPath(key, audioFormats);
 
@@ -82,13 +82,13 @@ class AssetHandler {
 	}
 
 	/**
-	* Returns a streamed instance of `openfl.media.Sound` for the file specified.
-	* If the Lime version specified is anything older than `8.4.0`,
-	* it will default to decoding instead.
-	*
-	* @param key The path to the file. (ex. `audio/test.ogg`, `audio/test`)
-	* @return A `Sound` instance of the file.
-	**/
+	Returns a streamed instance of `openfl.media.Sound` for the file specified.  
+	If the Lime version specified is anything older than `8.4.0`,
+	it will default to decoding instead.
+
+	@param key The path to the file. (ex. `audio/test.ogg`, `audio/test`)
+	@return A `Sound` instance of the file.
+	*/
 	public function streamedAudio(key:String):Sound {
 		#if (lime >= version("8.4.0"))
 		var path:String = getPath(key, audioFormats);
@@ -109,12 +109,12 @@ class AssetHandler {
 	}
 
 	/**
-	* Returns the content of a file via the given file path.
-	* If the file does not exist, an empty string is returned instead.
-	*
-	* @param key The path to the file. (ex. `data/test.txt`)
-	* @return The contents of the file.
-	**/
+	Returns the content of a file via the given file path.  
+	If the file does not exist, an empty string is returned instead.
+
+	@param key The path to the file. (ex. `data/test.txt`)
+	@return The contents of the file.
+	*/
 	public function text(key:String):String {
 		var key:String = getPath(key);
 
@@ -123,13 +123,11 @@ class AssetHandler {
 	}
 
 	/**
-	* Returns a sparrow atlas, via the path specified.
-	*
-	* @param key The path to the sparrow atlas.
-	* Both the `xml` and image must be named the same way
-	* (`images/test.png`, `images/test.xml`) -> `images/test`
-	* @return A `FlxAtlasFrames` instance for said sparrow atlas.
-	**/
+	Returns a sparrow atlas, via the path specified.
+
+	@param key The path to both the `.png` and `.xml`.
+	@return A `FlxAtlasFrames` instance for said sparrow atlas.
+	*/
 	public function sparrowAtlas(key:String):FlxAtlasFrames {
 		var graphic:FlxGraphic = image(key);
 		var xml:String = text(key + '.xml');
@@ -137,11 +135,11 @@ class AssetHandler {
 	}
 
 	/**
-	* Combines multiple sparrow atlases into one atlas, via a set list of paths.
-	* @param keys The paths to each sparrow atlas.
-	* See `sparrowAtlas()` for how to specify the path correctly.
-	* @return The combined instance of `FlxAtlasFrames`.
-	**/
+	Combines multiple sparrow atlases into one atlas, via a set list of paths.
+	@param keys The paths to each sparrow atlas.
+	See `sparrowAtlas()` for how to specify the path correctly.
+	@return The combined instance of `FlxAtlasFrames`.
+	*/
 	public function multiAtlas(keys:Array<String>):FlxAtlasFrames {
 		var parentFrames = sparrowAtlas(keys[0]);
 		if (keys.length == 1) return parentFrames;
@@ -157,23 +155,28 @@ class AssetHandler {
 		return parentFrames;
 	}
 
+	/**
+	Checks if a file exists, relative to the handler's root folder.
+	@param key The path to check.
+	@return Whether this file/folder exists or not.
+	*/
 	public function exists(key:String):Bool {
 		return sys.FileSystem.exists(getPath(key));
 	}
 
 	/**
-	* Grabs the full path of a file.
-	*
-	* @param key The relative path to the file.
-	* For mitigating possible performance drops, I suggest appending a file extension to `key`
-	* to reduce any file checking that isn't needed, depending on your scenario.
-	*
-	* @param extensions Any extensions/formats the handler should look out for.
-	* If none are specified, it'll assume there's already a file extension applied to `key`, and 
-	* will ignore it.
-	*
-	* @return The full path to the file, including the extension.
-	**/
+	Grabs the full path of a file.
+
+	@param key The relative path to the file.  
+	For mitigating possible performance drops, I suggest appending a file extension to `key`
+	to reduce any file checking that isn't needed, depending on your scenario.
+
+	@param extensions Any extensions/formats the handler should look out for.  
+	If none are specified, it'll assume there's already a file extension applied to `key`, and 
+	will ignore it.
+
+	@return The full path to the file, including the extension.
+	*/
 	public dynamic function getPath(key:String, ?extensions:Array<String>):String {
 		var path = new Path('$root/$key');
 
@@ -191,38 +194,38 @@ class AssetHandler {
 }
 
 /**
-* A global instance container for game assets, as well as
-* being able to access assets specifically for Nevermore.
-**/
+A global instance container for game assets, as well as
+being able to access assets specifically for Nevermore.
+*/
 class Assets {
 	/**
-	* The root directory that assets will be looked in for.
-	* Change this before calling `Assets.init()` if you have a
-	* different name for your assets.
-	**/
+	The root directory that assets will be looked in for.  
+	Change this before calling `Assets.init()`, if you have a
+	different name for your assets.
+	*/
 	public static var rootFolder:String = 'assets';
 
 	/**
-	* The main instance for all assets.
-	* Modify/use this for your game, if need be.
-	**/
+	The main instance for all assets.  
+	Modify/use this for your game, if need be.
+	*/
 	public static var main:AssetHandler;
 
 	/**
-	* Made specifically for assets that Nevermore needs.
-	* Don't touch this, unless you absolutely know what you're doing.
-	**/
+	Made specifically for assets that Nevermore needs.  
+	Don't touch this, unless you absolutely know what you're doing.
+	*/
 	public static var dependency:AssetHandler;
 
 	/**
-	* The global cache for all assets.
-	* Both `main` and `dependency` use this, so modify it wisely.
-	**/
+	The global cache for all assets.  
+	Both `main` and `dependency` use this, so modify it wisely.
+	*/
 	public static var cache:AssetCache;
 
 	/**
-	* Initializes the asset system.
-	**/
+	Initializes the asset system.
+	*/
 	public static function init() {
 		cache = new AssetCache();
 
