@@ -101,7 +101,7 @@ class FieldInput extends InputManager {
 			var sustain:Sustain = note.sustain;
 			if (sustain != null) {
 				sustain.wasHit = true;
-				if (sustain.isRoll) sustain.regrabTimer = 0.25;
+				if (sustain.isRoll) sustain.regrabTimer = Constants.ROLL_REGRAB_WINDOW;
 
 				receptor.isHolding = true;
 			}
@@ -175,7 +175,6 @@ class FieldInput extends InputManager {
 		sustain.regrabAlpha = 1;
 
 		// only clip if it's past the sustain
-		// TODO: make this work for sv's (this DEFINITELY doesn't work with sv's)
 		if (!parent.scrollVelocities)
 			sustain.timeOffset = Math.max(clock.time - sustain.adjustedTime, 0);
 		else if (clock.time >= sustain.adjustedTime)
