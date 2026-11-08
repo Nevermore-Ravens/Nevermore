@@ -39,6 +39,26 @@ class Receptor extends NoteObject {
 	}
 
 	/**
+	Sets the colour of this receptor, relative to a specific note or judgement.
+	@param note The note to base the colour off of.
+	*/
+	public function setGlowColor(?note:BaseNote) {
+		if (note == null || !note.canGlow || !note.luminize) {
+			color = 0xFFFFFFFF;
+			luminize = false;
+			return;
+		}
+
+		luminize = true;
+
+		if (Nevermore.settings.receptorGlow == 'Judgement') {
+			color = note.judgement.color;
+		} else {
+			color = note.color;
+		}
+	}
+
+	/**
 	Makes this receptor play a specific animation,
 	preferably when a related action is done.
 	@param name The animation name to play.
@@ -47,8 +67,7 @@ class Receptor extends NoteObject {
 		name ??= 'glow';
 
 		if (name == 'standard') {
-			color = 0xFFFFFFFF;
-			luminize = false;
+			setGlowColor();
 		}
 
 		animation.play(name, true);

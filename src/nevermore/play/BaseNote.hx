@@ -50,6 +50,17 @@ class BaseNote extends NoteObject {
 	public var data:NoteData;
 
 	/**
+	The judgement achieved for this note.
+	Set whenever the note gets hit.
+	*/
+	public var judgement:Judgement;
+
+	/**
+	Whether this note can make the corresponding receptor glow.
+	*/
+	public var canGlow:Bool = Nevermore.settings.receptorGlow != 'Off';
+
+	/**
 	How much to multiply this note's alpha by the receptor's alpha.
 	*/
 	public var multAlpha:Float = 1;

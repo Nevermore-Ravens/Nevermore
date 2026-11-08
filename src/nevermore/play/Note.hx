@@ -55,6 +55,7 @@ class Note extends BaseNote {
 		alpha = 1;
 
 		sustain = null;
+		judgement = null;
 		passedStrumline = false;
 		multAlpha = 1;
 		

@@ -70,6 +70,15 @@ class NevermoreSettings {
 	Setting this to your monitor's refresh rate (or double) is recommended.
 	*/
 	var notefieldFramerate = 60;
+
+	/**
+	How receptors should glow whenever a sustain/tap note is hit.
+	List:
+	* Note - Relative to the colour that the note is.
+	* Judgement - Relative to the colour of the judgement for that note.
+	* Off - Disables glowing entirely.
+	*/
+	var receptorGlow:String = 'Note';
 }
 
 @:structInit

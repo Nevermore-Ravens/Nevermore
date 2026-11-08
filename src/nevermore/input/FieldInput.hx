@@ -90,10 +90,12 @@ class FieldInput extends InputManager {
 
 		strumline = note?.strumline ?? parent.getStrumline(id);
 		receptor = strumline.members[direction];
+		receptor.isHolding = !strumline.ai;
 
 		if (note != null) {
-			receptor.glow();
-			receptor.isHolding = !strumline.ai;
+			note.judgement = Judgement.get(note.getDeviation(timestamp));
+			receptor.setGlowColor(note);
+			if (note.canGlow) receptor.glow();
 
 			note.behavior.hitsound.play(true);
 
@@ -101,17 +103,13 @@ class FieldInput extends InputManager {
 			var sustain:Sustain = note.sustain;
 			if (sustain != null) {
 				sustain.wasHit = true;
+				sustain.judgement = note.judgement;
 				if (sustain.isRoll) sustain.regrabTimer = Constants.ROLL_REGRAB_WINDOW;
 
 				receptor.isHolding = true;
 			}
-
-			if (note.luminize) {
-				receptor.color = note.color;
-				receptor.luminize = true;
-			}
 		} else if (!rollHit) {
-			receptor.isHolding = !strumline.ai;
+			receptor.setGlowColor(note);
 			receptor.glow('pressed');
 		}
 
@@ -141,7 +139,7 @@ class FieldInput extends InputManager {
 				curHolds.remove(sustain);
 				sustain.kill();
 
-				if (strumline.ai) {
+				if (sustain.canGlow && strumline.ai) {
 					receptor.glow('standard');
 					receptor.isHolding = false;
 				}
@@ -194,11 +192,8 @@ class FieldInput extends InputManager {
 
 		sustain.untilTick = sustainInterval;
 		if (strumline.ai || held) {
-			receptor.glow();
-			if (sustain.luminize) {
-				receptor.color = sustain.color;
-				receptor.luminize = true;
-			}
+			receptor.setGlowColor(sustain);
+			if (sustain.canGlow) receptor.glow();
 		}
 
 		parent.sustainHit(strumline, sustain, curHolds[curHolds.length - 1] == sustain);
@@ -267,7 +262,7 @@ class FieldInput extends InputManager {
 			curHolds.remove(sustain);
 			sustain.kill();
 			receptor.isHolding = held;
-			if (strumline.ai) {
+			if (sustain.canGlow && strumline.ai) {
 				receptor.glow('standard');
 				receptor.isHolding = false;
 			}
@@ -282,11 +277,8 @@ class FieldInput extends InputManager {
 
 		sustain.untilTick = sustainInterval;
 		if (strumline.ai || held) {
-			receptor.glow();
-			if (sustain.luminize) {
-				receptor.color = sustain.color;
-				receptor.luminize = true;
-			}
+			receptor.setGlowColor(sustain);
+			if (sustain.canGlow) receptor.glow();
 		}
 
 		parent.sustainHit(strumline, sustain, curHolds[curHolds.length - 1] == sustain);
@@ -303,17 +295,16 @@ class FieldInput extends InputManager {
 		var receptor:Receptor = strumline.members[note.lane];
 
 		note.kill();
+		note.judgement = Judgement.current[1]; // force it to `Perfect` ratings for botplay
 					
 		if (note.sustain != null) {
 			note.sustain.wasHit = true;
+			note.sustain.judgement = note.judgement;
 		}
 
+		receptor.setGlowColor(note);
 		receptor.glow();
 		receptor.isHolding = note.sustain != null;
-		if (note.luminize) {
-			receptor.color = note.color;
-			receptor.luminize = true;
-		}
 
 		parent.noteHit(strumline, note);
 		note.behavior.hitsound.play(true);
