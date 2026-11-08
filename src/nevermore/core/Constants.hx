@@ -2,6 +2,23 @@ package nevermore.core;
 
 class Constants {
 	/**
+	The list of snaps/quantizations that are used for note colouring.
+	*/
+	public static var SNAPS:Array<Int> = [
+		4,
+		8,
+		12,
+		16,
+		20,
+		24,
+		32,
+		48,
+		64,
+		96,
+		192
+	];
+
+	/**
 	The amount of milliseconds in a second.
 	*/
 	public static var MS_PER_SEC:Int = 1000;

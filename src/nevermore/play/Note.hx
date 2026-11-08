@@ -45,6 +45,7 @@ class Note extends BaseNote {
 		active = false;
 		moves = false;
 		missed = false;
+		canGlow = true;
 
 		this.data = data;
 		this.strumline = strumline;

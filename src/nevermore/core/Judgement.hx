@@ -24,15 +24,31 @@ class Judgement {
 	*/
 	public static var list:Map<String, Array<Judgement>> = [
 		'StepMania' => [
-			{name: 'Flawless'},
-			{name: 'Perfect'},
-			{name: 'Great'},
+			{
+				name: 'Flawless',
+				window: 22.5,
+				color: 0xFF29B4FF
+			},
+			{
+				name: 'Perfect',
+				window: 45,
+				color: 0xFFFFEB22
+			},
+			{
+				name: 'Great',
+				window: 90,
+				color: 0xFF60E049
+			},
 			{
 				name: 'Good',
+				window: 135,
+				color: 0xFF66B6FF,
 				breaksCombo: true
 			},
 			{
 				name: 'Bad',
+				window: 180,
+				color: 0xFFEB00F7,
 				breaksCombo: true
 			}
 		]

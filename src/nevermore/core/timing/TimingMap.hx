@@ -88,6 +88,43 @@ class TimingMap {
 	}
 
 	/**
+	Gives a snap/quantization relative to the position given.
+	@param pos The time/position to convert.
+	@param pointRelative Whether this snap will take tempo changes into account.
+	(see `Chart.snapRelativeToChanges`)
+	@return The converted snap/quantization.
+	*/
+	public function getSnap(pos:Float, ?pointRelative:Bool = true):Int {
+		return Constants.SNAPS[getSnapID(pos, pointRelative)];
+	}
+
+	/**
+	Returns a corresponding snap ID, relative to the position given.
+	@param pos The time/position to convert.
+	@param pointRelative Whether this snap will take tempo changes into account.
+	(see `Chart.snapRelativeToChanges`)
+	@return The converted snap ID.
+	**/
+	@:pure public function getSnapID(pos:Float, ?pointRelative:Bool = true):Int {
+		var row:Int = 0;
+		if (pointRelative) row = getRow(pos);
+		else {
+			var point:TimingPoint = getByTime(pos);
+			var distance:Float = pos - point.time;
+			var crotchet:Float = Constants.crotchet(point.tempo);
+
+			row = Math.round((distance / crotchet) * Constants.ROWS_PER_BEAT);
+		}
+
+		for (i in 0 ... Constants.SNAPS.length) {
+			if (row % (192 / Constants.SNAPS[i]) == 0) // 192 rows per measure (48 * 4)
+				return i;
+		}
+
+		return Constants.SNAPS.length - 1;
+	}
+
+	/**
 	Gets the row at a specified position.
 	@param pos The song time.
 	@param point The timing point to use as reference.

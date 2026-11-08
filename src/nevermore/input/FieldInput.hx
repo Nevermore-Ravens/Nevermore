@@ -73,7 +73,7 @@ class FieldInput extends InputManager {
 			// is it within range?
 			if (!possibleNote.behavior.hittable || !possibleNote.inRange) continue;
 
-			// checks if the note is the closest to the judgement line
+			// checks if the note is the closest to the playhead
 			// rather than the first available note
 			// possibility of being slightly slower
 			// but might be closer to the actual note you meant to hit
@@ -105,7 +105,7 @@ class FieldInput extends InputManager {
 				receptor.isHolding = true;
 			}
 		} else if (!rollHit) {
-			receptor.setGlowColor(note);
+			receptor.setGlowColor();
 			receptor.glow('pressed');
 		}
 

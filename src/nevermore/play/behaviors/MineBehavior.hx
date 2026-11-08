@@ -39,13 +39,14 @@ class MineBehavior extends NoteBehavior {
 			var note:Note = notes[i];
 
 			var timeDist:Float = note.visualTime - note.clock.time;
-			note.angle = timeDist * (Util.crotchet(note.clock.timingMap.tempo) * 0.001);
+			note.angle = timeDist * (Constants.crotchet(note.clock.timingMap.tempo) * 0.001);
 		}
 	}
 
 	override function setup(note:BaseNote) {
 		note.active = true;
 		note.luminize = false;
+		note.canGlow = false;
 		note.color = 0xFFFFFFFF;
 	}
 }
