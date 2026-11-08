@@ -53,12 +53,8 @@ class FieldInput extends InputManager {
 
 			sustain.regrabTimer = Constants.ROLL_REGRAB_WINDOW;
 			parent.sustainHit(sustain.strumline, sustain, true);
+			receptor.setGlowColor(sustain);
 			receptor.glow();
-
-			if (sustain.luminize) {
-				receptor.color = sustain.color;
-				receptor.luminize = true;
-			}
 			
 			rollHit = true;
 		}
