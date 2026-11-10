@@ -53,12 +53,22 @@ class BaseNote extends NoteObject {
 	The judgement achieved for this note.
 	Set whenever the note gets hit.
 	*/
-	public var judgement:Judgement;
+	public var judgement(default, set):Judgement;
+	function set_judgement(v:Judgement) {
+		if (Nevermore.settings.receptorGlow == "Judgement" && v != null)
+			glowColor = v.color;
+		return judgement = v;
+	}
 
 	/**
 	Whether this note can make the corresponding receptor glow.
 	*/
 	public var canGlow:Bool = Nevermore.settings.receptorGlow != 'Off';
+
+	/**
+	What color a `Receptor` should use if provided.
+	*/
+	public var glowColor:Null<Color> = null;
 
 	/**
 	How much to multiply this note's alpha by the receptor's alpha.

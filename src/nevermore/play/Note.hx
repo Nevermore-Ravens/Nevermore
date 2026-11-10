@@ -67,10 +67,10 @@ class Note extends BaseNote {
 		length = data.length;
 		
 		this.receptor = strumline.members[lane];
-		if (!strumline.luminize) luminize = false;
-		else luminize = Nevermore.settings.luminize;
+		luminize = strumline.luminize && Nevermore.settings.luminize;
 
 		color = NoteColor.get(this);
+		glowColor = luminize ? cast color : null;
 		type = data.type;
 
 		return this;

@@ -1,8 +1,10 @@
 package nevermore.play;
 
 import flixel.group.FlxSpriteGroup;
+import nevermore.skins.BasicNoteskin;
 import nevermore.skins.Noteskin;
 import nevermore.play.Sustain;
+import nevermore.Nevermore;
 
 /**
 Contains a set list of receptors corresponding to specific inputs.  
@@ -115,6 +117,24 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	*/
 	public var luminize:Bool = Nevermore.settings.luminize;
 
+	
+	/**
+	Whether this strumline's receptors
+	are allowed to have custom colouring.
+
+	Set to `null` to have the value follow regular `luminize`,
+	unless `Nevermore.settings.receptorGlow` is equal to "Judgement", in which `null` becomes `true`.
+	*/
+	@:isVar public var luminizeReceptors(get, set):Null<Bool> = null;
+	function get_luminizeReceptors() {
+		return luminizeReceptors ?? (luminize || Nevermore.settings.receptorGlow == "Judgement");
+	}
+	function set_luminizeReceptors(v:Null<Bool>) {
+		luminizeReceptors = v;
+		regen();
+		return v;
+	}
+
 	/**
 	What direction this strumline is scrolling in.
 	*/
@@ -156,17 +176,22 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 		var oldSize = size;
 		size = 1;
 
+		var spacing = skin != null ? skin.spacing : 160 * BasicNoteskin.scale;
+		var section = skin != null ? skin.getSection("receptor") : null;
 		var receptor:Receptor = null;
 		for (i in 0...keyCount) {
 			add(receptor = new Receptor(this, i));
-			// over on another project, we gotta figure out a good and non-hacky way to luminize the strums ONLY.
-			receptor.luminize = luminize;
-			if (skin != null) skin.applyNoteObject(receptor, "receptor");
+			receptor.luminize = luminizeReceptors;
+			if (section != null) {
+				section.applyNoteObject(receptor);
+				receptor.defaultColor = section.colors == null ? 0xFFFFFFFF : section.colors[i % section.colors.length];
+				receptor.skinLuminize = section.luminize == null ? null : section.luminize[i % section.luminize.length];
+			}
 			receptor.glow("standard");
 			receptor.updateHitbox();
 
-			receptor.x += skin.spacing * (i - keyCount * 0.5);
-			receptor.y += (skin.spacing - receptor.height) * 0.5;
+			receptor.x += spacing * (i - keyCount * 0.5);
+			receptor.y += (spacing - receptor.height) * 0.5;
 		}
 
 		receptor = null;

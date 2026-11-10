@@ -9,6 +9,7 @@ import nevermore.play.Note;
 /**
 An individual receptor for a strumline.
 */
+@:allow(nevermore.play.Strumline)
 class Receptor extends NoteObject {
 	/**
 	Whether this receptor is currently being held.
@@ -24,6 +25,16 @@ class Receptor extends NoteObject {
 	For any additional attachments that can be added onto this receptor.
 	*/
 	public var attachments:Array<NoteObject> = [];
+
+	/**
+	What the `parent`'s `skin` provided for `luminize`.
+	*/
+	var skinLuminize:Null<Bool> = null;
+
+	/**
+	The color to use when one is not provided when changing animation.
+	*/
+	var defaultColor:Color = 0xFFFFFFFF;
 
 	public function new(parent:Strumline, lane:Int) {
 		super();
@@ -43,19 +54,14 @@ class Receptor extends NoteObject {
 	@param note The note to base the colour off of.
 	*/
 	public function setGlowColor(?note:BaseNote) {
-		if (note == null || !note.canGlow || !note.luminize) {
-			color = 0xFFFFFFFF;
-			luminize = false;
+		if (note == null || !note.canGlow || note.glowColor == null) {
+			color = cast defaultColor;
+			luminize = skinLuminize ?? false;
 			return;
 		}
 
-		luminize = true;
-
-		if (Nevermore.settings.receptorGlow == 'Judgement') {
-			color = note.judgement.color;
-		} else {
-			color = note.color;
-		}
+		luminize = skinLuminize ?? true;
+		color = cast note.glowColor;
 	}
 
 	/**

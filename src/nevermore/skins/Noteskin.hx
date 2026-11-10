@@ -122,6 +122,11 @@ class Noteskin {
 	public function hasSection(section:String) {
 		return sections.exists(section) || (fallback != null && fallback.hasSection(section));
 	}
+	public function getSection(section:String) {
+		if (sections.exists(section))
+			return sections.get(section);
+		return fallback == null ? null : fallback.getSection(section);
+	}
 	public function apply(to:FlxSprite, lane:Int, luminized:Bool, section:String):Bool {
 		if (sections.exists(section)) {
 			sections.get(section).apply(to, lane, luminized);
