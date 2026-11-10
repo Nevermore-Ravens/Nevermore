@@ -170,7 +170,6 @@ class BaseField extends FlxSpriteGroup {
 		applyModifiers(chart, modifiers);
 
 		var map:TimingMap = clock.timingMap;
-		var list:Array<NoteData> = [];
 		for (note in chart.notes) {
 			note.beat = map.getBeat(note.time);
 			note.snapID = map.getSnapID(note.time, chart.snapRelativeToChanges);
