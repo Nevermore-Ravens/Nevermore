@@ -319,7 +319,7 @@ class NoteField extends BaseField {
 	}
 
 	override function noteSpawned(data:NoteData) {
-		if (data.player >= strumlines.length) return;
+		data.player = Math.floor(Math.min(data.player, strumlines.length - 1));
 
 		var note = addNote(data, notes, Note);
 		if (data.length > 0) {
@@ -387,6 +387,16 @@ class NoteField extends BaseField {
 		}
 
 		input.regrabTimer(sustain.strumline, sustain);
+	}
+
+	override function set_cameras(list:Array<FlxCamera>) {
+		background.cameras = list;
+		return super.set_cameras(list);
+	}
+
+	override function set_camera(cam:FlxCamera) {
+		background.camera = camera;
+		return super.set_camera(cam);
 	}
 
 	#if !NEVERMORE_NO_MODCHARTS	

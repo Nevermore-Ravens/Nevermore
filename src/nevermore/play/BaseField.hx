@@ -171,13 +171,12 @@ class BaseField extends FlxSpriteGroup {
 
 		var map:TimingMap = clock.timingMap;
 		var list:Array<NoteData> = [];
-		for (i => note in chart.notes) {
+		for (note in chart.notes) {
 			note.beat = map.getBeat(note.time);
 			note.snapID = map.getSnapID(note.time, chart.snapRelativeToChanges);
-			list.push(note);
 		}
 		
-		spawner.load(list);
+		spawner.load(chart.notes);
 		spawner.triggered = noteSpawned;
 	}
 
