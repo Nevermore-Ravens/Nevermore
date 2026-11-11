@@ -73,7 +73,7 @@ All you have to do is give your chart a list of scroll velocities to use via `ne
 ## Quantization
 Nevermore supports note quantization, which is the colour of notes depending on the snap they're at between 2 beats.  
 It can be turned on with `Nevermore.settings.quantization`.  
-(see [Quantization.hx](./src/nevermore/core/Quantization.hx) for more)
+(see [NoteColor.hx](./src/nevermore/core/NoteColor.hx) for more)
 
 # FAQ
 ## "Why was this made, and not built directly into Never2x?"
