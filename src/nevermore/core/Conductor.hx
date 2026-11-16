@@ -120,7 +120,6 @@ class Conductor extends flixel.FlxBasic {
 		clock.measureHit.removeAll();
 
 		tempo = 120;
-		volume = 1.0;
 		rate = 1.0;
 		vocals = null;
 	}

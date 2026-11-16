@@ -19,16 +19,14 @@ enum abstract ScrollDirection(String) from String to String {
 @:publicFields
 class NevermoreSettings {
 	/**
-	Shifts the time of all notes forward or backward.  
-	Moves where a hit is considered 0 milliseconds, relative to the audio.  
-	Lower values mean notes will spawn earlier, so you have to hit earlier, and vice versa.
+	Shifts the time of all notes forward or backward, or the playhead relative to the audio position.
+	Negative values mean you have to hit notes earlier, and positive values mean you have to hit them later.
 	*/
 	var inputOffset:Float = 0;
 
-	/**
-	Otherwise known as moving the "judgement line".  
-	Moves where a hit is considered 0 milliseconds relative to the receptors, and not the audio.  
-	Lower values moves the line to be "after" the receptors.
+	/**.  
+	Shifts the visual playhead of all notes relative to the receptors, rather than the audio.
+	Negative values moves the playhead to be "after" the receptors.
 	*/                                     
 	var visualOffset:Float = 0;
 

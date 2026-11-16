@@ -156,6 +156,15 @@ class AssetHandler {
 	}
 
 	/**
+	Checks if a specified path is a directory/folder or not.
+	@param key The path to check for.
+	@return The result of this check.
+	*/
+	public function isDirectory(key:String):Bool {
+		return sys.FileSystem.isDirectory(getPath(key));
+	}
+
+	/**
 	Checks if a file exists, relative to the handler's root folder.
 	@param key The path to check.
 	@return Whether this file/folder exists or not.
@@ -259,6 +268,10 @@ class Assets {
 
 	public static function multiAtlas(keys:Array<String>):FlxAtlasFrames {
 		return main.multiAtlas(keys);
+	}
+
+	public static function isDirectory(key:String):Bool {
+		return main.isDirectory(key);
 	}
 
 	public static function exists(key:String):Bool {
