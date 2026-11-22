@@ -27,7 +27,7 @@ class HitErrorBar extends FlxSpriteGroup {
 	var hitRegistery:FlxTypedSpriteGroup<NoteHitBar>;
 
 	public function new(?x:Float = 0.0, ?y:Float = 0.0, ?list:Array<Judgement>) {
-		super();
+		super(x, y);
 
 		list ??= Judgement.current;
 
