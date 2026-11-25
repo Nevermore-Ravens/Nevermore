@@ -112,6 +112,7 @@ class BaseModifier {
 		for (i in 0...cacheValues.length) {
 			for (v in 0...cacheValues[i].length)
 				values[i][v] = cacheValues[i][v];
+			active[i] = isActive(values[i]);
 		}
 	}
 
